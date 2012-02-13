@@ -26,9 +26,9 @@
 
 .scrollbar .handle .line { font-size: 0; background: #888; }
 
-#horizontal .sly { height: 170px; outline: 1px solid #4DBCE9; }
+#horizontal .sly { height: 170px; }
 #horizontal .sly ul { height: 100%; }
-#horizontal .sly ul li { float: left; width: 187px; height: 100%; margin: 0 10px 0 10px; font-size: 50px; line-height: 170px; }
+#horizontal .sly ul li { float: left; width: 187px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 170px; }
 #horizontal .scrollbar { margin: 10px 0 0 0; height: 20px; }
 #horizontal .scrollbar .handle { width: 100px; height: 100%; cursor: pointer; }
 #horizontal .scrollbar .handle .line { width: 100%; margin-top: 10px; height: 1px;}
@@ -52,7 +52,7 @@
 #vertical { position: relative; }
 #vertical .sly { width: 440px; height: 500px; border: 1px solid #aaa; }
 #vertical .sly ul { width: 100%; height: 100%; overflow: hidden; }
-#vertical .sly ul li { height: 80px; margin: 5px 0 8px 0; font-size: 40px; line-height: 80px; }
+#vertical .sly ul li { height: 80px; margin: 0 0 1px 0; font-size: 40px; line-height: 80px; }
 #vertical .scrollbar { position: absolute; top: 0; right: 0; width: 20px; height: 500px; }
 #vertical .scrollbar .handle { width: 100%; height: 100px; cursor: pointer; }
 #vertical .scrollbar .handle .line { width: 1px; height: 100%; margin-left: 50%; }
