@@ -923,6 +923,10 @@
 			o.byItems ? self.activate( o.startAt ) : slide( pos.cur - o.startAt );
 			syncBars();
 
+			// Vars
+			var doc = $(document),
+				dragEvents = 'mousemove.' + pluginName + ' mouseup.' + pluginName;
+
 			// Scrolling navigation
 			o.scrollBy && $scrollSource.bind('DOMMouseScroll.' + pluginName + ' mousewheel.' + pluginName, function(e){
 
@@ -954,7 +958,7 @@
 			});
 
 			// Keyboard navigation
-			o.keyboardNav && $(document).bind('keydown.' + pluginName, function(e){
+			o.keyboardNav && doc.bind('keydown.' + pluginName, function(e){
 
 				switch( e.keyCode || e.which ){
 
@@ -979,7 +983,7 @@
 			});
 
 			// Development logging
-			$(document).bind('keydown.' + pluginName, function(e){
+			doc.bind('keydown.' + pluginName, function(e){
 
 				switch( e.keyCode || e.which ){
 
@@ -1000,8 +1004,8 @@
 			// Dragging navigation
 			o.dragContent && $slidee.bind('mousedown.' + pluginName, function(e){
 
-				// If not left mouse button, stop
-				if( !!e.button ) return;
+				// Ignore other than left mouse button
+				if( e.which !== 1 ) return;
 
 				stopDefault(e);
 
@@ -1011,8 +1015,6 @@
 					start = +(new Date),
 					srcEl = e.target || e.srcElement,
 					easeoff = 0,
-					doc = $(document),
-					dragEvents = 'mousemove.' + pluginName + ' mouseup.' + pluginName,
 					isInitialized = 0;
 
 				// Add dragging class
@@ -1090,7 +1092,7 @@
 			$handle && o.dragHandle && $handle.bind('mousedown.' + pluginName, function(e){
 
 				// If not left mouse button, stop
-				if( !!e.button ) return;
+				if( e.which !== 1 ) return;
 
 				stopDefault(e);
 
@@ -1099,9 +1101,7 @@
 					posInit = hPos.cur,
 					pathMin = -hPos.cur,
 					pathMax = hPos.max - hPos.cur,
-					nextDrag = 0,
-					doc = $(document),
-					dragEvents = 'mousemove.' + pluginName + ' mouseup.' + pluginName;
+					nextDrag = 0;
 
 				// Add dragging class
 				$handle.addClass(o.draggedClass);
