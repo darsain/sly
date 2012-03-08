@@ -3,208 +3,333 @@
 <head>
 	<meta charset="utf-8">
 	<title>Sly - jQuery plugin</title>
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/sly.css">
+	<link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body id="top">
 
-	<a href="http://github.com/Darsain/sly"><img style="position:absolute;top:0;left:0;border:0;" src="https://a248.e.akamai.net/assets.github.com/img/bec6c51521dcc8148146135149fe06a9cc737577/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
+<div id="header" class="container header">
 
+	<div id="download">
+		<h6>Download Latest</h6>
+		<div class="btn-group">
+			<a href="//github.com/Darsain/sly/raw/master/jquery.sly.js" class="btn btn-large">Development</a>
+			<a href="//github.com/Darsain/sly/raw/master/jquery.sly.min.js" class="btn btn-large">Minified</a>
+		</div>
+	</div>
+
+	<h1>Sly</h1>
+	<p>jQuery plugin for one-directional scrolling simulation with item based navigation support</p>
+
+</div>
+
+<div id="nav">
 	<div class="container">
 
-		<header id="top" class="page-header">
-			<div id="download" class="pull-right">
-				<h6 class="pull-right">Download Latest</h6>
+		<ul id="tabs" class="clearfix">
+			<li data-activate="horizontal"><a href="#">Horizontal examples</a></li>
+			<li data-activate="vertical"><a href="#">Vertical examples</a></li>
+			<li data-activate="infinite"><a href="#">Infinite scroll</a></li>
+		</ul>
+
+	</div>
+</div>
+
+<div id="sections" class="container">
+
+	<div id="horizontal">
+
+		<div class="slyWrap example1">
+
+			<h2>Item navigation: <code>basic</code></h2>
+
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
+			</div>
+
+			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "basic", "startAt": 3, "scrollBy": 1 }'>
+				<ul class="big cfix" data-items="30"></ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
 				<div class="btn-group">
-					<a href="//github.com/Darsain/sly/raw/master/jquery.sly.js" class="btn btn-large">Development</a>
-					<a href="//github.com/Darsain/sly/raw/master/jquery.sly.min.js" class="btn btn-large">Minified</a>
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart" data-arg="10"><strong>10</strong> toStart</button>
+					<button class="btn" data-action="toCenter" data-arg="10"><strong>10</strong> toCenter</button>
+					<button class="btn" data-action="toEnd" data-arg="10"><strong>10</strong> toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
 				</div>
 			</div>
-			<hgroup>
-				<h1>Sly</h1>
-				<h3><small>jQuery plugin for one-directional scrolling simulation with item based navigation support</small></h3>
-			</hgroup>
-		</header>
 
-		<div class="row">
-			<div class="span12 slyWrap" id="horizontal">
+			<h4>Code</h4>
 
-				<div class="scrollbar">
-					<div class="handle"><div class="line"></div></div>
-				</div>
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "basic",
+	dragContent: 1,
+	startAt: 3,
+	scrollBy: 1
+});
+</pre>
 
-				<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "byItems": 1, "autoNav": 1, "startAt": 3, "scrollBy": 1 }'>
-					<ul class="big cfix" data-items="30"></ul>
-				</div>
-
-				<ul class="pages"></ul>
-
-				<div class="controls btn-toolbar">
-					<div class="btn-group">
-						<button class="btn prev">&laquo; prev</button>
-						<button class="btn next">next &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn prevPage">&laquo; prevPage</button>
-						<button class="btn nextPage">nextPage &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart">toStart</button>
-						<button class="btn" data-action="toCenter">toCenter</button>
-						<button class="btn" data-action="toEnd">toEnd</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart" data-arg="10"><strong>10</strong> toStart</button>
-						<button class="btn" data-action="toCenter" data-arg="10"><strong>10</strong> toCenter</button>
-						<button class="btn" data-action="toEnd" data-arg="10"><strong>10</strong> toEnd</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="add">Add item</button>
-						<button class="btn" data-action="remove">Remove item</button>
-					</div>
-				</div>
-
-			</div>
 		</div>
 
 		<hr>
 
-		<div class="row">
-			<div class="span12 slyWrap" id="horizontal2">
+		<div class="slyWrap example1">
 
-				<div class="scrollbar">
-					<div class="handle"><div class="line"></div></div>
-				</div>
+			<h2>Item navigation: <code>smart</code></h2>
 
-				<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "byItems": 1, "autoStep": 1, "scrollBy": 1, "centerActive": 1 }'>
-					<ul class="big cfix" data-items="10"></ul>
-				</div>
-
-				<div class="controls btn-toolbar">
-					<div class="btn-group">
-						<button class="btn prev">&laquo; prev</button>
-						<button class="btn next">next &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart">toStart</button>
-						<button class="btn" data-action="toCenter">toCenter</button>
-						<button class="btn" data-action="toEnd">toEnd</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="add">Add item</button>
-						<button class="btn" data-action="remove">Remove item</button>
-					</div>
-				</div>
-
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
 			</div>
+
+			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "smart", "startAt": 3, "scrollBy": 1 }'>
+				<ul class="big cfix" data-items="30"></ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart" data-arg="10"><strong>10</strong> toStart</button>
+					<button class="btn" data-action="toCenter" data-arg="10"><strong>10</strong> toCenter</button>
+					<button class="btn" data-action="toEnd" data-arg="10"><strong>10</strong> toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
+				</div>
+			</div>
+
 		</div>
 
 		<hr>
 
-		<div class="row">
-			<div class="span12 slyWrap" id="horizontal3">
+		<div class="slyWrap example2">
 
-				<div class="sly" data-options='{ "horizontal": 1, "byItems": 1, "centerActive": 1 }'>
-					<ul class="big cfix">
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-						<li>
-							<h3>Lorem ipsum dolor</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-							Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-							pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.</p>
-						</li>
-					</ul>
-				</div>
-
-				<div class="controls btn-toolbar">
-					<div class="btn-group">
-						<button class="btn prev">&laquo; prev</button>
-						<button class="btn next">next &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart">toStart</button>
-						<button class="btn" data-action="toCenter">toCenter</button>
-						<button class="btn" data-action="toEnd">toEnd</button>
-					</div>
-				</div>
-
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
 			</div>
+
+			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "centered", "scrollBy": 1 }'>
+				<ul class="big cfix" data-items="30"></ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toCenter" data-arg="10"><strong>10</strong> toCenter</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
+				</div>
+			</div>
+
 		</div>
 
 		<hr>
 
-		<div class="row">
-			<div class="span6 slyWrap" id="vertical">
+		<div class="slyWrap example2">
 
-				<div class="scrollbar">
-					<div class="handle"><div class="line"></div></div>
-				</div>
-
-				<div class="sly" data-options='{ "dragContent": 1, "byItems": 1, "autoStep": 1, "startAt": 3, "stepBy": 3, "scrollBy": 1, "elasticBounds": 1 }'>
-					<ul class="big cfix" data-items="30"></ul>
-				</div>
-
-				<ul class="pages"></ul>
-
-				<div class="controls btn-toolbar">
-					<div class="btn-group">
-						<button class="btn prev">&laquo; prev</button>
-						<button class="btn next">next &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn prevPage">&laquo; prevPage</button>
-						<button class="btn nextPage">nextPage &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart">toStart</button>
-						<button class="btn" data-action="toCenter">toCenter</button>
-						<button class="btn" data-action="toEnd">toEnd</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="add">Add item</button>
-						<button class="btn" data-action="remove">Remove item</button>
-					</div>
-				</div>
-
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="span6 slyWrap" id="vertical2">
+			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "forceCentered", "scrollBy": 1 }'>
+				<ul class="big cfix" data-items="10"></ul>
+			</div>
 
-				<div class="scrollbar">
-					<div class="handle"><div class="line"></div></div>
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
 				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toCenter" data-arg="5"><strong>5</strong> toCenter</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
+				</div>
+			</div>
 
-				<div class="sly" data-options='{ "scrollBy": 100 }'>
-					<div>
+		</div>
+
+		<hr>
+
+		<div class="slyWrap example3">
+
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "speed": 400 }'>
+				<ul class="big cfix">
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+					<li>
+						<h3>Lorem ipsum dolor</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
+						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+						pellentesque eu, pretium quis, sem.</p>
+					</li>
+				</ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="vertical" class="clearfix">
+
+		<div class="slyWrap example1">
+
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
+			</div>
+
+			<div class="sly" data-options='{ "dragContent": 1, "itemNav": "smart", "startAt": 3, "scrollBy": 1, "elasticBounds": 1 }'>
+				<ul class="big cfix" data-items="30"></ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prev">&laquo; prev</button>
+					<button class="btn next">next &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
+				</div>
+			</div>
+
+		</div>
+
+
+		<div class="slyWrap example2">
+
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
+			</div>
+
+			<div class="sly" data-options='{ "scrollBy": 100, "startAt": 100 }'>
+				<div>
 <h1>Lorem ipsum dolor</h1>
 
 <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas.
@@ -216,8 +341,8 @@ condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href=
 <h2>Header Level 2</h2>
 
 <ol>
-	<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
-	<li>Aliquam tincidunt mauris eu risus.</li>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+<li>Aliquam tincidunt mauris eu risus.</li>
 </ol>
 
 <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue.
@@ -227,15 +352,15 @@ at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote
 <h3>Header Level 3</h3>
 
 <ul>
-	<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
-	<li>Aliquam tincidunt mauris eu risus.</li>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+<li>Aliquam tincidunt mauris eu risus.</li>
 </ul>
 
 <pre>
 #header h1 a {
-	display: block;
-	width: 300px;
-	height: 80px;
+display: block;
+width: 300px;
+height: 80px;
 }
 </pre>
 
@@ -247,7 +372,7 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-<h3>Header Level 3</h3>
+<h4>Header Level 4</h4>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
@@ -256,131 +381,74 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-					</div>
 				</div>
-
-				<ul class="pages"></ul>
-
-				<div class="controls btn-toolbar">
-					<div class="btn-group">
-						<button class="btn prevPage">&laquo; prevPage</button>
-						<button class="btn nextPage">nextPage &raquo;</button>
-					</div>
-					<div class="btn-group">
-						<button class="btn" data-action="toStart">toStart</button>
-						<button class="btn" data-action="toCenter">toCenter</button>
-						<button class="btn" data-action="toEnd">toEnd</button>
-					</div>
-				</div>
-
 			</div>
-		</div>
 
+			<ul class="pages"></ul>
 
-		<div class="footer">
-			<p class="pull-right"><a href="#top">Back to top</a></p>
-			<p>Licensed under the <a href="http://www.opensource.org/licenses/MIT">MIT license</a>.</p>
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart" data-arg="h3"><strong>H3</strong> toStart</button>
+					<button class="btn" data-action="toCenter" data-arg="h3"><strong>H3</strong> toCenter</button>
+					<button class="btn" data-action="toEnd" data-arg="h3"><strong>H3</strong> toEnd</button>
+				</div>
+			</div>
+
 		</div>
 
 	</div>
 
+	<div id="infinite">
 
-<script type="text/javascript">
-window.log=function(){log.history=log.history||[];log.history.push(arguments);if(this.console){console.log(Array.prototype.slice.call(arguments))}};
-</script>
-<script type="text/javascript" src="libs/jquery.min.js"></script>
-<script type="text/javascript" src="libs/jquery.easing.1.3.js"></script>
+		<div class="controlbar clearfix">
+
+			<button class="btn btn-black fright" data-action="toStart">Back to top &uarr;</button>
+
+			<button class="btn btn-red" data-action="reset">Reset to original state</button>
+
+		</div>
+
+		<hr>
+
+		<div class="frameWrap">
+			<div class="frame">
+				<ul class="clearfix"></ul>
+			</div>
+
+			<div class="scrollbar">
+				<div class="handle"><div class="line"></div></div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+<div id="footer">
+	<div class="container">
+		<span class="fright"><a href="#top">Back to top &uarr;</a></span>
+		<p>Licensed under the <a href="http://www.opensource.org/licenses/MIT">MIT license</a>.</p>
+	</div>
+</div>
+
+<a href="http://github.com/Darsain/sly"><img style="position:absolute;top:0;left:0;border:0;" src="https://a248.e.akamai.net/assets.github.com/img/bec6c51521dcc8148146135149fe06a9cc737577/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
+
+<script type="text/javascript">window.log=function(){log.history=log.history||[];log.history.push(arguments);if(this.console){console.log(Array.prototype.slice.call(arguments))}};</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
 <script type="text/javascript" src="jquery.sly.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="js/libs/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="js/libs/prettify.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
 
-function getSizes( contSize, gap, maxElements ){
-
-	maxElements = maxElements ? maxElements : 20;
-
-	for( var i = 2; i <= maxElements; i++ ){
-
-		var conSizeGapless = contSize - ( ( i - 1 ) * gap ),
-			itemSize = conSizeGapless / i;
-
-		if( itemSize % 1 < gap / i ) console.log( i + ' elements by ' + itemSize + ' pixels' );
-
-	}
-
-}
-
-jQuery("document").ready(function($){
-
-	// Populate list items
-	$('ul[data-items]').each(function(i,e){
-
-		var items = parseInt($(e).data('items')),
-			output = '';
-
-		for( var i = 0; i<items; i++ ){
-			output += '<li>'+i+'</li>';
-		}
-
-		$(e).html(output);
-
-	});
-
-	// Horizontal sly
-	$(".slyWrap").each(function(i,e){
-//if( i != 0 ) return;
-		var cont = $(this),
-			frame = cont.find(".sly"),
-			slidee = frame.find("ul"),
-			scrollbar = cont.find(".scrollbar"),
-			pagesbar = cont.find(".pages"),
-			options = frame.data("options"),
-
-			controls = cont.find(".controls"),
-			prevButton = controls.find(".prev"),
-			nextButton = controls.find(".next"),
-			prevPageButton = controls.find(".prevPage"),
-			nextPageButton = controls.find(".nextPage");
-
-		options = $.extend( {}, options, {
-			scrollBar: scrollbar,
-			pagesBar: pagesbar,
-
-			prev: prevButton,
-			next: nextButton,
-			prevPage: prevPageButton,
-			nextPage: nextPageButton,
-			disabledClass: 'btn-disabled'
-		});
-
-		// Call sly
-		frame.sly( options );
-
-		// Bind controls
-		cont.find("button").click(function(){
-
-			var action = $(this).data('action'),
-				arg = $(this).data('arg');
-
-			switch(action){
-
-				case 'add':
-					slidee.append( slidee.children().slice(-1).clone().removeClass().text(function(i,text){ return text/1 + 1; }) );
-					frame.sly('reload');
-				break;
-
-				case 'remove':
-					slidee.find("li").slice(-1).remove();
-					frame.sly('reload');
-				break;
-
-				default: frame.sly(action, arg);
-
-			}
-
-		});
-
-	});
-
-});
-</script>
 </body>
 </html>
