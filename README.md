@@ -1,13 +1,13 @@
 # Sly
 
-jQuery plugin for one-directional scrolling simulation with item based navigation support.
+jQuery plugin for one-directional scrolling simulation with item based navigation support and lots of other goodies.
 
 **This plugin is in beta testing!**
 
 [See the DEMO](http://darsain.github.com/sly)
 
 
-## Terminology & requirements
+## Layout & requirements
 
 ![Terminology](http://darsain.github.com/sly/terminology.png)
 
@@ -16,11 +16,14 @@ Sly is being applied to FRAME. FRAME has to have one child, which is referred to
 Content can be random slug of tags and text, or - if you want to use item based navigation - a strict list of items.
 
 FRAME should have **no padding** in corresponded sly direction (`padding-left` & `padding-right` for horizontal, and `padding-top` & `padding-bottom` for vertical sly),
-and SIDEE should have **no margin** in corresponded sly direction (`margin-left` & `margin-right` for horizontal, and `margin-top` & `margin-bottom` for vertical sly).
+and SLIDEE should have **no margin** in corresponded sly direction (`margin-left` & `margin-right` for horizontal, and `margin-top` & `margin-bottom` for vertical sly).
 If you wish to apply padding to SLIDEE, or margins to items, you can do so
 (`sly` is accounting for that), but do not use any other units than **pixels**. Using **%**, **em**, or anything other than pixels will break offsets and limits.
 
 Plugin should work everywhere including IE6.
+
+Also, despite all the awesome things that this plugin does, there is **no other** dependency than jQuery.
+That means no jQuery-UI required, everything is included in this nice 9KB[minified] action - you are welcome :)
 
 ## Calling
 
