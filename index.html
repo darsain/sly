@@ -40,13 +40,11 @@
 
 		<div class="slyWrap example1">
 
-			<h2>Item navigation: <code>basic</code></h2>
-
 			<div class="scrollbar">
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "basic", "startAt": 3, "scrollBy": 1 }'>
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "startAt": 3, "scrollBy": 1 }'>
 				<ul class="big cfix" data-items="30"></ul>
 			</div>
 
@@ -76,8 +74,6 @@
 					<button class="btn" data-action="remove">Remove item</button>
 				</div>
 			</div>
-
-			<h4>Code</h4>
 
 <pre class="prettyprint lang-js">
 $frame.sly({
@@ -95,13 +91,11 @@ $frame.sly({
 
 		<div class="slyWrap example1">
 
-			<h2>Item navigation: <code>smart</code></h2>
-
 			<div class="scrollbar">
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "smart", "startAt": 3, "scrollBy": 1 }'>
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "smart", "dragContent": 1, "startAt": 3, "scrollBy": 1 }'>
 				<ul class="big cfix" data-items="30"></ul>
 			</div>
 
@@ -132,6 +126,16 @@ $frame.sly({
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "smart",
+	dragContent: 1,
+	startAt: 3,
+	scrollBy: 1
+});
+</pre>
+
 		</div>
 
 		<hr>
@@ -142,7 +146,7 @@ $frame.sly({
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "centered", "scrollBy": 1 }'>
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "centered", "dragContent": 1, "scrollBy": 1 }'>
 				<ul class="big cfix" data-items="30"></ul>
 			</div>
 
@@ -171,6 +175,15 @@ $frame.sly({
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "centered",
+	dragContent: 1,
+	scrollBy: 1
+});
+</pre>
+
 		</div>
 
 		<hr>
@@ -181,7 +194,7 @@ $frame.sly({
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "horizontal": 1, "dragContent": 1, "itemNav": "forceCentered", "scrollBy": 1 }'>
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "dragContent": 1, "scrollBy": 1 }'>
 				<ul class="big cfix" data-items="10"></ul>
 			</div>
 
@@ -210,13 +223,22 @@ $frame.sly({
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "forceCentered",
+	dragContent: 1,
+	scrollBy: 1
+});
+</pre>
+
 		</div>
 
 		<hr>
 
 		<div class="slyWrap example3">
 
-			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "speed": 400 }'>
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered" }'>
 				<ul class="big cfix">
 					<li>
 						<h3>Lorem ipsum dolor</h3>
@@ -281,6 +303,13 @@ $frame.sly({
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "forceCentered"
+});
+</pre>
+
 		</div>
 
 	</div>
@@ -293,7 +322,7 @@ $frame.sly({
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "dragContent": 1, "itemNav": "smart", "startAt": 3, "scrollBy": 1, "elasticBounds": 1 }'>
+			<div class="sly" data-options='{ "itemNav": "smart", "dragContent": 1, "startAt": 10, "scrollBy": 1, "elasticBounds": 1 }'>
 				<ul class="big cfix" data-items="30"></ul>
 			</div>
 
@@ -319,6 +348,16 @@ $frame.sly({
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	itemNav: "smart",
+	dragContent: 1,
+	startAt: 10,
+	scrollBy: 1,
+	elasticBounds: 1
+});
+</pre>
+
 		</div>
 
 
@@ -328,7 +367,7 @@ $frame.sly({
 				<div class="handle"><div class="line"></div></div>
 			</div>
 
-			<div class="sly" data-options='{ "scrollBy": 100, "startAt": 100 }'>
+			<div class="sly" data-options='{ "scrollBy": 100, "startAt": 200 }'>
 				<div>
 <h1>Lorem ipsum dolor</h1>
 
@@ -403,6 +442,13 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 				</div>
 			</div>
 
+<pre class="prettyprint lang-js">
+$frame.sly({
+	scrollBy: 100,
+	startAt: 100
+});
+</pre>
+
 		</div>
 
 	</div>
@@ -429,6 +475,21 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 			</div>
 		</div>
 
+<pre class="prettyprint lang-js">
+$frame.on('sly:move', function( e, pos ){
+
+	// If close to end, append new items
+	if( pos.cur > pos.max - 100 ){
+
+		populate( $ul, 10);
+
+		$frame.sly('reload');
+
+	}
+
+}).sly({ itemNav: 'basic', scrollBy: 1 });
+</pre>
+
 	</div>
 
 </div>
@@ -444,7 +505,7 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 
 <script type="text/javascript">window.log=function(){log.history=log.history||[];log.history.push(arguments);if(this.console){console.log(Array.prototype.slice.call(arguments))}};</script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
+<script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery.min.js"%3E%3C/script%3E'))</script>
 <script type="text/javascript" src="jquery.sly.js"></script>
 <script type="text/javascript" src="js/libs/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="js/libs/prettify.js"></script>

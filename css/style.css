@@ -501,59 +501,64 @@ button.btn.small, input[type="submit"].btn.small { *padding-top: 3px; *padding-b
 .pages li:hover { background: #eee; }
 .pages li.active { background: #999; border-color: #888; box-shadow: inset 0 0 0 2px #eee; }
 
-.scrollbar .handle .line { font-size: 0; background: #888; }
+.scrollbar { background: #808080; border-radius: 4px; border: 2px solid #808080; border-top-color: #666; }
+.scrollbar .handle { border-radius: 4px; background: #fff; cursor: pointer;
+	-webkit-box-shadow: 0 1px 0 #555;
+	-moz-box-shadow: 0 1px 0 #555;
+	-o-box-shadow: 0 1px 0 #555;
+	box-shadow: 0 1px 0 #555;
+}
 
-#horizontal hr { margin: 3em 0; }
+/* Horizontal examples */
+#horizontal .slyWrap { margin: 3em 0; }
+
+#horizontal .scrollbar { margin: 1em 0; height: 5px; }
+#horizontal .scrollbar .handle { width: 100px; height: 100%; }
 
 #horizontal .example1 .sly { height: 170px; }
 #horizontal .example1 .sly ul { height: 100%; }
 #horizontal .example1 .sly ul li { float: left; width: 187px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 170px; }
-#horizontal .example1 .scrollbar { margin: 10px 0 0 0; height: 20px; }
-#horizontal .example1 .scrollbar .handle { width: 100px; height: 100%; cursor: pointer; }
-#horizontal .example1 .scrollbar .handle .line { width: 100%; margin-top: 10px; height: 1px; }
 
 #horizontal .example2 .sly { height: 200px; }
 #horizontal .example2 .sly ul { height: 100%; }
 #horizontal .example2 .sly ul li { float: left; width: 266px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 200px; }
-#horizontal .example2 .scrollbar { margin: 10px 0 0 0; height: 20px; }
-#horizontal .example2 .scrollbar .handle { width: 100px; height: 100%; cursor: pointer; }
-#horizontal .example2 .scrollbar .handle .line { width: 100%; margin-top: 10px; height: 1px; }
 
 #horizontal .example3 .sly { height: 160px; }
 #horizontal .example3 .sly ul { height: 100%; }
 #horizontal .example3 .sly ul li { float: left; padding: 0 20px; width: 360px; height: 100%; font-size: 50px; opacity: 0.2; cursor: default;
 	overflow: hidden; background: none; box-shadow: none; font-size: 14px; text-align: justify; color: #444;
-	-webkit-transition: opacity 0.4s linear; -moz-transition: opacity 0.4s linear; -o-transition: opacity 0.4s linear; transition: opacity 0.4s linear;
+	-webkit-transition: opacity 0.3s linear; -moz-transition: opacity 0.3s linear; -o-transition: opacity 0.3s linear; transition: opacity 0.3s linear;
 }
 #horizontal .example3 .sly ul li.active { opacity: 1; }
 
-#vertical .slyWrap { width: 470px; float: left; }
+/* Vertical examples */
+#vertical .slyWrap { margin: 1em 0; width: 470px; float: left; }
+
+#vertical .scrollbar { width: 5px; }
+#vertical .scrollbar .handle { height: 100px; width: 100%; }
 
 #vertical .example1 { position: relative; }
-#vertical .example1 .sly { width: 450px; height: 500px; border: 1px solid #aaa; }
+#vertical .example1 .sly { width: 445px; height: 500px; border: 1px solid #aaa; }
 #vertical .example1 .sly ul { width: 100%; height: 100%; overflow: hidden; }
 #vertical .example1 .sly ul li { height: 80px; margin: 0 0 1px 0; font-size: 40px; line-height: 80px; }
-#vertical .example1 .scrollbar { position: absolute; top: 0; right: 0; width: 20px; height: 500px; }
-#vertical .example1 .scrollbar .handle { width: 100%; height: 100px; cursor: pointer; }
-#vertical .example1 .scrollbar .handle .line { width: 1px; height: 100%; margin-left: 50%; }
+#vertical .example1 .scrollbar { position: absolute; top: 0; right: 10px; height: 500px; }
 
 #vertical .example2 { position: relative; }
-#vertical .example2 .sly { width: 440px; margin-left: 18px; height: 500px; border: 1px solid #aaa; background: #fff; }
+#vertical .example2 .sly { width: 445px; margin-left: 25px; height: 500px; border: 1px solid #aaa; background: #fff; }
 #vertical .example2 .sly > div { padding: 1em 1.5em; }
-#vertical .example2 .scrollbar { position: absolute; top: 0; left: -1px; width: 20px; height: 500px; }
-#vertical .example2 .scrollbar .handle { width: 100%; height: 100px; cursor: pointer; }
-#vertical .example2 .scrollbar .handle .line { width: 1px; height: 100%; margin-left: 50%; }
+#vertical .example2 .scrollbar { position: absolute; top: 0; left: 10px; height: 500px; }
 
+/* Vertical example */
 #infinite .controlbar { margin: 2em 0 1.5em; }
 #infinite .frameWrap { position: relative; height: 500px; }
-#infinite .frame { height: 500px; margin-right: 20px; overflow: hidden; }
+#infinite .frame { height: 500px; margin-right: 20px; overflow: hidden; border: 1px solid #888; }
 #infinite .frame ul { width: 100%; margin: 0; padding: 0; list-style: none; }
-#infinite .frame ul li { margin: 0 0 5px 0; padding: 0; height: 200px; line-height: 200px; font-size: 30px; border-bottom: 1px solid #ccc;
+#infinite .frame ul li { margin: 0 0 5px 0; padding: 0; height: 200px; line-height: 200px; font-size: 30px; border-bottom: 1px solid #aaa;
 	background: #eee; color: #888; text-align: center;
 }
-#infinite .scrollbar { position: absolute; top: 0; right: -15px; width: 30px; height: 500px; }
-#infinite .scrollbar .handle { width: 100%; height: 100px; cursor: pointer; }
-#infinite .scrollbar .handle .line { width: 1px; height: 100%; margin-left: 14px; }
+
+#infinite .scrollbar { position: absolute; top: 0; right: 0; width: 5px; height: 498px; }
+#infinite .scrollbar .handle { height: 100px; width: 100%; }
 
 /* Footer */
 #footer { margin-top: 3em; font-size: 0.85em; padding: 2.5em 0; color: #666; border-top: 5px solid #666; text-transform: uppercase; }

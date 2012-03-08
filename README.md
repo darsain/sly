@@ -75,7 +75,7 @@ $frame.sly( [options] );
 
 **elasticBounds:** `default: 0` when dragging past limits, stretch them a little bit (like on spartphones)
 
-**speed:** `default: 200` animations speed. set to `0` to disable animating, in which case the `jQuery.css` method will be used
+**speed:** `default: 300` animations speed. set to `0` to disable animating, in which case the `jQuery.css` method will be used
 
 **easing:** `default: 'swing'` animations easing. build in jQuery are "linear" and "swing". for more, install [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/)
 
@@ -324,7 +324,7 @@ $frame.sly({
 	scrollBy:        0,
 	dragContent:     0,
 	  elasticBounds: 0,
-	speed:           200,
+	speed:           300,
 	easing:          'swing',
 	scrollSource:    null,
 	startAt:         0,

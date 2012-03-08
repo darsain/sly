@@ -1225,7 +1225,7 @@ $.fn[pluginName].defaults = {
 	scrollBy:        0,       // how many pixels/items should one mouse scroll event go. leave "0" to disable mousewheel scrolling
 	dragContent:     0,       // set to 1 to enable navigation by dragging the content with your mouse
 	  elasticBounds: 0,       // when dragging past limits, stretch them a little bit (like on spartphones)
-	speed:           200,     // animations speed
+	speed:           300,     // animations speed
 	easing:          'swing', // animations easing. build in jQuery options are "linear" and "swing". for more, install gsgd.co.uk/sandbox/jquery/easing/
 	scrollSource:    null,    // selector or DOM element for catching the mousewheel event for sly scrolling. default source is the frame container
 	startAt:         0,       // starting offset in pixels or items (depends on itemsNav option)

@@ -13,7 +13,7 @@ jQuery(function($){
 		hashId = window.location.hash.replace(/^#tab=/, ''),
 		initial = hashId && $sections.filter('#'+hashId).length ? hashId : $tabs.eq(0).data('activate'),
 		activeClass = 'active',
-		hiddenClass = 'visuallyhidden';
+		hiddenClass = 'hidden';
 
 	// Tabs navigation
 	$tabs.on('click', function(e){
