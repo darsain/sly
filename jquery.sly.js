@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.0
+ * jQuery Sly v0.9.1
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -79,6 +79,8 @@ function Plugin( frame, o ){
 		$nextButton = $(o.next),
 		$prevPageButton = $(o.prevPage),
 		$nextPageButton = $(o.nextPage),
+		cycleIndex = 0,
+		cycleIsPaused = 0,
 		isDragging = 0,
 		callbacks = {};
 
@@ -91,6 +93,12 @@ function Plugin( frame, o ){
 	 * @public
 	 */
 	var load = this.reload = function(){
+
+		// Ignored last margin
+		var ignoredMargin = 0;
+
+		// Clear cycling timeout
+		clearTimeout( cycleIndex );
 
 		// Reset global variables
 		frameSize = o.horizontal ? $frame.width() : $frame.height();
@@ -114,6 +122,9 @@ function Plugin( frame, o ){
 				paddingStart = getPx( $slidee, o.horizontal ? 'paddingLeft' : 'paddingTop' ),
 				paddingEnd = getPx( $slidee, o.horizontal ? 'paddingRight' : 'paddingBottom' ),
 				areFloated = $items.css('float') !== 'none';
+
+			// Update ignored margin
+			ignoredMargin = marginStart ? 0 : marginEnd;
 
 			// Reset slideeSize
 			slideeSize = 0;
@@ -171,13 +182,15 @@ function Plugin( frame, o ){
 
 			});
 
-			// Adjust position limits
-			var slideeSizeAdjusted = slideeSize - ( marginStart ? 0 : marginEnd );
-			pos.min = centerOffset;
-			pos.max = forceCenteredNav ? items[items.length-1].offCenter : slideeSizeAdjusted > frameSize ? slideeSizeAdjusted - frameSize : 0;
-
 			// Resize slidee
 			$slidee.css( o.horizontal ? { width: slideeSize+'px' } : { height: slideeSize+'px' } );
+
+			// Adjust slidee size for last margin
+			slideeSize -= ignoredMargin;
+
+			// Set limits
+			pos.min = centerOffset;
+			pos.max = forceCenteredNav ? items[items.length-1].offCenter : slideeSize > frameSize ? slideeSize - frameSize : 0;
 
 			// Fix overflowing activeItem
 			rel.activeItem >= items.length && self.activate( items.length-1 );
@@ -211,8 +224,19 @@ function Plugin( frame, o ){
 		} else {
 			while( tempPagePos - frameSize < pos.max ){
 
-				pages.push( tempPagePos > pos.max ? pos.max : tempPagePos );
+				var pagePos = tempPagePos > pos.max ? pos.max : tempPagePos;
+
+				pages.push( pagePos );
 				tempPagePos += frameSize;
+
+				// When item navigation, and last page is smaller than half of the last item size,
+				// adjust the last page position to pos.max and break the loop
+				if( tempPagePos > pos.max && itemNav && pos.max - pagePos < ( items[items.length-1].size - ignoredMargin ) / 2 ){
+
+					pages[pages.length-1] = pos.max;
+					break;
+
+				}
 
 			}
 		}
@@ -227,7 +251,7 @@ function Plugin( frame, o ){
 			// Bind page navigation, append to pagesbar, and save to $pages variable
 			$pages = $(pagesHtml).bind('click.' + namespace, function(){
 
-				activatePage( $pages.index(this) );
+				self.activatePage( $pages.index(this) );
 
 			}).appendTo( $pb.empty() );
 
@@ -256,6 +280,23 @@ function Plugin( frame, o ){
 
 		// Disable buttons
 		disableButtons();
+
+		// Automatic cycling
+		if( itemNav && o.cycleBy ){
+
+			var pauseEvents = 'mouseenter.' + namespace + ' mouseleave.' + namespace;
+
+			// Pause on hover
+			o.pauseOnHover && $frame.unbind(pauseEvents).bind(pauseEvents, function(e){
+
+				!cycleIsPaused && self.cycle( e.type === 'mouseenter', 1 );
+
+			});
+
+			// Initiate cycling
+			self.cycle( o.startPaused );
+
+		}
 
 		// Trigger :load event
 		$frame.trigger( pluginName + ':load', [ pos, $items, rel ] );
@@ -410,7 +451,7 @@ function Plugin( frame, o ){
 	 */
 	this.prevPage = function(){
 
-		activatePage( rel.activePage - 1 );
+		self.activatePage( rel.activePage - 1 );
 
 	};
 
@@ -422,7 +463,7 @@ function Plugin( frame, o ){
 	 */
 	this.nextPage = function(){
 
-		activatePage( rel.activePage + 1 );
+		self.activatePage( rel.activePage + 1 );
 
 	};
 
@@ -683,11 +724,11 @@ function Plugin( frame, o ){
 	/**
 	 * Activates a page
 	 *
-	 * @private
+	 * @public
 	 *
 	 * @param {Int} index Page index, starting from 0
 	 */
-	function activatePage( index ){
+	this.activatePage = function( index ){
 
 		// Fix overflowing
 		index = index < 0 ? 0 : index >= pages.length ? pages.length-1 : index;
@@ -695,7 +736,7 @@ function Plugin( frame, o ){
 
 		syncBars();
 
-	}
+	};
 
 
 	/**
@@ -825,6 +866,77 @@ function Plugin( frame, o ){
 
 
 	/**
+	 * Manage cycling
+	 *
+	 * @public
+	 *
+	 * @param {Bool} pause Pass true to pause cycling
+	 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set cycleIsPaused variable to true
+	 */
+	this.cycle = function( pause, soft ){
+
+		if( !itemNav || !o.cycleBy ) return;
+
+		if( !soft ){
+			cycleIsPaused = !!pause;
+		}
+
+		if( pause ){
+
+			if( cycleIndex ){
+
+				cycleIndex = clearTimeout( cycleIndex );
+
+				// Trigger :cyclePause event
+				$frame.trigger( pluginName + ':cyclePause', [ pos, $items, rel ] );
+
+			}
+
+		} else {
+
+			// Don't initiate more than one cycle
+			if( cycleIndex ) return;
+
+			// Trigger :cycleStart event
+			$frame.trigger( pluginName + ':cycleStart', [ pos, $items, rel ] );
+
+			// Cycling loop
+			(function loop(){
+
+				cycleIndex = setTimeout( function(){
+
+					if( !isDragging ){
+						switch( o.cycleBy ){
+
+							case 'items':
+								var nextItem = rel.activeItem >= items.length-1 ? 0 : rel.activeItem + 1;
+								self.activate( nextItem );
+							break;
+
+							case 'pages':
+								var nextPage = rel.activePage >= pages.length-1 ? 0 : rel.activePage + 1;
+								self.activatePage( nextPage );
+							break;
+
+						}
+					}
+
+					// Trigger :cycle event
+					$frame.trigger( pluginName + ':cycle', [ pos, $items, rel ] );
+
+					// Cycle the cycle!
+					loop();
+
+				}, o.cycleInterval );
+
+			}());
+
+		}
+
+	};
+
+
+	/**
 	 * Crossbrowser reliable way to stop default event action
 	 *
 	 * @private
@@ -885,20 +997,6 @@ function Plugin( frame, o ){
 
 		var doc = $(document),
 			dragEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
-
-		// Development logging
-		doc.bind('keydown.' + namespace, function(e){
-
-			switch( e.keyCode || e.which ){
-
-				case 82:
-					log("pos / rel / items / pages / options");
-					log( pos, rel, items, pages, o );
-				break;
-
-			}
-
-		});
 
 		// Set required styles to elements
 		$frame.css({ overflow: 'hidden' }).css('position') === 'static' && $frame.css({ position: 'relative' });
@@ -1220,6 +1318,12 @@ $.fn[pluginName].defaults = {
 	next:            null,    // selector or DOM element for "next item" button     ; doesn't work when `itemsNav` is disabled
 	prevPage:        null,    // selector or DOM element for "previous page" button
 	nextPage:        null,    // selector or DOM element for "next page" button
+
+	// Automated cycling
+	cycleBy:         0,       // enable automatic cycling by 'items', or 'pages'
+	  cycleInterval: 5000,    // number of milliseconds between cycles
+	  pauseOnHover:  1,       // pause cycling when mouse hovers over frame
+	  startPaused:   0,       // set to "1" to start in paused sate. cycling can be than resumed with "cycle" method
 
 	// Mixed options
 	scrollBy:        0,       // how many pixels/items should one mouse scroll event go. leave "0" to disable mousewheel scrolling

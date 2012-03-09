@@ -517,19 +517,24 @@ button.btn.small, input[type="submit"].btn.small { *padding-top: 3px; *padding-b
 
 #horizontal .example1 .sly { height: 170px; }
 #horizontal .example1 .sly ul { height: 100%; }
-#horizontal .example1 .sly ul li { float: left; width: 187px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 170px; }
+#horizontal .example1 .sly ul li { float: left; width: 266px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 170px; }
 
 #horizontal .example2 .sly { height: 200px; }
 #horizontal .example2 .sly ul { height: 100%; }
 #horizontal .example2 .sly ul li { float: left; width: 266px; height: 100%; margin: 0 1px 0 0; font-size: 50px; line-height: 200px; }
 
-#horizontal .example3 .sly { height: 160px; }
+#horizontal .example3 .sly { height: 200px; }
 #horizontal .example3 .sly ul { height: 100%; }
-#horizontal .example3 .sly ul li { float: left; padding: 0 20px; width: 360px; height: 100%; font-size: 50px; opacity: 0.2; cursor: default;
+#horizontal .example3 .sly ul li { float: left; width: 465px; height: 100%; margin: 0 10px 0 0; font-size: 50px; line-height: 200px; cursor: default; }
+#horizontal .example3 .sly ul li.active { background: #4DBCE9; color: #fff; -webkit-box-shadow: none; -moz-box-shadow: none; -o-box-shadow: none; box-shadow: none; }
+
+#horizontal .example4 .sly { height: 160px; }
+#horizontal .example4 .sly ul { height: 100%; }
+#horizontal .example4 .sly ul li { float: left; padding: 0 20px; width: 360px; height: 100%; font-size: 50px; opacity: 0.2; cursor: default;
 	overflow: hidden; background: none; box-shadow: none; font-size: 14px; text-align: justify; color: #444;
 	-webkit-transition: opacity 0.3s linear; -moz-transition: opacity 0.3s linear; -o-transition: opacity 0.3s linear; transition: opacity 0.3s linear;
 }
-#horizontal .example3 .sly ul li.active { opacity: 1; }
+#horizontal .example4 .sly ul li.active { opacity: 1; }
 
 /* Vertical examples */
 #vertical .slyWrap { margin: 1em 0; width: 470px; float: left; }

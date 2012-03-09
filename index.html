@@ -238,7 +238,60 @@ $frame.sly({
 
 		<div class="slyWrap example3">
 
-			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered" }'>
+			<div class="scrollbar">
+				<div class="handle"></div>
+			</div>
+
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "scrollBy": 1, "cycleBy": "pages", "cycleInterval": 2000, "startPaused": 1 }'>
+				<ul class="big cfix" data-items="10"></ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls btn-toolbar">
+				<div class="btn-group">
+					<button class="btn btn-green" data-action="cycle">Start cycle</button>
+					<button class="btn btn-green " data-action="cycle" data-arg="1">Pause</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn prevPage">&laquo; prevPage</button>
+					<button class="btn nextPage">nextPage &raquo;</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart">toStart</button>
+					<button class="btn" data-action="toCenter">toCenter</button>
+					<button class="btn" data-action="toEnd">toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="toStart" data-arg="5"><strong>5</strong> toStart</button>
+					<button class="btn" data-action="toCenter" data-arg="5"><strong>5</strong> toCenter</button>
+					<button class="btn" data-action="toEnd" data-arg="5"><strong>5</strong> toEnd</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn" data-action="add">Add item</button>
+					<button class="btn" data-action="remove">Remove item</button>
+				</div>
+			</div>
+
+<pre class="prettyprint lang-js">
+$frame.sly({
+	horizontal: 1,
+	itemNav: "basic",
+	dragContent: 1,
+	scrollBy: 1,
+	cycleBy: 'pages',
+	cycleInterval: 2000,
+	startPaused: 1
+});
+</pre>
+
+		</div>
+
+		<hr>
+
+		<div class="slyWrap example4">
+
+			<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "cycleBy": "items", "cycleInterval": 2000 }'>
 				<ul class="big cfix">
 					<li>
 						<h3>Lorem ipsum dolor</h3>
@@ -289,6 +342,10 @@ $frame.sly({
 
 			<div class="controls btn-toolbar">
 				<div class="btn-group">
+					<button class="btn btn-green" data-action="cycle">Resume</button>
+					<button class="btn btn-green" data-action="cycle" data-arg="1">Pause</button>
+				</div>
+				<div class="btn-group">
 					<button class="btn prev">&laquo; prev</button>
 					<button class="btn next">next &raquo;</button>
 				</div>
@@ -306,7 +363,9 @@ $frame.sly({
 <pre class="prettyprint lang-js">
 $frame.sly({
 	horizontal: 1,
-	itemNav: "forceCentered"
+	itemNav: 'forceCentered',
+	cycleBy: 'items',
+	cycleInterval: 2000
 });
 </pre>
 

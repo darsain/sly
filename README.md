@@ -70,6 +70,16 @@ $frame.sly( [options] );
 
 **nextPage:** `default: null` selector or DOM element for "next page" button ; does the same thing as **next** button when `forceCentered` navigation type is used
 
+###### Automated cycling
+
+**cycleBy:** `default: 0` enable automated cycling by 'items', or 'pages'
+
+**cycleInterval:** `default: 5000` number of milliseconds between cycles
+
+**pauseOnHover:** `default: 1` pause cycling when mouse hovers over frame
+
+**startPaused:** `default: 0` set to "1" to start in paused sate. cycling can be than resumed with "cycle" method
+
 ###### Mixed options
 
 **scrollBy:** `default: 0` how many pixels or items (when **itemNav** is enabled) should one mouse scroll go. leave `0` to disable mousewheel scrolling
@@ -110,7 +120,33 @@ $frame.sly( 'activate', item );
 
 Activates an item, and depending on **itemNav** type, repositions it. Doesn't work when **itemNav** is disabled.
 
-**item:** item index or DOM element
+Activation means that item receives **activeClass** (option described above) as its class, and is the starting point for **next** & **prev** methods described below.
+
+**item:** index or DOM element of an item in SLIDEE that should be activated
+
+#### ActivatePage
+
+```js
+$frame.sly( 'activatePage', index );
+```
+
+Activates a page, and positions SLIDEE to it.
+
+Activation means that element `.eq(index)` in pages bar receives **activeClass** (option described above) as its class,
+and is the starting point for **nextPage** & **prevPage** methods described below.
+
+**index:** index of a page that should be activated
+
+#### Cycle
+
+```js
+$frame.sly( 'cycle' [, pause [, soft ] ] );
+```
+
+Start or pause automatic cycling.
+
+**pause:** pass `true` to pause cycling. it won't get un-paused until you call this method again
+**soft:** pass `true` to use soft pause - pause that will be canceled when mouse hovers in & out of the frame. This is for internal purposes and you probably won't ever need this :)
 
 #### Destroy
 
@@ -297,6 +333,31 @@ Event triggered on FRAME on every SLIDEE move. This is triggered after animation
 $frame.on( 'sly:moveEnd', function( event, position, $items, relatives ){ ... } );
 ```
 
+#### sly:cycleStart
+
+Triggered on each cycle initialization, e.g. on sly load with cycling enabled, and every time you un-pause cycling by moving your mouse outside of the frame,
+or triggering the **cycle** method.
+
+```js
+$frame.on( 'sly:cycleStart', function( event, position, $items, relatives ){ ... } );
+```
+
+#### sly:cycle
+
+Triggered on each cycle right after the animation starts. It is essentially an equivalent of `sly:move` event, but triggered only when auto cycling.
+
+```js
+$frame.on( 'sly:cycle', function( event, position, $items, relatives ){ ... } );
+```
+
+#### sly:cyclePause
+
+Triggered when cycling has been paused, whether it was by mouse hovering over frame, or by **pause** method.
+
+```js
+$frame.on( 'sly:cyclePause', function( event, position, $items, relatives ){ ... } );
+```
+
 ## Example of a call with all default options
 
 ```js
@@ -323,6 +384,12 @@ $frame.sly({
 	prevPage:        null,
 	nextPage:        null,
 
+	// Automated cycling
+	cycleBy:         0,
+	  cycleInterval: 5000,
+	  pauseOnHover:  1,
+	  startPaused:   0,
+
 	// Mixed options
 	scrollBy:        0,
 	dragContent:     0,
@@ -343,8 +410,11 @@ $frame.sly({
 
 ## Notable behaviors
 
++ Wen using item based navigation, you can go wild with your items. Each one can be of different size, and have different margins & paddings. Sly is smart, and can figure it out :)
+
 + When **forceCentered** item navigation is used, every item is considered to be a new page. That's so the pages bar could render page button for each item.
-It looks nice :) check the last horizontal examples. Also, in this case, the **nextPage** & **prevPage** methods do the exact same thing as **next** & **prev** methods.
+Check the **forceCentered** horizontal examples in demo page. Also, in this case, the **nextPage** & **prevPage** methods do the exact same thing as **next** & **prev** methods.
+
 + When first margin in corresponded sly direction (`margin-top` for vertical, `margin-bottom` for horizontal) of first item is `0`, the last margin of last item is ignored,
 and SLIDEE wont go past the last item border-box. Thats so you wouldn't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
-browsers when you want just spaces between items, bot not between first/last item and SLIDEE border.
+browsers when you want just spaces between items, but not between first/last item and SLIDEE border.
