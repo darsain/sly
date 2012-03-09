@@ -72,13 +72,13 @@ $frame.sly( [options] );
 
 ###### Automated cycling
 
-**cycleBy:** `default: 0` enable automated cycling by 'items', or 'pages'
+**cycleBy:** `default: 0` enable automated cycling by `'items'`, or `'pages'`
 
 **cycleInterval:** `default: 5000` number of milliseconds between cycles
 
 **pauseOnHover:** `default: 1` pause cycling when mouse hovers over frame
 
-**startPaused:** `default: 0` set to "1" to start in paused sate. cycling can be than resumed with "cycle" method
+**startPaused:** `default: 0` set to "1" to start in paused state. cycling can be than started with **cycle** method
 
 ###### Mixed options
 
