@@ -297,7 +297,7 @@ Event triggered on FRAME on every SLIDEE move. This is triggered after animation
 $frame.on( 'sly:moveEnd', function( event, position, $items, relatives ){ ... } );
 ```
 
-## Example sly call with all default options
+## Example of a call with all default options
 
 ```js
 $frame.sly({
