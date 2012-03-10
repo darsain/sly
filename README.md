@@ -44,7 +44,8 @@ $frame.sly( [options] );
 + **basic**: items snap to edges (ideal if you don't care about "active item" functionality)
 + **smart**: same as basic, but activated item close to, or outside of the visible edge will be positioned to the best logical position to help with further navigation
 + **centered**: activated items are positioned to the center of visible frame if possible
-+ **forceCentered**: active items are always centered & centered items are always active. every change in position activates item that is right now in center
++ **forceCentered**: active items are always centered & centered items are always active. every change in position activates item that is right now in center.
+with this navigation type, each item is considered to be a separate page, so each item receives a page button in pages bar.
 
 ###### Scrollbar
 
@@ -64,7 +65,7 @@ $frame.sly( [options] );
 
 **prev:** `default: null` selector or DOM element for "previous item" button ; doesn't work when not using `byItems` navigation type
 
-**next:** `default: null` selector or DOM element for "next item" button ; doesn't work when not using `byItems` navigation type
+**next:** `default: null` selector or DOM element for "next item" button ; doesn't when work not using `byItems` navigation type
 
 **prevPage:** `default: null` selector or DOM element for "previous page" button ; does the same thing as **prev** button when `forceCentered` navigation type is used
 
@@ -135,7 +136,7 @@ Activates a page, and positions SLIDEE to it.
 Activation means that element `.eq(index)` in pages bar receives **activeClass** (option described above) as its class,
 and is the starting point for **nextPage** & **prevPage** methods described below.
 
-**index:** index of a page that should be activated
+**index:** index of a page that should be activated, starting at `0`
 
 #### Cycle
 
