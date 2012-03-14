@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.1
+ * jQuery Sly v0.9.2
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -1014,6 +1014,9 @@ function Plugin( frame, o ){
 
 		// Scrolling navigation
 		o.scrollBy && $scrollSource.bind('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, function(e){
+
+			// If there is no scrolling to be done, leave the default event alone
+			if( pos.min === pos.max ) return;
 
 			stopDefault( e, 1 );
 
