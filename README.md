@@ -9,7 +9,7 @@ jQuery plugin for one-directional scrolling simulation with item based navigatio
 
 ## Layout & requirements
 
-![Terminology](http://darsain.github.com/sly/img/terminology.png?v=1)
+![Terminology](https://darsain.github.com/sly/img/terminology.png?v=1)
 
 Sly is being applied to FRAME. FRAME has to have one child, which is referred to as SLIDEE. The content is than inside of a SLIDEE.
 
