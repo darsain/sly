@@ -75,6 +75,7 @@ function Plugin( frame, o ){
 			pages: 0
 		},
 		$scrollSource = o.scrollSource ? $( o.scrollSource ) : $frame,
+		$dragSource = o.dragSource ? $( o.dragSource ) : $frame,
 		$prevButton = $(o.prev),
 		$nextButton = $(o.next),
 		$prevPageButton = $(o.prevPage),
@@ -1078,7 +1079,7 @@ function Plugin( frame, o ){
 		o.nextPage && $nextPageButton.bind('click.' + namespace, function(e){ stopDefault(e); self.nextPage(); });
 
 		// Dragging navigation
-		o.dragContent && $slidee.bind('mousedown.' + namespace, function(e){
+		o.dragContent && $dragSource.bind('mousedown.' + namespace, function(e){
 
 			// Ignore other than left mouse button
 			if( e.which !== 1 ) return;
@@ -1334,7 +1335,8 @@ $.fn[pluginName].defaults = {
 	  elasticBounds: 0,       // when dragging past limits, stretch them a little bit (like on spartphones)
 	speed:           300,     // animations speed
 	easing:          'swing', // animations easing. build in jQuery options are "linear" and "swing". for more, install gsgd.co.uk/sandbox/jquery/easing/
-	scrollSource:    null,    // selector or DOM element for catching the mousewheel event for sly scrolling. default source is the frame container
+	scrollSource:    null,    // selector or DOM element for catching the mouse wheel event for sly scrolling. default source is the frame
+	dragSource:      null,    // selector or DOM element for catching the mouse dragging events. default source is the frame
 	startAt:         0,       // starting offset in pixels or items (depends on itemsNav option)
 	keyboardNav:     0,       // whether to allow navigation by keyboard arrows (left & right for horizontal, up & down for vertical)
 	                          // NOTE! keyboard navigation will disable page scrolling with keyboard arrows in correspondent sly direction (vertical or horizontal)

@@ -93,7 +93,9 @@ with this navigation type, each item is considered to be a separate page, so eac
 
 **easing:** `default: 'swing'` animations easing. build in jQuery are "linear" and "swing". for more, install [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/)
 
-**scrollSource:** `default: null` selector or DOM element for catching the mousewheel event for sly scrolling if anything other than FRAME should be used
+**scrollSource:** `default: null` selector or DOM element for catching the mouse wheel events for sly scrolling if anything other than FRAME should be used
+
+**dragSource:** `default: null` selector or DOM element for catching the mouse dragging events for sly dragging if anything other than FRAME should be used
 
 **startAt:** `default: 0` starting offset in pixels or items (depends on **itemsNav** option). index of first item is `0`
 
