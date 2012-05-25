@@ -13,8 +13,8 @@ audio:not([controls]) { display: none; }
    ========================================================================== */
 
 html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-html, button, input, select, textarea { font-family: sans-serif; color: #222; }
-body { margin: 0; font-size: 14px; line-height: 1.4; overflow-y: scroll; -webkit-tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; tab-size: 4; }
+html, button, input, select, textarea { font-family: sans-serif; color: #222; -webkit-tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; tab-size: 4; }
+body { margin: 0; font-size: 14px; line-height: 1.4; overflow-y: scroll; background: url('../img/texture.png') #404040; text-shadow: 1px 1px 0 rgba(0,0,0,.5); }
 
 ::-moz-selection { background: #333; color: #fff; text-shadow: -1px -1px 0 #000 !important; }
 ::selection { background: #333; color: #fff; text-shadow: -1px -1px 0 #000 !important; }
@@ -24,8 +24,8 @@ body { margin: 0; font-size: 14px; line-height: 1.4; overflow-y: scroll; -webkit
    Links
    ========================================================================== */
 
-a { color: #0088cc; text-decoration: none; }
-a:hover { color: #005580; }
+a { color: #a6a6a6; text-decoration: none; }
+a:hover { color: #fff; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline: 0; }
 
@@ -57,7 +57,7 @@ code { padding: 3px 4px; background-color: #f7f7f9; border: 1px solid #e1e1e8; b
 q { quotes: none; }
 q:before, q:after { content: ""; content: none; }
 
-small { font-size: 85%; }
+small { font-size: 85%; opacity: 0.6; }
 
 sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
 sup { top: -0.5em; }
@@ -393,12 +393,7 @@ button.btn.small, input[type="submit"].btn.small { *padding-top: 3px; *padding-b
 .label-important { background-color: #b94a48; }
 .label-warning { background-color: #f89406; }
 .label-success { background-color: #468847; }
-.label-info { background-color: #3a87ad; }/*
-.label:hover { color: #ffffff; text-decoration: none; }
-.label-important:hover { background-color: #953b39; }
-.label-warning:hover { background-color: #c67605; }
-.label-success:hover { background-color: #356635; }
-.label-info:hover { background-color: #2d6987; }*/
+.label-info { background-color: #3a87ad; }
 
 /* Progress */
 .progress {
@@ -452,31 +447,67 @@ button.btn.small, input[type="submit"].btn.small { *padding-top: 3px; *padding-b
 
 
 /* ==========================================================================
-   Page styles
+   Example page boilerplate styles
    ========================================================================== */
+
+body { border: 2px solid #555; border-color: rgba(255,255,255,.1); border-left: 0; border-right: 0; margin: 5px 0; outline: 5px solid #222; }
 
 .container { width: 940px; margin: 0 auto; }
 
 /* Header */
-#header { padding: 3em 0; }
-#header h1,
-#header p { margin: 0; }
-#header p { color: #888; }
+#header { color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,.5); }
+#header .container { position: relative; height: 190px; }
+#header h1 { margin: 0; padding: 40px 0 0 0; font-family: Exo, sans-serif; text-shadow: 2px 2px 0 rgba(0,0,0,.5); }
+#header p { margin: 0; color: #999; font-style: italic; }
 
-#download { width: 25%; float: right; }
-#download .btn-group { float: right; }
-#download,
-#controls { text-align: right; }
+#header .download { position: absolute; top: 20px; right: 160px; width: 210px; height: 75px; background: url('../img/download.png') no-repeat right 0; }
+#header .download h4 { margin: 9px 28px 0 0; font: bold 16px/1 Exo, sans-serif; text-align: right; color: #bbb; }
+#header .download a { position: absolute; bottom: 0; height: 100%; text-align: center; }
+#header .download a.left { left: 0; width: 110px; }
+#header .download a.right { right: 0; width: 100px; }
+#header .download a span { display: block; margin-top: 39px; height: 32px; line-height: 32px; }
+#header .download a.left span { border-right: 1px solid #333; }
+#header .download a.right span { border-left: 1px solid #555; }
+#header .download:hover { background-position: right -75px; }
+#header .download:hover h4 { color: #fff; }
+#header .download:hover a.right span { border-color: #888; }
+#header .download a:hover span { background: #5a5a5a; background: rgba(255,255,255,.1); }
+
+#header a.repo { position: absolute; top: -3px; right: 0; width: 120px; height: 130px; background: url('../img/repo.png') no-repeat center top; }
 
 /* Navigation */
-#nav { margin: 0 0 20px 0; background: #424242; border-bottom: 2px solid #000; }
+#nav { position: absolute; bottom: -3px; margin: 0; padding: 0; list-style: none; }
+#nav li { display: block; float: left; width: 200px; margin-right: 1px; text-align: center; font-weight: bold; }
+#nav li a { display: block; padding: 15px 0; text-transform: uppercase; border-radius: 0; text-decoration: none; color: #ccc;
+	background: #4a4a4a; background: rgba(255,255,255,.04); -webkit-border-radius: 2px 2px 0 0; border-radius: 2px 2px 0 0;
+}
+#nav li a:hover { color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,.5); background: #4a4a4a; background: rgba(255,255,255,.1); }
+#nav li a.active { color: #424242; text-shadow: none; background: #f5f5f5;
+	background: -moz-linear-gradient(top,  #ffffff 32%, #f5f5f5 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(32%,#ffffff), color-stop(100%,#f5f5f5)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 32%,#f5f5f5 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 32%,#f5f5f5 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 32%,#f5f5f5 100%); /* IE10+ */
+	background: linear-gradient(top,  #ffffff 32%,#f5f5f5 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5',GradientType=0 ); /* IE6-9 */
+	box-shadow: 0 -3px 0 rgba(0,0,0,.5);
+}
 
-#tabs { margin: 0; padding: 0; list-style: none; }
-#tabs li { display: block; float: left; width: 33.32%; text-align: center; font-weight: bold; }
-#tabs li a { display: block; padding: 1.5em 0; text-transform: uppercase; border-radius: 0; text-decoration: none; color: #eee; text-shadow: -1px -1px 0 rgba(0,0,0,0.5); }
-#tabs li a:hover { background: #4a4a4a; }
-#tabs li.active { position: relative; top: 2px; }
-#tabs li.active a { color: #424242; background: #fff; text-shadow: none; }
+/* Content */
+#content { background: #f5f5f5; padding: 10px; text-shadow: 1px 1px 0 rgba(255,255,255,.1); background-clip: padding-box;
+	border-top: 3px solid; border-bottom: 3px solid; border-color: rgba(0,0,0,.5);
+}
+#content a { color: #0088cc; }
+#content a:hover { color: #005580; }
+
+/* Footer */
+#footer { font-size: 0.85em; padding: 2.5em 0; color: #fff; text-transform: uppercase; }
+#footer p { margin: 3px 0; }
+
+
+/* ==========================================================================
+   Page styles
+   ========================================================================== */
 
 /* universal sly */
 .slyWrap .controls { margin: 20px 0 ; }
@@ -564,13 +595,9 @@ button.btn.small, input[type="submit"].btn.small { *padding-top: 3px; *padding-b
 #infinite .scrollbar { position: absolute; top: 0; right: 0; width: 5px; height: 498px; }
 #infinite .scrollbar .handle { height: 100px; width: 100%; }
 
-/* Footer */
-#footer { margin-top: 3em; font-size: 0.85em; padding: 2.5em 0; color: #666; border-top: 5px solid #666; text-transform: uppercase; }
-#footer p { margin: 3px 0; }
 
-
-/* ==|== non-semantic helper classes ========================================
-   Please define your styles before this section.
+/* ==========================================================================
+   Non-semantic helper classes
    ========================================================================== */
 
 /* For image replacement */
