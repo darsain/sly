@@ -280,7 +280,7 @@ On almost any action sly does, there is an event being triggered. All custom eve
 
 #### sly:load
 
-Event trigger on FRAME after first sly load, and each **realod** method call.
+Event triggered on FRAME after first sly load, and each **realod** method call.
 
 ```js
 $frame.on( 'sly:load', function( event, position, $items, relatives ){ ... } );
@@ -288,7 +288,7 @@ $frame.on( 'sly:load', function( event, position, $items, relatives ){ ... } );
 
 #### sly:active
 
-Event trigger on an item that has just been activated.
+Event triggered on an item that has just been activated.
 
 ```js
 $item.on( 'sly:active', function( event, $items, relatives ){ ... } );
