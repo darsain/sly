@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.3
+ * jQuery Sly v0.9.4
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -207,6 +207,7 @@ function Plugin( frame, o ){
 			// Stretch scrollbar handle to represent the visible area
 			handleSize = o.dynamicHandle ? Math.round( sbSize * frameSize / slideeSize ) : o.horizontal ? $handle.width() : $handle.height();
 			handleSize = handleSize > sbSize ? sbSize : handleSize;
+			handleSize = handleSize < o.minHandleSize ? o.minHandleSize : handleSize;
 			hPos.max = sbSize - handleSize;
 
 			// Resize handle
@@ -1309,6 +1310,7 @@ $.fn[pluginName].defaults = {
 	scrollBar:       null,    // selector or DOM element for scrollbar container (scrollbar container should have one child element representing scrollbar handle)
 	  dynamicHandle: 1,       // resizes scrollbar handle to represent the relation between hidden and visible content. set to "0" to leave it as big as CSS made it
 	  dragHandle:    1,       // set to 0 to disable dragging of scrollbar handle with mouse
+	  minHandleSize: 50,      // minimal height or width (depends on sly direction) of a handle in pixels
 
 	// Pagesbar (when centerActive is enabled, every item is considered to be a page)
 	pagesBar:        null,    // selector or DOM element for pages bar container

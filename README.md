@@ -55,6 +55,8 @@ with this navigation type, each item is considered to be a separate page, so eac
 
 **dragHandle:** `default: 1` set to 0 to disable dragging of scrollbar handle with mouse
 
+**minHandleSize:** `default: 50` minimal height, or width for handle size (depends on sly direction) in pixels
+
 ###### Pages bar
 
 **pagesBar:** `default: null` selector or DOM element for pages bar container
@@ -373,6 +375,7 @@ $frame.sly({
 	scrollBar:       null,
 	  dynamicHandle: 1,
 	  dragHandle:    1,
+	  minHandleSize: 50,
 
 
 	// Pages bar
@@ -413,11 +416,11 @@ $frame.sly({
 
 ## Notable behaviors
 
-+ Wen using item based navigation, you can go wild with your items. Each one can be of different size, and have different margins & paddings. Sly is smart, and can figure it out :)
++ Wen using item based navigation, you can go wild with your items. Each one can be different size, and have different margins & paddings. Sly is smart, and can figure it out :)
 
 + When **forceCentered** item navigation is used, every item is considered to be a new page. That's so the pages bar could render page button for each item.
 Check the **forceCentered** horizontal examples in demo page. Also, in this case, the **nextPage** & **prevPage** methods do the exact same thing as **next** & **prev** methods.
 
-+ When first margin in corresponded sly direction (`margin-top` for vertical, `margin-bottom` for horizontal) of first item is `0`, the last margin of last item is ignored,
++ When margin of a first item (`margin-top` for vertical, `margin-left` for horizontal) is `0`, the last margin of last item is ignored,
 and SLIDEE wont go past the last item border-box. Thats so you wouldn't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
 browsers when you want just spaces between items, but not between first/last item and SLIDEE border.
