@@ -29,7 +29,7 @@ That means no jQuery-UI required, everything is included in this nice 9KB[minifi
 
 ```js
 
-$frame.sly( [options] );
+$frame.sly( [ options [, returnInstance ]] );
 ```
 
 ### [options]
@@ -112,6 +112,11 @@ keyboard navigation will disable page scrolling with keyboard arrows in correspo
 
 **disabledClass:** `default: 'disabled'` class that will be added to buttons when there is no use for them
 
+### [ returnInstance ]
+
+Boolean argument requesting to return a plugin instance instead of a chainable jQuery object. You can than use all methods documented below directly on this instance.
+
+If motio is called on more than one element, it returns an array of instances.
 
 ## Methods
 

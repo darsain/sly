@@ -1027,6 +1027,9 @@ function Plugin( frame, o ){
 		var doc = $(document),
 			dragEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
 
+		// Extend options
+		o = $.extend( {}, $.fn[pluginName].defaults, o );
+
 		// Set required styles to elements
 		$frame.css({ overflow: 'hidden' }).css('position') === 'static' && $frame.css({ position: 'relative' });
 		$sb.css('position') === 'static' && $sb.css({ position: 'relative' });
@@ -1305,29 +1308,48 @@ function Plugin( frame, o ){
 
 
 // jQuery plugin extension
-$.fn[pluginName] = function( options ){
+$.fn[pluginName] = function( options, returnInstance ){
 
 	var method = false,
-		methodArgs = Array.prototype.slice.call( arguments, 1 ),
-		o = {};
+		methodArgs,
+		instances = [];
 
 	// Basic attributes logic
-	if( $.isPlainObject(options) ){
-		o = $.extend( {}, $.fn[pluginName].defaults, options );
-	} else {
+	if( typeof options !== 'undefined' && !$.isPlainObject( options ) ){
 		method = options === false ? 'destroy' : options;
+		methodArgs = arguments;
+		Array.prototype.shift.call( methodArgs );
 	}
 
-	// Call plugin on all elements
-	return this.each(function( i, frame ){
+	// Apply requested actions on all elements
+	this.each(function( i, element ){
 
 		// Plugin call with prevention against multiple instantiations
-		var plugin = $.data( frame, namespace ) || $.data( frame, namespace, new Plugin( frame, o ) );
+		var plugin = $.data( element, namespace );
 
-		// Call plugin method if requested
-		$.isFunction( plugin[method] ) && plugin[method].apply( plugin, methodArgs );
+		if( plugin && method ){
+
+			// Call plugin method
+			if( plugin[method] ){
+
+				plugin[method].apply( plugin, methodArgs );
+
+			}
+
+		} else if( !plugin && !method ){
+
+			// Create a new plugin object if it doesn't exist yet
+			plugin =  $.data( element, namespace, new Plugin( element, options ) );
+
+		}
+
+		// Push plugin to instances
+		instances.push( plugin );
 
 	});
+
+	// Return chainable jQuery object, or plugin instance(s)
+	return returnInstance && !method ? instances.length > 1 ? instances : instances[0] : this;
 
 };
 
@@ -1378,7 +1400,7 @@ $.fn[pluginName].defaults = {
 	scrollBy:        0,       // how many pixels/items should one mouse scroll event go. leave "0" to disable mousewheel scrolling
 	dragContent:     0,       // set to 1 to enable navigation by dragging the content with your mouse
 	  elasticBounds: 0,       // when dragging past limits, stretch them a little bit (like on spartphones)
-	speed:           100,     // animations speed
+	speed:           300,     // animations speed
 	easing:          'swing', // animations easing. build in jQuery options are "linear" and "swing". for more, install gsgd.co.uk/sandbox/jquery/easing/
 	scrollSource:    null,    // selector or DOM element for catching the mouse wheel event for sly scrolling. default source is the frame
 	dragSource:      null,    // selector or DOM element for catching the mouse dragging events. default source is the frame
