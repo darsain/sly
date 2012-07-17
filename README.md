@@ -286,6 +286,21 @@ Event triggered on FRAME after first sly load, and each **realod** method call.
 $frame.on( 'sly:load', function( event, position, $items, relatives ){ ... } );
 ```
 
+**NOTE**: `position` argument in this event also contains an `old` property, specifying the position values before reload. The position object than looks like this:
+
+```js
+{
+	cur: 100,
+	max: 120,
+	min: 0,
+	old: {
+		cur: 100,
+		max: 100,
+		min: 0
+	}
+}
+```
+
 #### sly:active
 
 Event triggered on an item that has just been activated.

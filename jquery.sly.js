@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.4
+ * jQuery Sly v0.9.5
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -40,7 +40,7 @@ function Plugin( frame, o ){
 		},
 
 	// Scrollbar variables
-		$sb = $(o.scrollBar),
+		$sb = $(o.scrollBar).eq(0),
 		$handle = $sb.length ? $sb.children().eq(0) : 0,
 		sbSize = 0,
 		handleSize = 0,
@@ -95,8 +95,9 @@ function Plugin( frame, o ){
 	 */
 	var load = this.reload = function(){
 
-		// Ignored last margin
-		var ignoredMargin = 0;
+		// Local variables
+		var ignoredMargin = 0,
+			oldPos = $.extend({}, pos);
 
 		// Clear cycling timeout
 		clearTimeout( cycleIndex );
@@ -301,7 +302,7 @@ function Plugin( frame, o ){
 		}
 
 		// Trigger :load event
-		$frame.trigger( pluginName + ':load', [ pos, $items, rel ] );
+		$frame.trigger( pluginName + ':load', [ $.extend({}, pos, { old: oldPos }), $items, rel ] );
 
 	};
 
@@ -344,8 +345,11 @@ function Plugin( frame, o ){
 		}
 
 		// Stop if position has not changed
-		if( newPos === pos.cur ) return;
-		else pos.cur = newPos;
+		if( newPos === pos.cur ) {
+			return;
+		} else {
+			pos.cur = newPos;
+		}
 
 		// Reassign relative indexes
 		assignRelatives();
@@ -393,7 +397,7 @@ function Plugin( frame, o ){
 	function syncBars( speed ){
 
 		// Scrollbar synchronization
-		if( $handle ){
+		if ($handle) {
 
 			hPos.cur = Math.round( ( pos.cur - pos.min ) / ( pos.max - pos.min ) * hPos.max );
 			hPos.cur = hPos.cur < hPos.min ? hPos.min : hPos.cur > hPos.max ? hPos.max : hPos.cur;
@@ -414,7 +418,9 @@ function Plugin( frame, o ){
 	 */
 	function syncPages(){
 
-		if( !$pages.length ) return;
+		if (!$pages.length) {
+			return;
+		}
 
 		// Classes
 		$pages.removeClass(o.activeClass).eq(rel.activePage).addClass(o.activeClass);
@@ -502,7 +508,9 @@ function Plugin( frame, o ){
 			} else if( index !== -1 ){
 
 				// You can't align items to the start of the frame when centeredNav is enabled
-				if( centeredNav ) return;
+				if (centeredNav) {
+					return;
+				}
 
 				index !== -1 && slide( items[index].offStart );
 
@@ -555,7 +563,9 @@ function Plugin( frame, o ){
 			} else if( index !== -1 ){
 
 				// You can't align items to the end of the frame when centeredNav is enabled
-				if( centeredNav ) return;
+				if (centeredNav) {
+					return;
+				}
 
 				slide( items[index].offEnd );
 
@@ -684,7 +694,9 @@ function Plugin( frame, o ){
 	 */
 	this.activate = function( el, noReposition ){
 
-		if( !itemNav || el === undefined ) return;
+		if (!itemNav || el === undefined) {
+			return;
+		}
 
 		var index = getIndex( el ),
 			oldActive = rel.activeItem;
@@ -710,8 +722,11 @@ function Plugin( frame, o ){
 
 				// If activated element is currently on the far right side of the frame, assume that
 				// user is moving forward and animate it to the start of the visible frame, and vice versa
-				if     ( index >= rel.lastItem )  self.toStart( index );
-				else if( index <= rel.firstItem ) self.toEnd( index );
+				if (index >= rel.lastItem) {
+					self.toStart(index);
+				} else if (index <= rel.firstItem) {
+					self.toEnd(index);
+				}
 
 			}
 
@@ -779,16 +794,24 @@ function Plugin( frame, o ){
 			for( var i=0; i < items.length; i++ ){
 
 				// First item
-				if( first === false && sPos <= items[i].offStart ) first = i;
+				if (first === false && sPos <= items[i].offStart) {
+					first = i;
+				}
 
 				// Centered item
-				if( center === false && sPos - items[i].size / 2 <= items[i].offCenter ) center = i;
+				if (center === false && sPos - items[i].size / 2 <= items[i].offCenter) {
+					center = i;
+				}
 
 				// Last item
-				if( i === items.length-1 || ( last === false && sPos < items[i+1].offEnd ) ) last = i;
+				if (i === items.length - 1 || (last === false && sPos < items[i + 1].offEnd)) {
+					last = i;
+				}
 
 				// Terminate if all are assigned
-				if( last !== false ) break;
+				if (last !== false) {
+					break;
+				}
 
 			}
 
@@ -877,7 +900,9 @@ function Plugin( frame, o ){
 	 */
 	this.cycle = function( pause, soft ){
 
-		if( !itemNav || !o.cycleBy ) return;
+		if (!itemNav || !o.cycleBy) {
+			return;
+		}
 
 		if( !soft ){
 			cycleIsPaused = !!pause;
@@ -897,7 +922,9 @@ function Plugin( frame, o ){
 		} else {
 
 			// Don't initiate more than one cycle
-			if( cycleIndex ) return;
+			if (cycleIndex) {
+				return;
+			}
 
 			// Trigger :cycleStart event
 			$frame.trigger( pluginName + ':cycleStart', [ pos, $items, rel ] );
@@ -1018,7 +1045,9 @@ function Plugin( frame, o ){
 		o.scrollBy && $scrollSource.bind('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, function(e){
 
 			// If there is no scrolling to be done, leave the default event alone
-			if( pos.min === pos.max ) return;
+			if (pos.min === pos.max) {
+				return;
+			}
 
 			stopDefault( e, 1 );
 
@@ -1083,7 +1112,9 @@ function Plugin( frame, o ){
 		o.dragContent && $dragSource.bind('mousedown.' + namespace, function(e){
 
 			// Ignore other than left mouse button
-			if( e.which !== 1 ) return;
+			if (e.which !== 1) {
+				return;
+			}
 
 			stopDefault(e);
 
@@ -1142,7 +1173,9 @@ function Plugin( frame, o ){
 				}
 
 				// Drag only when isInitialized
-				if( !isInitialized ) return;
+				if (!isInitialized) {
+					return;
+				}
 
 				stopDefault(e);
 
@@ -1168,10 +1201,14 @@ function Plugin( frame, o ){
 				syncBars( released ? null : 0 );
 
 				// Trigger :drag event
-				if( isInitialized ) $slidee.trigger( pluginName + ':drag', [ pos ] );
+				if (isInitialized) {
+					$slidee.trigger(pluginName + ':drag', [pos]);
+				}
 
 				// Trigger :dragEnd event
-				if( released ) $slidee.trigger( pluginName + ':dragEnd', [ pos ] );
+				if (released) {
+					$slidee.trigger(pluginName + ':dragEnd', [pos]);
+				}
 
 			});
 
@@ -1181,7 +1218,9 @@ function Plugin( frame, o ){
 		$handle && o.dragHandle && $handle.bind('mousedown.' + namespace, function(e){
 
 			// Ignore other than left mouse button
-			if( e.which !== 1 ) return;
+			if (e.which !== 1) {
+				return;
+			}
 
 			stopDefault(e);
 
@@ -1229,13 +1268,17 @@ function Plugin( frame, o ){
 					$handle.stop().css( o.horizontal ? { left: hPos.cur+'px' } : { top: hPos.cur+'px' } );
 
 					// Trigger :dragStart event
-					if( !nextDrag ) $handle.trigger( pluginName + ':dragStart', [ hPos ] );
+					if (!nextDrag) {
+						$handle.trigger(pluginName + ':dragStart', [hPos]);
+					}
 
 					// Trigger :drag event
 					$handle.trigger( pluginName + ':drag', [ hPos ] );
 
 					// Trigger :dragEnd event
-					if( released ) $handle.trigger( pluginName + ':dragEnd', [ hPos ] );
+					if (released) {
+						$handle.trigger(pluginName + ':dragEnd', [hPos]);
+					}
 
 					// Throttle sync interval -> smoother animations, lower CPU load
 					if( nextDrag <= time || released || path > pathMax || path < pathMin ){
@@ -1335,7 +1378,7 @@ $.fn[pluginName].defaults = {
 	scrollBy:        0,       // how many pixels/items should one mouse scroll event go. leave "0" to disable mousewheel scrolling
 	dragContent:     0,       // set to 1 to enable navigation by dragging the content with your mouse
 	  elasticBounds: 0,       // when dragging past limits, stretch them a little bit (like on spartphones)
-	speed:           300,     // animations speed
+	speed:           100,     // animations speed
 	easing:          'swing', // animations easing. build in jQuery options are "linear" and "swing". for more, install gsgd.co.uk/sandbox/jquery/easing/
 	scrollSource:    null,    // selector or DOM element for catching the mouse wheel event for sly scrolling. default source is the frame
 	dragSource:      null,    // selector or DOM element for catching the mouse dragging events. default source is the frame
