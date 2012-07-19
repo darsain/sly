@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.5
+ * jQuery Sly v0.9.6
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -366,7 +366,7 @@ function Plugin( frame, o ){
 		var newProp = o.horizontal ? { left: -pos.cur+'px' } : { top: -pos.cur+'px' };
 
 		// Slidee move
-		if( speed > 10 ){
+		if( speed > 16 ){
 
 			$slidee.animate( newProp, speed, isDragging ? 'swing' : o.easing, function(e){
 
@@ -932,6 +932,10 @@ function Plugin( frame, o ){
 			// Cycling loop
 			(function loop(){
 
+				if( o.cycleInterval === 0 ){
+					return;
+				}
+
 				cycleIndex = setTimeout( function(){
 
 					if( !isDragging ){
@@ -980,6 +984,29 @@ function Plugin( frame, o ){
 		noBubbles && evt.stopPropagation ? evt.stopPropagation() : evt.cancelBubble = true;
 
 	}
+
+
+	/**
+	 * Updates a signle or multiple option values
+	 *
+	 * @param {Mixed} property Option property name that should be updated, or object with options that will extend the current one
+	 * @param {Mixed} value    Option property value
+	 *
+	 * @public
+	 */
+	this.set = function( property, value ){
+
+		if( $.isPlainObject(property) ){
+
+			o = $.extend({}, o, property);
+
+		} else if( typeof property === 'string' ) {
+
+			o[property] = value;
+
+		}
+
+	};
 
 
 	/**

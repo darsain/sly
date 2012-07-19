@@ -11,7 +11,7 @@ jQuery plugin for one-directional scrolling simulation with item based navigatio
 
 ![Terminology](http://darsain.github.com/sly/img/terminology.png?v=1)
 
-Sly is being applied to FRAME. FRAME has to have one child, which is referred to as SLIDEE. The content is than inside of a SLIDEE.
+Sly is being applied to FRAME. SLIDEE is a first child of a FRAME. The content is than inside of a SLIDEE.
 
 Content can be random slug of tags and text, or - if you want to use item based navigation - a strict list of items.
 
@@ -207,6 +207,22 @@ $frame.sly( 'reload' );
 ```
 
 Reloads `sly` instance. Call it if any change has happened to SLIDEE content, like things appended, removed, or resized.
+
+#### Set
+
+```js
+$frame.sly( 'set', [ propertyName/object [, value ]] );
+```
+
+Updates one, or multiple values in sly options object.
+
+```js
+$frame.sly( 'set', 'speed', 0 ); // Updates one property in options object
+$frame.slt( 'set', { speed: 0, cycleInterval: 0 } ) // Extends current options object with new values
+```
+
+Right now only a simple options can be updated (like `speed`, `cycleInterval`, class names ...). There should be a future update with support for updating anything.
+It depends on whether I'll encounter a reasonable case where someone would need to update more than a simple options :)
 
 #### ToCenter
 
