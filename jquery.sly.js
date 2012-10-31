@@ -14,7 +14,7 @@
 
 // Plugin names
 var pluginName = 'sly',
-	namespace = 'plugin_' + pluginName;
+	namespace = pluginName;
 
 /**
  * Plugin class
