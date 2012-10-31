@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.9.6
+ * jQuery Sly v0.9.7
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -1339,7 +1339,7 @@ $.fn[pluginName] = function( options, returnInstance ){
 
 	var method = false,
 		methodArgs,
-		instances = [];
+		instance;
 
 	// Basic attributes logic
 	if( typeof options !== 'undefined' && !$.isPlainObject( options ) ){
@@ -1370,13 +1370,15 @@ $.fn[pluginName] = function( options, returnInstance ){
 
 		}
 
-		// Push plugin to instances
-		instances.push( plugin );
+		// Register plugin instance for a first element in set
+		if( !instance ){
+			instance = plugin;
+		}
 
 	});
 
-	// Return chainable jQuery object, or plugin instance(s)
-	return returnInstance && !method ? instances.length > 1 ? instances : instances[0] : this;
+	// Return chainable jQuery object, or a plugin instance
+	return returnInstance && !method ? instance : this;
 
 };
 
