@@ -1,29 +1,54 @@
 # Sly
 
-jQuery plugin for one-directional scrolling simulation with item based navigation support and lots of other goodies.
+jQuery plugin for one-directional scrolling with item based navigation support.
 
-**This plugin is in beta testing!**
+[See the DEMO](http://darsa.in/sly)
 
-[See the DEMO](http://darsain.github.com/sly)
+#### Dependencies
 
+Except jQuery, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to slide a few items.
+Just this nice 9KB (minified) action - you are welcome :)
+
+#### Compatibility
+
+Works everywhere! I'm afraid even in IE6 (not intended, honest). Not sure about mobile thought... I have nothing to test it on :)
+
+Sly upholds the [Semantic Versioning Specification](http://semver.org/). Right now it is in a **beta** state. For more info on that, read the [Roadmap](#roadmap).
 
 ## Layout & requirements
 
 ![Terminology](http://darsain.github.com/sly/img/terminology.png?v=1)
 
-Sly is being applied to FRAME. SLIDEE is a first child of a FRAME. The content is than inside of a SLIDEE.
+Sly is being applied to a FRAME. SLIDEE is a first child of a FRAME. The content/items are than inside of a SLIDEE.
 
-Content can be random slug of tags and text, or - if you want to use item based navigation - a strict list of items.
+FRAME should have **no padding** in a corresponded sly direction (padding left & right for horizontal, and padding top & bottom for vertical navigation),
+and SLIDEE should have **no margin** in a corresponded sly direction (margin left & right for horizontal, and margin top & bottom for vertical navigation).
+You can apply padding to SLIDEE, or margins to items, (sly accounts for this), but do not use any other units than **pixels**, or you'll bork things.
 
-FRAME should have **no padding** in corresponded sly direction (`padding-left` & `padding-right` for horizontal, and `padding-top` & `padding-bottom` for vertical sly),
-and SLIDEE should have **no margin** in corresponded sly direction (`margin-left` & `margin-right` for horizontal, and `margin-top` & `margin-bottom` for vertical sly).
-If you wish to apply padding to SLIDEE, or margins to items, you can do so
-(`sly` is accounting for that), but do not use any other units than **pixels**. Using **%**, **em**, or anything other than pixels will break offsets and limits.
+If you are not using one of the item based navigation logics, content can be anything:
 
-Plugin should work everywhere including IE6.
+```html
+<div id="frame">
+	<div class="slidee">
+		<h2>This in here...</h2>
+		<p>...can be anything. <strong>Anything!</strong></p>
+	</div>
+</div>
+```
 
-Also, despite all the awesome things that this plugin does, there is **no other** dependency than jQuery.
-That means no jQuery-UI required, everything is included in this nice 9KB[minified] action - you are welcome :)
+Otherwise, you need a strict list of items, like:
+
+```html
+<div id="frame">
+	<ul class="slidee">
+		<li></li> // Item
+		<li></li> // Item
+		<li></li> // Item
+	</ul>
+</div>
+```
+
+But the actual markup is not enforced. Dividitis is not discriminated :)
 
 ## Calling
 
@@ -36,103 +61,122 @@ $frame.sly( [ options [, returnInstance ]] );
 
 ###### Sly type
 
-**horizontal:** `default: 0` set to 1 to change the sly direction to horizontal
+**horizontal:** `default: 0` Set to 1 to change the sly direction to horizontal.
 
-**itemNav:** `default: 0` type of item based navigation. when `itemNav` is enabled, items snap to frame edges or frame center (according to navigation type).
-`itemNav` also enables "item activation" functionality and methods associated with it (explained in Methods section). List of navigation types:
+**itemNav:** `default: 0` Type of item based navigation logic. Can be:
 
-+ **basic**: items snap to edges (ideal if you don't care about "active item" functionality)
-+ **smart**: same as basic, but activated item close to, or outside of the visible edge will be positioned to the best logical position to help with further navigation
-+ **centered**: activated items are positioned to the center of visible frame if possible
-+ **forceCentered**: active items are always centered & centered items are always active. every change in position activates item that is right now in center.
-with this navigation type, each item is considered to be a separate page, so each item receives a page button in pages bar.
++ **0**: `disabled` No item based navigation, just a usual scrolling.
++ **basic**: Items in SLIDEE snap to edges.
++ **smart**: Same as basic, but activated item close to, or outside of the visible edge will be positioned to the opposite to help with further navigation.
++ **centered**: Activated items are positioned to the center of a visible frame when possible.
++ **forceCentered**: Active items are always centered & centered items are always active. Every change in position activates item that is right now in the center of a FRAME.
+With this navigation type, each item is considered to be a separate page, so each item receives a page button in pages bar.
 
 ###### Scrollbar
 
-**scrollBar:** `default: null` selector or DOM element for scrollbar container (scrollbar container should have one child element representing scrollbar handle)
+**scrollBar:** `default: null` Selector or DOM element for scrollbar container (scrollbar should have one child element representing scrollbar handle).
 
-**dynamicHandle:** `default: 1` resizes scrollbar handle to represent the relation between hidden and visible content. set to "0" to leave it as big as CSS made it
+**dynamicHandle:** `default: 1` Resizes scrollbar handle to represent the size of a SLIDEE in proportion to FRAME. Set to `0` to leave it to CSS.
 
-**dragHandle:** `default: 1` set to 0 to disable dragging of scrollbar handle with mouse
+**dragHandle:** `default: 1` Set to `0` to disable dragging of a scrollbar handle.
 
-**minHandleSize:** `default: 50` minimal height, or width for handle size (depends on sly direction) in pixels
+**minHandleSize:** `default: 50` Minimal size of a handle in pixels.
 
 ###### Pages bar
 
-**pagesBar:** `default: null` selector or DOM element for pages bar container
+**pagesBar:** `default: null` Selector or DOM element for pages bar container.
 
-**pageBuilder:** `default: function` function that returns HTML for one page item. function receives one argument: `index` (starting at 0)
+**pageBuilder:** `default: function` Function that returns HTML for one page item. Arguments: `function (index) {}` (`index` starts at 0)
 
 ###### Navigation buttons
 
-**prev:** `default: null` selector or DOM element for "previous item" button ; doesn't work when not using `byItems` navigation type
+**prev:** `default: null` Selector or DOM element for a "previous item" button. Irrelevant in non-item based navigation.
 
-**next:** `default: null` selector or DOM element for "next item" button ; doesn't when work not using `byItems` navigation type
+**next:** `default: null` Selector or DOM element for a "next item" button. Irrelevant in non-item based navigation.
 
-**prevPage:** `default: null` selector or DOM element for "previous page" button ; does the same thing as **prev** button when `forceCentered` navigation type is used
+**prevPage:** `default: null` Selector or DOM element for a "previous page" button.
 
-**nextPage:** `default: null` selector or DOM element for "next page" button ; does the same thing as **next** button when `forceCentered` navigation type is used
+**nextPage:** `default: null` Selector or DOM element for a "next page" button.
 
 ###### Automated cycling
 
-**cycleBy:** `default: 0` enable automated cycling by `'items'`, or `'pages'`
+**cycleBy:** `default: 0` Enable automated cycling by `'items'`, or `'pages'`.
 
-**cycleInterval:** `default: 5000` number of milliseconds between cycles
+**cycleInterval:** `default: 5000` Number of milliseconds between cycles.
 
-**pauseOnHover:** `default: 1` pause cycling when mouse hovers over frame
+**pauseOnHover:** `default: 1` Pause cycling when mouse hovers over a frame.
 
-**startPaused:** `default: 0` set to "1" to start in paused state. cycling can be than started with **cycle** method
+**startPaused:** `default: 0` Set to "1" to start in paused state.
 
 ###### Mixed options
 
-**scrollBy:** `default: 0` how many pixels or items (when **itemNav** is enabled) should one mouse scroll go. leave `0` to disable mousewheel scrolling
+**scrollBy:** `default: 0` Enable mouse scrolling by this many **pixels**, or (in item-based navigation) **items**.
 
-**dragContent:** `default: 0` set to 1 to enable navigation by dragging the content with your mouse
+**dragContent:** `default: 0` Enable navigation by dragging the SLIDEE with a mouse.
 
-**elasticBounds:** `default: 0` when dragging past limits, stretch them a little bit (like on spartphones)
+**elasticBounds:** `default: 0` When dragging past limits, stretch them a little bit (like on smart-phones).
 
-**speed:** `default: 300` animations speed. set to `0` to disable animating, in which case the `jQuery.css` method will be used
+**speed:** `default: 300` Animations speed. Set to `0` to disable animation.
 
-**easing:** `default: 'swing'` animations easing. build in jQuery are "linear" and "swing". for more, install [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/)
+**easing:** `default: 'swing'` Animations easing. Can be `'linear'`, or `'swing'`. For more, install the [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/).
 
-**scrollSource:** `default: null` selector or DOM element for catching the mouse wheel events for sly scrolling if anything other than FRAME should be used
+**scrollSource:** `default: null` Selector or DOM element for catching the mouse scroll events. By default, FRAME is used.
 
-**dragSource:** `default: null` selector or DOM element for catching the mouse dragging events for sly dragging if anything other than FRAME should be used
+**dragSource:** `default: null` Selector or DOM element for catching the mouse dragging events. By default, FRAME is used.
 
-**startAt:** `default: 0` starting offset in pixels or items (depends on **itemsNav** option). index of first item is `0`
+**startAt:** `default: 0` Starting offset in ***pixels** or (in item-based navigation) **items**. Items index starts at 0.
 
-**keyboardNav:** `default: 0` set to `0` to allow navigation by keybord arrows (left & right for horizontal, up & down for vertical).
-keyboard navigation will disable page scrolling with keyboard arrows in correspondent sly direction
+**keyboardNav:** `default: 0` Enable navigation with keyboard arrows (left & right for horizontal, up & down for vertical).
+
+Note: Keyboard navigation will disable page scrolling with keyboard arrows in a correspondent sly direction.
 
 ###### Classes
 
-**draggedClass:** `default: 'dragged'` class that will be added to scrollbar handle, or content when dragged
+**draggedClass:** `default: 'dragged'` Class name for scrollbar handle, or SLIDEE when they are being dragged.
 
-**activeClass:** `default: 'active'` class that will be added to the active item, or active page element
+**activeClass:** `default: 'active'` Class name for active item.
 
-**disabledClass:** `default: 'disabled'` class that will be added to buttons when there is no use for them
+**disabledClass:** `default: 'disabled'` Class name for disabled buttons. (e.g.: "Previous item" button when first item is selected)
 
 ### [ returnInstance ]
 
-Boolean argument requesting to return a plugin instance instead of a chainable jQuery object. You can than use all methods documented below directly on this instance.
+Boolean argument requesting to return a plugin instance instead of a chainable jQuery object. You can than use all methods
+documented below directly on this instance.
 
-If motio is called on more than one element, it returns an array of instances.
+If Sly is called on more than one element, it returns an instances for the first element in set.
 
 ## Methods
 
-Sly has a bunch of very useful methods that provide almost any functionality required.
+Sly has a bunch of very useful methods that provide almost any functionality required. You can call them via `.sly()` proxy,
+or directly on a plugin instance. You can get the instance by:
+
+Passing `true` into the `returnInstance` argument.
+
+```js
+var frame = $('#frame').sly(options, true);
+```
+
+Or by retrieving it from a FRAME element data.
+
+```js
+var frame = $('#frame').sly(options).data('sly');
+```
+
+You can than call all methods directly.
+
+```js
+frame.activate(2);
+```
 
 #### Activate
 
 ```js
-$frame.sly( 'activate', item );
+$frame.sly('activate', item);
 ```
 
-Activates an item, and depending on **itemNav** type, repositions it. Doesn't work when **itemNav** is disabled.
+Activates an item, and depending on a navigation type, repositions it. Irrelevant in non-item based navigation.
 
-Activation means that item receives **activeClass** (option described above) as its class, and is the starting point for **next** & **prev** methods described below.
-
-**item:** index or DOM element of an item in SLIDEE that should be activated
+**item:** Index or DOM element of an item in SLIDEE that should be activated.
 
 #### ActivatePage
 
@@ -140,23 +184,35 @@ Activation means that item receives **activeClass** (option described above) as 
 $frame.sly( 'activatePage', index );
 ```
 
-Activates a page, and positions SLIDEE to it.
+Activates a page.
 
-Activation means that element `.eq(index)` in pages bar receives **activeClass** (option described above) as its class,
-and is the starting point for **nextPage** & **prevPage** methods described below.
-
-**index:** index of a page that should be activated, starting at `0`
+**index:** Index of a page that should be activated, starting at 0.
 
 #### Cycle
 
 ```js
-$frame.sly( 'cycle' [, pause [, soft ] ] );
+$frame.sly( 'cycle' );
 ```
 
-Start or pause automatic cycling.
+Starts automated cycling.
 
-**pause:** pass `true` to pause cycling. it won't get un-paused until you call this method again
-**soft:** pass `true` to use soft pause - pause that will be canceled when mouse hovers in & out of the frame. This is for internal purposes and you probably won't ever need this :)
+#### Pause
+
+```js
+$frame.sly( 'pause', [ soft ] );
+```
+
+Pause automated cycling.
+
+**soft:** Pass `true` to use soft pause - pause that will be canceled when mouse hovers out of the frame. Used internally for **pauseOnHover** functionality.
+
+#### Toggle
+
+```js
+$frame.sly( 'toggle' );
+```
+
+Start when paused, or pause when cycling.
 
 #### Destroy
 
@@ -174,7 +230,7 @@ Removes `sly` instance, resets positions, and unbinds all attached events.
 $frame.sly( 'next' );
 ```
 
-Activates next item. Doesn't work when **itemNav** is disabled.
+Activates next item. Irrelevant in non-item based navigation.
 
 #### Prev
 
@@ -182,7 +238,7 @@ Activates next item. Doesn't work when **itemNav** is disabled.
 $frame.sly( 'prev' );
 ```
 
-Activates previous item. Doesn't work when **itemNav** is disabled.
+Activates previous item. Irrelevant in non-item based navigation.
 
 #### NextPage
 
@@ -190,7 +246,7 @@ Activates previous item. Doesn't work when **itemNav** is disabled.
 $frame.sly( 'nextPage' );
 ```
 
-Animates to the next page.
+Activates next page. When **forceCentered** navigation is used, this is a mere alias of a **next** method.
 
 #### PrevPage
 
@@ -198,7 +254,7 @@ Animates to the next page.
 $frame.sly( 'prevPage' );
 ```
 
-Animates to the previous page.
+Activates previous page. When **forceCentered** navigation is used, this is a mere alias of a **prev** method.
 
 #### Reload
 
@@ -211,48 +267,47 @@ Reloads `sly` instance. Call it if any change has happened to SLIDEE content, li
 #### Set
 
 ```js
-$frame.sly( 'set', [ propertyName/object [, value ]] );
+$frame.sly( 'set', [ propertyName/object [, value ] ] );
 ```
 
-Updates one, or multiple values in sly options object.
+Updates one, or multiple values in a sly options object.
 
 ```js
 $frame.sly( 'set', 'speed', 0 ); // Updates one property in options object
 $frame.slt( 'set', { speed: 0, cycleInterval: 0 } ) // Extends current options object with new values
 ```
 
-Right now only a simple options can be updated (like `speed`, `cycleInterval`, class names ...). There should be a future update with support for updating anything.
-It depends on whether I'll encounter a reasonable case where someone would need to update more than a simple options :)
+Right now only a simple options can be updated (like `speed`, `cycleInterval`, class names ...).
 
 #### ToCenter
 
 ```js
-$frame.sly( 'toCenter', target );
+$frame.sly( 'toCenter' [, target ] );
 ```
 
 Animates target to the center of a visible frame. When no `target` is passed, it will animate whole SLIDEE to the center.
 
-**target:** can be selector of item inside of SLIDEE, item index, or item DOM element
+**target:** In item based navigation, it can be item index, or item DOM element. In content based scrolling, can be a selector or DOM element inside of SLIDEE.
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content slug, like headings and stuff*
+*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 #### ToStart
 
 ```js
-$frame.sly( 'toStart', target );
+$frame.sly( 'toStart' [, target ] );
 ```
 
 Animates target to the start of a visible frame. Doesn't work when any type of centered item navigation is used.
 When no `target` is passed, it will animate whole SLIDEE to the start.
 
-**target:** can be selector of item inside of SLIDEE, item index, or item DOM element
+**target:** In item based navigation, it can be item index, or item DOM element. In content based scrolling, can be a selector or DOM element inside of SLIDEE.
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content slug, like headings and stuff*
+*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 #### ToEnd
 
 ```js
-$frame.sly( 'toEnd', target );
+$frame.sly( 'toEnd' [, target ] );
 ```
 
 Animates target to the end of a visible frame. Doesn't work when any type of centered item navigation is used.
@@ -260,16 +315,16 @@ When no `target` is passed, it will animate whole SLIDEE to the end.
 
 **target:** can be selector of item inside of SLIDEE, item index, or item DOM element
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content slug, like headings and stuff*
+*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 
 ## Custom events
 
 On almost any action sly does, there is an event being triggered. All custom events receive similar arguments: `$items`, `position`, and `relatives`.
 
-**$items:** argument is jQuery wrapped array of items. Doesn't contain anything when **itemNav** is disabled.
+**$items:** argument is jQuery wrapped array of items. Empty when non-item based navigation is used.
 
-**position:** object with information about current SLIDEE position. Consists of:
+**position:** object with information about a current SLIDEE position. Structure:
 
 ```js
 {
@@ -279,21 +334,21 @@ On almost any action sly does, there is an event being triggered. All custom eve
 }
 ```
 
-**relatives:** this object provides indexes of items relative to the visible view of the FRAME, as well as bunch of other useful info. Consists of:
+**relatives:** this object provides indexes of items in SLIDEE relative to a visible view of a FRAME, as well as a bunch of other useful info. Structure:
 
 ```js
 {
 	activeItem: 3,    // current active idem index
-	activePage: 0,    // current page index
-	centerItem: 2,    // item lying in center of visible FRAME
-	firstItem: 0,     // first completely visible item in FRAME
+	activePage: 0,    // current active page index
+	centerItem: 2,    // item lying in center of a visible FRAME
+	firstItem: 0,     // first completely visible item in a FRAME
 	frameSize: 940,   // FRAME size in a direction of current sly (horizontal: width, vertical: height)
-	handleSize: 157,  // scrollbar handle size in a direction of current sly (horizontal: width, vertical: height)
+	handleSize: 157,  // scrollbar handle size in a direction of a current sly (horizontal: width, vertical: height)
 	items: 30,        // total number of items
-	lastItem: 4,      // last completely visible item in FRAME
+	lastItem: 4,      // last completely visible item in a FRAME
 	pages: 6,         // number of pages
-	sbSize: 940,      // scrollbar size in a direction of current sly (horizontal: width, vertical: height)
-	slideeSize: 5640  // SLIDEE size in a direction of current sly (horizontal: width, vertical: height)
+	sbSize: 940,      // scrollbar size in a direction of a current sly (horizontal: width, vertical: height)
+	slideeSize: 5640  // SLIDEE size in a direction of a current sly (horizontal: width, vertical: height)
 }
 ```
 
@@ -301,7 +356,7 @@ On almost any action sly does, there is an event being triggered. All custom eve
 
 #### sly:load
 
-Event triggered on FRAME after first sly load, and each **realod** method call.
+Event triggered on FRAME after first sly load, and after each **realod** method call.
 
 ```js
 $frame.on( 'sly:load', function( event, position, $items, relatives ){ ... } );
@@ -332,7 +387,7 @@ $item.on( 'sly:active', function( event, $items, relatives ){ ... } );
 
 #### sly:dragStart
 
-Event triggered on SLIDEE or scrollbar handle on dragging start.
+Event triggered on a SLIDEE or a scrollbar handle on dragging start.
 
 ```js
 $slidee.on( 'sly:dragStart', function( event, position ){ ... } );
@@ -341,7 +396,7 @@ $sbHandle.on( 'sly:dragStart', function( event, position ){ ... } );
 
 #### sly:drag
 
-Event triggered on SLIDEE or scrollbar handle on dragging.
+Event triggered on a SLIDEE or a scrollbar handle on dragging.
 
 ```js
 $slidee.on( 'sly:drag', function( event, position ){ ... } );
@@ -359,8 +414,8 @@ $sbHandle.on( 'sly:dragEnd', function( event, position ){ ... } );
 
 #### sly:move
 
-Event triggered on FRAME on every SLIDEE move. This is triggered right before the animation start,
-but the arguments represent the state of FRAME/SLIDEE/items when the animation will finish.
+Event triggered on a FRAME on every SLIDEE move. This is triggered right before the animation start,
+but the arguments represent the state of FRAME/SLIDEE/items when the animation will be finished.
 
 ```js
 $frame.on( 'sly:move', function( event, position, $items, relatives ){ ... } );
@@ -377,7 +432,7 @@ $frame.on( 'sly:moveEnd', function( event, position, $items, relatives ){ ... } 
 #### sly:cycleStart
 
 Triggered on each cycle initialization, e.g. on sly load with cycling enabled, and every time you un-pause cycling by moving your mouse outside of the frame,
-or triggering the **cycle** method.
+or trigger the **cycle** method.
 
 ```js
 $frame.on( 'sly:cycleStart', function( event, position, $items, relatives ){ ... } );
@@ -393,7 +448,7 @@ $frame.on( 'sly:cycle', function( event, position, $items, relatives ){ ... } );
 
 #### sly:cyclePause
 
-Triggered when cycling has been paused, whether it was by mouse hovering over frame, or by **pause** method.
+Triggered when cycling has been paused, whether it was by mouse hovering over FRAME, or by **pause** method.
 
 ```js
 $frame.on( 'sly:cyclePause', function( event, position, $items, relatives ){ ... } );
@@ -452,11 +507,25 @@ $frame.sly({
 
 ## Notable behaviors
 
-+ Wen using item based navigation, you can go wild with your items. Each one can be different size, and have different margins & paddings. Sly is smart, and can figure it out :)
++ When using item based navigation, you can go wild with your items. Each one can be of different size, and have different margins & paddings. Sly is smart, and can figure it out :)
 
-+ When **forceCentered** item navigation is used, every item is considered to be a new page. That's so the pages bar could render page button for each item.
-Check the **forceCentered** horizontal examples in demo page. Also, in this case, the **nextPage** & **prevPage** methods do the exact same thing as **next** & **prev** methods.
++ When **forceCentered** item navigation is used, every item is considered to be a separate page. That's so the pages bar could render page button for each item.
+Check the **forceCentered** horizontal examples in demo page. Also, the **nextPage** & **prevPage** methods in this case do the exact same thing as **next** & **prev** methods.
 
 + When margin of a first item (`margin-top` for vertical, `margin-left` for horizontal) is `0`, the last margin of last item is ignored,
-and SLIDEE wont go past the last item border-box. Thats so you wouldn't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
-browsers when you want just spaces between items, but not between first/last item and SLIDEE border.
+and SLIDEE wont go past the last item border-box. Thats so you don't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
+browsers when you want to just spaces between items, but not between first/last item and a SLIDEE border.
+
+
+## Roadmap
+
+**This plugin is in beta testing!**
+
+To do before 1.0.0:
+
+- Dragging optimization.
+- Navigation by clicking on scrollbar.
+
+Maybe in 1.0.0, maybe later:
+
+- Touch events support.
