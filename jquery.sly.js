@@ -360,8 +360,9 @@ function Plugin( frame, o ){
 		// halt ongoing animations
 		stop();
 
-		// Trigger :move event
-		!isDragging && $frame.trigger( pluginName + ':move', [ pos, $items, rel ] );
+		// Trigger :move & :nav event
+		$frame.trigger( pluginName + ':move', [ pos, $items, rel ] );
+		!isDragging && $frame.trigger( pluginName + ':nav', [ pos, $items, rel ] );
 
 		var newProp = o.horizontal ? { left: -pos.cur+'px' } : { top: -pos.cur+'px' };
 

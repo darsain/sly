@@ -429,6 +429,17 @@ Event triggered on FRAME on every SLIDEE move. This is triggered after animation
 $frame.on( 'sly:moveEnd', function( event, position, $items, relatives ){ ... } );
 ```
 
+#### sly:nav
+
+Event triggered on each navigation change, like prev, next, prevPage, ...
+
+This event is not triggered when SLIDEE or a scrollbar handle are being dragged, but it is triggered on alignment,
+i.e. when mouse has been released, and items need to be aligned to the FRAME edges. Obviously that doesn't happen in non-item based navigation.
+
+```js
+$frame.on( 'sly:nav', function( event, position, $items, relatives ){ ... } );
+```
+
 #### sly:cycleStart
 
 Triggered on each cycle initialization, e.g. on sly load with cycling enabled, and every time you un-pause cycling by moving your mouse outside of the frame,
