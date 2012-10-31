@@ -452,7 +452,7 @@ $frame.sly({
 
 ## Notable behaviors
 
-+ Wen using item based navigation, you can go wild with your items. Each one can be different size, and have different margins & paddings. Sly is smart, and can figure it out :)
++ When using item based navigation, you can go wild with your items. Each one can be different size, and have different margins & paddings. Sly is smart, and can figure it out :)
 
 + When **forceCentered** item navigation is used, every item is considered to be a new page. That's so the pages bar could render page button for each item.
 Check the **forceCentered** horizontal examples in demo page. Also, in this case, the **nextPage** & **prevPage** methods do the exact same thing as **next** & **prev** methods.
