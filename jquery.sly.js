@@ -285,19 +285,19 @@ function Plugin( frame, o ){
 		disableButtons();
 
 		// Automatic cycling
-		if( itemNav && o.cycleBy ){
+		if( o.cycleBy ){
 
 			var pauseEvents = 'mouseenter.' + namespace + ' mouseleave.' + namespace;
 
 			// Pause on hover
 			o.pauseOnHover && $frame.unbind(pauseEvents).bind(pauseEvents, function(e){
 
-				!cycleIsPaused && self.cycle( e.type === 'mouseenter', 1 );
+				!cycleIsPaused && self[e.type === 'mouseenter' ? 'pause' : 'cycle'](1);
 
 			});
 
 			// Initiate cycling
-			self.cycle( o.startPaused );
+			!o.startPaused && self.cycle();
 
 		}
 
@@ -891,80 +891,90 @@ function Plugin( frame, o ){
 
 
 	/**
-	 * Manage cycling
+	 * Start cycling
 	 *
 	 * @public
-	 *
-	 * @param {Bool} pause Pass true to pause cycling
-	 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set cycleIsPaused variable to true
 	 */
-	this.cycle = function( pause, soft ){
+	this.cycle = function(){
 
-		if (!itemNav || !o.cycleBy) {
+		if (cycleIndex || !o.cycleBy || o.cycleBy === 'items' && !items.length) {
 			return;
 		}
 
-		if( !soft ){
-			cycleIsPaused = !!pause;
-		}
+		// Trigger :cycleStart event
+		$frame.trigger( pluginName + ':cycleStart', [ pos, $items, rel ] );
 
-		if( pause ){
+		// Cycling loop
+		(function loop(){
 
-			if( cycleIndex ){
-
-				cycleIndex = clearTimeout( cycleIndex );
-
-				// Trigger :cyclePause event
-				$frame.trigger( pluginName + ':cyclePause', [ pos, $items, rel ] );
-
-			}
-
-		} else {
-
-			// Don't initiate more than one cycle
-			if (cycleIndex) {
+			if( !o.cycleInterval ){
 				return;
 			}
 
-			// Trigger :cycleStart event
-			$frame.trigger( pluginName + ':cycleStart', [ pos, $items, rel ] );
+			cycleIndex = setTimeout( function(){
 
-			// Cycling loop
-			(function loop(){
+				if( !isDragging ){
+					switch( o.cycleBy ){
 
-				if( o.cycleInterval === 0 ){
-					return;
+						case 'items':
+							var nextItem = rel.activeItem >= items.length-1 ? 0 : rel.activeItem + 1;
+							self.activate( nextItem );
+						break;
+
+						case 'pages':
+							var nextPage = rel.activePage >= pages.length-1 ? 0 : rel.activePage + 1;
+							self.activatePage( nextPage );
+						break;
+
+					}
 				}
 
-				cycleIndex = setTimeout( function(){
+				// Trigger :cycle event
+				$frame.trigger( pluginName + ':cycle', [ pos, $items, rel ] );
 
-					if( !isDragging ){
-						switch( o.cycleBy ){
+				// Cycle the cycle!
+				loop();
 
-							case 'items':
-								var nextItem = rel.activeItem >= items.length-1 ? 0 : rel.activeItem + 1;
-								self.activate( nextItem );
-							break;
+			}, o.cycleInterval );
 
-							case 'pages':
-								var nextPage = rel.activePage >= pages.length-1 ? 0 : rel.activePage + 1;
-								self.activatePage( nextPage );
-							break;
+		}());
 
-						}
-					}
+	};
 
-					// Trigger :cycle event
-					$frame.trigger( pluginName + ':cycle', [ pos, $items, rel ] );
 
-					// Cycle the cycle!
-					loop();
+	/**
+	 * Pause cycling
+	 *
+	 * @public
+	 *
+	 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set cycleIsPaused variable to true
+	 */
+	this.pause = function( soft ){
 
-				}, o.cycleInterval );
+		if( cycleIndex ){
 
-			}());
+			if( !soft ){
+				cycleIsPaused = true;
+			}
+
+			cycleIndex = clearTimeout( cycleIndex );
+
+			// Trigger :cyclePause event
+			$frame.trigger( pluginName + ':cyclePause', [ pos, $items, rel ] );
 
 		}
+
+	};
+
+
+	/**
+	 * Toggle cycling
+	 *
+	 * @public
+	 */
+	this.toggle = function(){
+
+		self[cycleIndex ? 'pause' : 'cycle']();
 
 	};
 

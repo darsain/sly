@@ -244,7 +244,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "scrollBy": 1, "cycleBy": "pages", "cycleInterval": 2000, "startPaused": 1 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "scrollBy": 1, "cycleBy": "pages", "cycleInterval": 1000, "startPaused": 1, "pauseOnHover": 1 }'>
 					<ul class="big cfix" data-items="10"></ul>
 				</div>
 
@@ -252,8 +252,8 @@ $frame.sly({
 
 				<div class="controls btn-toolbar">
 					<div class="btn-group">
-						<button class="btn btn-green" data-action="cycle">Start cycle</button>
-						<button class="btn btn-green " data-action="cycle" data-arg="1">Pause</button>
+						<button class="btn btn-green" data-action="cycle">Cycle</button>
+						<button class="btn btn-green " data-action="pause">Pause</button>
 					</div>
 					<div class="btn-group">
 						<button class="btn prevPage">&laquo; prevPage</button>
@@ -282,7 +282,7 @@ $frame.sly({
 	dragContent: 1,
 	scrollBy: 1,
 	cycleBy: 'pages',
-	cycleInterval: 2000,
+	cycleInterval: 1000,
 	startPaused: 1
 });
 </pre>
@@ -345,7 +345,7 @@ $frame.sly({
 				<div class="controls btn-toolbar">
 					<div class="btn-group">
 						<button class="btn btn-green" data-action="cycle">Resume</button>
-						<button class="btn btn-green" data-action="cycle" data-arg="1">Pause</button>
+						<button class="btn btn-green" data-action="pause">Pause</button>
 					</div>
 					<div class="btn-group">
 						<button class="btn prev">&laquo; prev</button>
