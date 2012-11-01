@@ -168,6 +168,8 @@ You can than call all methods directly.
 frame.activate(2);
 ```
 
+---
+
 #### Activate
 
 ```js
@@ -352,7 +354,7 @@ On almost any action sly does, there is an event being triggered. All custom eve
 }
 ```
 
-***
+---
 
 #### sly:load
 
