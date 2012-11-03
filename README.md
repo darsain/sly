@@ -13,7 +13,7 @@ Just this nice 9KB (minified) action - you are welcome :)
 
 Works everywhere! I'm afraid even in IE6 (not intended, honest). Not sure about mobile thought... I have nothing to test it on :)
 
-Sly upholds the [Semantic Versioning Specification](http://semver.org/). Right now it is in a **beta** state. For more info on that, read the [Roadmap](#roadmap).
+Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info, read the [Roadmap](#roadmap).
 
 ## Layout & requirements
 
@@ -527,16 +527,16 @@ Check the **forceCentered** horizontal examples in demo page. Also, the **nextPa
 
 + When margin of a first item (`margin-top` for vertical, `margin-left` for horizontal) is `0`, the last margin of last item is ignored,
 and SLIDEE wont go past the last item border-box. Thats so you don't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
-browsers when you want to just spaces between items, but not between first/last item and a SLIDEE border.
+browsers when you want only spaces between items, but not between first/last item and a SLIDEE border.
 
 
 ## Roadmap
 
-**This plugin is in beta testing!**
+**This plugin is in beta!** and the API might change before the 1.0.0 release.
 
 To do before 1.0.0:
 
-- Dragging optimization.
+- Dragging optimization with requestAnimationFrame.
 - Navigation by clicking on scrollbar.
 
 Maybe in 1.0.0, maybe later:
