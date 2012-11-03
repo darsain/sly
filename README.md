@@ -48,7 +48,7 @@ Otherwise, you need a strict list of items, like:
 </div>
 ```
 
-But the actual markup is not enforced. Dividitis is not discriminated :)
+But the actual tags are not enforced. Dividitis is not discriminated :)
 
 ## Calling
 
