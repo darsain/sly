@@ -25,7 +25,7 @@ FRAME should have **no padding** in a corresponded sly direction (padding left &
 and SLIDEE should have **no margin** in a corresponded sly direction (margin left & right for horizontal, and margin top & bottom for vertical navigation).
 You can apply padding to SLIDEE, or margins to items, (sly accounts for this), but do not use any other units than **pixels**, or you'll bork things.
 
-If you are not using one of the item based navigation logics, content can be anything:
+If you are not using one of the item based navigation logics, the content can be anything:
 
 ```html
 <div id="frame">
@@ -67,7 +67,7 @@ $frame.sly( [ options [, returnInstance ]] );
 
 + **0**: `disabled` No item based navigation, just a usual scrolling.
 + **basic**: Items in SLIDEE snap to edges.
-+ **smart**: Same as basic, but activated item close to, or outside of the visible edge will be positioned to the opposite to help with further navigation.
++ **smart**: Same as basic, but activated item close to, or outside of the edge will be positioned to the opposite edge to help with further navigation.
 + **centered**: Activated items are positioned to the center of a visible frame when possible.
 + **forceCentered**: Active items are always centered & centered items are always active. Every change in position activates item that is right now in the center of a FRAME.
 With this navigation type, each item is considered to be a separate page, so each item receives a page button in pages bar.
@@ -143,7 +143,7 @@ Note: Keyboard navigation will disable page scrolling with keyboard arrows in a 
 Boolean argument requesting to return a plugin instance instead of a chainable jQuery object. You can than use all methods
 documented below directly on this instance.
 
-If Sly is called on more than one element, it returns an instances for the first element in set.
+If Sly is called on more than one element, it returns a plugin instance for a first element in set.
 
 ## Methods
 
@@ -264,7 +264,7 @@ Activates previous page. When **forceCentered** navigation is used, this is a me
 $frame.sly( 'reload' );
 ```
 
-Reloads `sly` instance. Call it if any change has happened to SLIDEE content, like things appended, removed, or resized.
+Reloads `sly` instance. Call it if any change has happened to SLIDEE content, like things have been appended, removed, or resized.
 
 #### Set
 
@@ -289,9 +289,9 @@ $frame.sly( 'toCenter' [, target ] );
 
 Animates target to the center of a visible frame. When no `target` is passed, it will animate whole SLIDEE to the center.
 
-**target:** In item based navigation, it can be item index, or item DOM element. In content based scrolling, can be a selector or DOM element inside of SLIDEE.
+**target:** In item based navigation, it can be an item index, or an item DOM element. In content based scrolling, it can be a selector or a DOM element inside of SLIDEE.
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
+*You can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 #### ToStart
 
@@ -302,9 +302,9 @@ $frame.sly( 'toStart' [, target ] );
 Animates target to the start of a visible frame. Doesn't work when any type of centered item navigation is used.
 When no `target` is passed, it will animate whole SLIDEE to the start.
 
-**target:** In item based navigation, it can be item index, or item DOM element. In content based scrolling, can be a selector or DOM element inside of SLIDEE.
+**target:** In item based navigation, it can be an item index, or an item DOM element. In content based scrolling, it can be a selector or a DOM element inside of SLIDEE.
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
+*You can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 #### ToEnd
 
@@ -315,9 +315,9 @@ $frame.sly( 'toEnd' [, target ] );
 Animates target to the end of a visible frame. Doesn't work when any type of centered item navigation is used.
 When no `target` is passed, it will animate whole SLIDEE to the end.
 
-**target:** can be selector of item inside of SLIDEE, item index, or item DOM element
+**target:** In item based navigation, it can be an item index, or an item DOM element. In content based scrolling, it can be a selector or a DOM element inside of SLIDEE.
 
-*you can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
+*You can use this method even when **itemNav** is disabled, targeting random items from content, like headings, paragraphs, ...*
 
 
 ## Custom events
