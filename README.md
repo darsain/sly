@@ -11,9 +11,23 @@ Just this nice 9KB (minified) action - you are welcome :)
 
 #### Compatibility
 
-Works everywhere! I'm afraid even in IE6 (not intended, honest). Not sure about mobile thought... I have nothing to test it on :)
+Works everywhere! I'm afraid even in IE6 (not intended, honest). Mobile is not tested.
 
-Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info, read the [Roadmap](#roadmap).
+Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info, read the [Roadmap](#roadmap) below.
+
+## Roadmap
+
+**This plugin is in development!** and the API may change before the 1.0.0 release.
+
+To do before 1.0.0:
+
+- Exchanging jQuery.animate for highly optimized custom animation rendering for silky-smoothness.
+- Navigation by clicking on scrollbar.
+- Extending events with jQuery.Callbacks API.
+
+Maybe in 1.0.0, maybe later:
+
+- Touch events support.
 
 ## Layout & requirements
 
@@ -529,16 +543,9 @@ Check the **forceCentered** horizontal examples in demo page. Also, the **nextPa
 and SLIDEE wont go past the last item border-box. Thats so you don't have to fix last item margins with `li:last-child { margin-right: 0; }`, or class on last child to support older
 browsers when you want only spaces between items, but not between first/last item and a SLIDEE border.
 
+## Contributing
 
-## Roadmap
+Contributions are welcome, but there are some rules:
 
-**This plugin is in beta!** and the API might change before the 1.0.0 release.
-
-To do before 1.0.0:
-
-- Dragging optimization with requestAnimationFrame.
-- Navigation by clicking on scrollbar.
-
-Maybe in 1.0.0, maybe later:
-
-- Touch events support.
+- Maintain the coding style used in the project.
+- The resulting code has to pass JSHint with options defined in the header.
