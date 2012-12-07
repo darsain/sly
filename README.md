@@ -130,7 +130,7 @@ With this navigation type, each item is considered to be a separate page, so eac
 
 **elasticBounds:** `default: 0` When dragging past limits, stretch them a little bit (like on smart-phones).
 
-**speed:** `default: 300` Animations speed. Set to `0` to disable animation.
+**speed:** `default: 0` Animations speed. Set to `0` to disable animations.
 
 **easing:** `default: 'swing'` Animations easing. Can be `'linear'`, or `'swing'`. For more, install the [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/).
 
