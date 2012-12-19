@@ -39,7 +39,7 @@
 			// Frame variables
 			$frame     = $(frame),
       childrenFilter = o.childrenFilter || '*',
-			$slidee    = $frame.children(childrenFilter).eq(0),
+			$slidee    = $frame.children().eq(0),
 			frameSize  = 0,
 			slideeSize = 0,
 			pos        = {
