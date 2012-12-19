@@ -38,7 +38,8 @@
 
 			// Frame variables
 			$frame     = $(frame),
-			$slidee    = $frame.children().eq(0),
+      childrenFilter = o.childrenFilter || '*',
+			$slidee    = $frame.children(childrenFilter).eq(0),
 			frameSize  = 0,
 			slideeSize = 0,
 			pos        = {
@@ -113,7 +114,7 @@
 			frameSize  = o.horizontal ? $frame.width() : $frame.height();
 			sbSize     = o.horizontal ? $sb.width() : $sb.height();
 			slideeSize = o.horizontal ? $slidee.outerWidth() : $slidee.outerHeight();
-			$items     = $slidee.children();
+			$items     = $slidee.children(childrenFilter);
 			items      = [];
 			pages      = [];
 

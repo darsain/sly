@@ -86,6 +86,10 @@ $frame.sly( [ options [, returnInstance ]] );
 + **forceCentered**: Active items are always centered & centered items are always active. Every change in position activates item that is right now in the center of a FRAME.
 With this navigation type, each item is considered to be a separate page, so each item receives a page button in pages bar.
 
+###### Children filter
+
+**childrenFilter:** `default: *` Set filtration selector to limit set of items in SLIDEE. E.g. if you need to extract invisible items, just add `childrenFilter: ':visible'`.
+
 ###### Scrollbar
 
 **scrollBar:** `default: null` Selector or DOM element for scrollbar container (scrollbar should have one child element representing scrollbar handle).
