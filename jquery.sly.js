@@ -658,7 +658,7 @@
 		 * @return {Void}
 		 */
 		function getRelatives(slideePos) {
-			slideePos = isNumber(slideePos) ? slideePos : pos.dest;
+			slideePos = within(isNumber(slideePos) ? slideePos : pos.dest, pos.min, pos.max);
 
 			var relatives = {},
 				centerOffset = forceCenteredNav ? 0 : frameSize / 2;
