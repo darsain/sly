@@ -45,7 +45,7 @@
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "startAt": 3, "scrollBy": 1 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragHandle": 1, "dragContent": 1, "startAt": 3, "scrollBy": 1 }'>
 					<ul class="big cfix" data-items="30"></ul>
 				</div>
 
@@ -80,6 +80,7 @@
 $frame.sly({
 	horizontal: 1,
 	itemNav: "basic",
+	dragHandle: 1,
 	dragContent: 1,
 	startAt: 3,
 	scrollBy: 1
@@ -96,7 +97,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "smart", "dragContent": 1, "startAt": 3, "scrollBy": 1 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "smart", "dragHandle": 1, "dynamicHandle": 1, "dragContent": 1, "startAt": 3, "scrollBy": 1, "speed": 300 }'>
 					<ul class="big cfix" data-items="30"></ul>
 				</div>
 
@@ -131,9 +132,12 @@ $frame.sly({
 $frame.sly({
 	horizontal: 1,
 	itemNav: "smart",
+	dragHandle: 1,
+	dynamicHandle: 1,
 	dragContent: 1,
 	startAt: 3,
-	scrollBy: 1
+	scrollBy: 1,
+	speed: 300
 });
 </pre>
 
@@ -147,7 +151,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "centered", "dragContent": 1, "scrollBy": 1 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "centered", "dragHandle": 1, "dynamicHandle": 1, "dragContent": 1, "scrollBy": 1, "speed": 300, "easing": "easeOutExpo" }'>
 					<ul class="big cfix" data-items="30"></ul>
 				</div>
 
@@ -180,8 +184,12 @@ $frame.sly({
 $frame.sly({
 	horizontal: 1,
 	itemNav: "centered",
+	dragHandle: 1,
+	dynamicHandle: 1,
 	dragContent: 1,
-	scrollBy: 1
+	scrollBy: 1,
+	speed: 300,
+	easing: 'easeOutExpo'
 });
 </pre>
 
@@ -195,7 +203,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "dragContent": 1, "scrollBy": 1, "easing": "easeOutBack" }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "dragHandle": 1, "dynamicHandle": 1, "dragContent": 1, "scrollBy": 1, "speed": 500, "easing": "easeOutBack" }'>
 					<ul class="big cfix" data-items="10"></ul>
 				</div>
 
@@ -228,9 +236,12 @@ $frame.sly({
 $frame.sly({
 	horizontal: 1,
 	itemNav: "forceCentered",
+	dragHandle: 1,
+	dynamicHandle: 1,
 	dragContent: 1,
 	scrollBy: 1,
-	easing: "easeOutBack" // with jQuery easing v1.3
+	speed: 500,
+	easing: "easeOutBack" // with jQuery Easing plugin
 });
 </pre>
 
@@ -244,7 +255,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragContent": 1, "scrollBy": 1, "cycleBy": "pages", "cycleInterval": 1000, "startPaused": 1, "pauseOnHover": 1 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "basic", "dragHandle": 1, "dynamicHandle": 1, "dragContent": 1, "scrollBy": 1, "speed": 300, "cycleBy": "pages", "cycleInterval": 1000, "startPaused": 1, "pauseOnHover": 1 }'>
 					<ul class="big cfix" data-items="10"></ul>
 				</div>
 
@@ -253,7 +264,7 @@ $frame.sly({
 				<div class="controls btn-toolbar">
 					<div class="btn-group">
 						<button class="btn btn-green" data-action="cycle">Cycle</button>
-						<button class="btn btn-green " data-action="pause">Pause</button>
+						<button class="btn btn-green" data-action="pause">Pause</button>
 					</div>
 					<div class="btn-group">
 						<button class="btn prevPage">&laquo; prevPage</button>
@@ -279,8 +290,11 @@ $frame.sly({
 $frame.sly({
 	horizontal: 1,
 	itemNav: "basic",
+	dragHandle: 1,
+	dynamicHandle: 1,
 	dragContent: 1,
 	scrollBy: 1,
+	speed: 300,
 	cycleBy: 'pages',
 	cycleInterval: 1000,
 	startPaused: 1
@@ -293,7 +307,7 @@ $frame.sly({
 
 			<div class="slyWrap example4">
 
-				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "cycleBy": "items", "cycleInterval": 2000 }'>
+				<div class="sly" data-options='{ "horizontal": 1, "itemNav": "forceCentered", "speed": 300, "cycleBy": "items", "cycleInterval": 2000, "pauseOnHover": 1 }'>
 					<ul class="big cfix">
 						<li>
 							<h3>Lorem ipsum dolor</h3>
@@ -366,8 +380,10 @@ $frame.sly({
 $frame.sly({
 	horizontal: 1,
 	itemNav: 'forceCentered',
+	speed: 300,
 	cycleBy: 'items',
-	cycleInterval: 2000
+	cycleInterval: 2000,
+	pauseOnHover: 1
 });
 </pre>
 
@@ -383,7 +399,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "itemNav": "smart", "dragContent": 1, "startAt": 10, "scrollBy": 1, "elasticBounds": 1 }'>
+				<div class="sly" data-options='{ "itemNav": "smart", "dragHandle": 1, "dynamicHandle": 1, "dragContent": 1, "speed": 300, "startAt": 10, "scrollBy": 1, "elasticBounds": 1 }'>
 					<ul class="big cfix" data-items="30"></ul>
 				</div>
 
@@ -412,7 +428,10 @@ $frame.sly({
 <pre class="prettyprint lang-js">
 $frame.sly({
 	itemNav: "smart",
+	dragHandle: 1,
+	dynamicHandle: 1,
 	dragContent: 1,
+	speed: 300,
 	startAt: 10,
 	scrollBy: 1,
 	elasticBounds: 1
@@ -428,7 +447,7 @@ $frame.sly({
 					<div class="handle"></div>
 				</div>
 
-				<div class="sly" data-options='{ "scrollBy": 100, "startAt": 200 }'>
+				<div class="sly" data-options='{ "scrollBy": 100, "dragHandle": 1, "dynamicHandle": 1, "startAt": 200 }'>
 					<div>
 <h1>Lorem ipsum dolor</h1>
 
@@ -506,6 +525,8 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non pr
 <pre class="prettyprint lang-js">
 $frame.sly({
 	scrollBy: 100,
+	dragHandle: 1,
+	dynamicHandle: 1,
 	startAt: 100
 });
 </pre>

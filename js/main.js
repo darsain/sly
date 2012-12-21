@@ -1,18 +1,20 @@
+/*global prettyPrint:false */
 jQuery(function($){
+	'use strict';
 
 	// -----------------------------------------------------------------------------------
 	//   Examples
 	// -----------------------------------------------------------------------------------
 
 	// Function for populating lists with placeholder items
-	function populate( container, count, offset ){
+	function populate(container, count, offset) {
 
 		var output = '';
 
 		offset = isNaN(offset) ? 0 : offset;
 
-		for( var i = 0; i<count; i++ ){
-			output += '<li>'+(offset+i)+'</li>';
+		for (var i = 0; i < count; i++) {
+			output += '<li>' + (offset + i) + '</li>';
 		}
 
 		return $(output).appendTo(container);
@@ -20,134 +22,122 @@ jQuery(function($){
 	}
 
 	// Populate list items
-	$('ul[data-items]').each(function(i,e){
+	$('ul[data-items]').each(function (i, element) {
 
-		var items = parseInt( $(e).data('items'), 10 );
+		var items = parseInt($(element).data('items'), 10);
 
-		populate( e, items );
+		populate(element, items);
 
 	});
 
 	// Activate section (it misbehaves when sly is called on hidden sections)
-	$(document).on('activated', function( event, sectionId ){
+	$(document).on('activated', function (event, sectionId) {
 
 		var $section = $('#'+sectionId);
 
-		if( $section.data('examplesLoaded') ){
-
+		if ($section.data('examplesLoaded')) {
 			return;
-
 		}
 
-		switch( sectionId ){
-
+		switch (sectionId) {
 			case 'infinite':
-
 				var $frame = $section.find('.frame'),
-					$ul = $frame.find('ul').eq(0),
+					$slidee = $frame.find('ul').eq(0),
 					$scrollbar = $section.find('.scrollbar'),
-					$buttons = $section.find('.controlbar [data-action]');
+					$buttons = $section.find('.controlbar [data-action]'),
+					reset = 0;
 
-				populate( $ul, 10 );
+				populate($slidee, 10);
 
-				$frame.on('sly:move', function( e, pos ){
-
-					if( pos.cur > pos.max - 100 ){
-
-						populate( $ul, 10, $ul.children().length-1 );
-
+				$frame.on('sly:move', function (event, pos) {
+					// Append more items
+					if (pos.dest > pos.max - 100) {
+						populate($slidee, 10, $slidee.children().length-1);
 						$frame.sly('reload');
-
 					}
-
-				}).sly({ itemNav: 'basic', scrollBy: 1, scrollBar: $scrollbar });
+				}).on('sly:moveEnd', function (event, pos) {
+					// Reload when requested
+					if (reset && pos.cur === pos.min) {
+						reset = 0;
+						$slidee.find('li').slice(10).remove();
+						$frame.sly('reload');
+					}
+				}).sly({ itemNav: 'basic', scrollBy: 1, dynamicHandle: 1, scrollBar: $scrollbar });
 
 				// Controls
-				$buttons.on('click', function(e){
-
+				$buttons.on('click', function () {
 					var action = $(this).data('action');
 
-					switch(action){
-
+					switch (action) {
 						case 'reset':
+							reset = 1;
 							$frame.sly('toStart');
-							setTimeout(function(){
-								$ul.find('li').slice(10).remove();
-								$frame.sly('reload');
-							}, 200);
 						break;
 
 						default:
 							$frame.sly(action);
 					}
-
 				});
-
 			break;
 
 			default:
-
 				// Call sly instances
-				$section.find(".slyWrap").each(function(i,e){
-					//if( i != 3 ) return;
-					var cont = $(this),
-						frame = cont.find(".sly"),
-						slidee = frame.find("ul"),
-						scrollbar = cont.find(".scrollbar"),
-						pagesbar = cont.find(".pages"),
-						options = frame.data("options"),
+				$section.find(".slyWrap").each(function (i, element) {
 
-						controls = cont.find(".controls"),
-						prevButton = controls.find(".prev"),
-						nextButton = controls.find(".next"),
-						prevPageButton = controls.find(".prevPage"),
-						nextPageButton = controls.find(".nextPage");
+					var $cont = $(element),
+						$frame = $cont.find(".sly"),
+						$slidee = $frame.find("ul"),
+						$scrollbar = $cont.find(".scrollbar"),
+						$pagesbar = $cont.find(".pages"),
+						options = $frame.data("options"),
 
-					options = $.extend( {}, options, {
-						scrollBar: scrollbar,
-						pagesBar: pagesbar,
+						$controls = $cont.find(".controls"),
+						$prevButton = $controls.find(".prev"),
+						$nextButton = $controls.find(".next"),
+						$prevPageButton = $controls.find(".prevPage"),
+						$nextPageButton = $controls.find(".nextPage");
 
-						prev: prevButton,
-						next: nextButton,
-						prevPage: prevPageButton,
-						nextPage: nextPageButton,
+					$.extend(options, {
+						scrollBar: $scrollbar,
+						pagesBar: $pagesbar,
+
+						prev: $prevButton,
+						next: $nextButton,
+						prevPage: $prevPageButton,
+						nextPage: $nextPageButton,
 						disabledClass: 'btn-disabled'
 					});
 
 					// Call sly
-					frame.sly( options );
+					$frame.sly(options);
 
 					// Bind controls
-					cont.find("button").click(function(){
+					$cont.find("button").click(function () {
 
 						var action = $(this).data('action'),
 							arg = $(this).data('arg');
 
-						switch(action){
-
+						switch (action) {
 							case 'add':
-								slidee.append( slidee.children().slice(-1).clone().removeClass().text(function(i,text){ return text/1 + 1; }) );
-								frame.sly('reload');
+								var children = $slidee.children().length,
+									$item = $('<li>'+children+'</li>');
+								$slidee.append($item);
+								$frame.sly('reload');
 							break;
 
 							case 'remove':
-								slidee.find("li").slice(-1).remove();
-								frame.sly('reload');
+								$slidee.children().slice(-1).remove();
+								$frame.sly('reload');
 							break;
 
 							default:
-								frame.sly(action, arg);
-
+								$frame.sly(action, arg);
 						}
-
 					});
-
 				});
-
 		}
 
 		$section.data('examplesLoaded', true);
-
 	});
 
 
@@ -161,35 +151,32 @@ jQuery(function($){
 		activeClass = 'active';
 
 	// Tabs
-	$nav.on('click', 'a', function(e){
-		e.preventDefault();
-		activate( $(this).attr('href').substr(1) );
+	$nav.on('click', 'a', function (event) {
+		event.preventDefault();
+		activate($(this).attr('href').substr(1));
 	});
 
 	// Back to top button
-	$('a[href="#top"]').on('click', function(e){
-		e.preventDefault();
+	$('a[href="#top"]').on('click', function (event) {
+		event.preventDefault();
 		$(document).scrollTop(0);
 	});
 
 	// Activate a section
-	function activate( sectionID, initial ){
-
-		sectionID = sectionID && $sections.filter('#'+sectionID).length ? sectionID : $sections.eq(0).attr('id');
+	function activate(sectionID, initial) {
+		sectionID = (sectionID && $sections.filter('#'+sectionID).length) ? sectionID : $sections.eq(0).attr('id');
 		$nav.find('a').removeClass(activeClass).filter('[href=#'+sectionID+']').addClass(activeClass);
 		$sections.hide().filter('#'+sectionID).show();
 
-		if( !initial ){
+		if (!initial) {
 			window.location.hash = '!' + sectionID;
 		}
 
-		$(document).trigger('activated', [ sectionID ] );
-
+		$(document).trigger('activated', [sectionID]);
 	}
 
 	// Activate initial section
-	activate( window.location.hash.match(/^#!/) ? window.location.hash.substr(2) : 0, 1 );
-
+	activate(window.location.hash.match(/^#!/) ? window.location.hash.substr(2) : 0, 1);
 
 	// -----------------------------------------------------------------------------------
 	//   Additional plugins
@@ -197,5 +184,4 @@ jQuery(function($){
 
 	// Trigger prettyPrint
 	prettyPrint();
-
 });

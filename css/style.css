@@ -516,12 +516,17 @@ body { border: 2px solid #555; border-color: rgba(255,255,255,.1); border-left: 
 
 .sly { overflow: hidden; }
 .sly > ul { list-style: none; margin: 0; padding: 0; }
-.sly > ul li { position: relative; margin: 0; padding: 0; background: #4DBCE9; color: #fff; text-align: center; cursor: pointer; }
-.sly > ul li.active { background: #fff; color: #4DBCE9;
-	-webkit-box-shadow: inset 0 0 0 1px #4DBCE9, inset 0 0 40px 20px #97e6f7;
-	-moz-box-shadow: inset 0 0 0 1px #4DBCE9, inset 0 0 40px 20px #97e6f7;
-	-o-box-shadow: inset 0 0 0 1px #4DBCE9, inset 0 0 40px 20px #97e6f7;
-	box-shadow: inset 0 0 0 1px #4DBCE9, inset 0 0 40px 20px #97e6f7;
+.sly > ul li { position: relative; margin: 0; padding: 0; background: #4DBCE9; color: #fff; text-align: center; cursor: pointer;
+	-webkit-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+	-moz-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+	-o-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+}
+.sly > ul li.active { background: #fafafa; color: #aaa; z-index: 100;
+	-webkit-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), inset 0 0 0 10px rgba(0,0,0,.07);
+	-moz-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), inset 0 0 0 10px rgba(0,0,0,.07);
+	-o-box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), inset 0 0 0 10px rgba(0,0,0,.07);
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), inset 0 0 0 10px rgba(0,0,0,.07);
 }
 
 .pages { list-style: none; margin: 20px 0; padding: 0; text-align: center; }
