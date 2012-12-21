@@ -335,7 +335,7 @@
 			pos.dest = newPos;
 
 			// Queue next cycle
-			if (!animation.stillDragging) {
+			if (!animation.stillDragging && !cycleIsPaused) {
 				self.cycle();
 			}
 
@@ -791,6 +791,8 @@
 				return;
 			}
 
+			cycleIsPaused = 0;
+
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
 			} else {
@@ -1067,7 +1069,7 @@
 							ignoreNextClick = 1;
 
 							// Pause ongoing cycle
-							self.pause(1);
+							self.pause(!cycleIsPaused);
 
 							// Disable click actions on source element, as they are unwelcome when dragging
 							$srcEl.on('click', function disableAction(event) {
@@ -1125,7 +1127,7 @@
 					$frame.trigger(pluginName + ':moveStart', [pos, $items, rel, 'scrollbar']);
 
 					// Pause ongoing cycle
-					self.pause(1);
+					self.pause(!cycleIsPaused);
 
 					// Bind dragging events
 					$doc.on(dragEvents, function (event) {
