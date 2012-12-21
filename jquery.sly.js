@@ -340,11 +340,9 @@
 			}
 
 			// Synchronize states
-			// if (!dragging || released) {
-				updateRelatives();
-				updateNavButtonsState();
-				syncPagesbar();
-			// }
+			updateRelatives();
+			updateNavButtonsState();
+			syncPagesbar();
 
 			// Render the animation
 			if (newPos !== pos.cur && !renderID) {
@@ -660,7 +658,7 @@
 		 * @return {Void}
 		 */
 		function getRelatives(slideePos) {
-			slideePos = slideePos || pos.dest;
+			slideePos = isNumber(slideePos) ? slideePos : pos.dest;
 
 			var relatives = {},
 				centerOffset = forceCenteredNav ? 0 : frameSize / 2;
@@ -724,7 +722,7 @@
 		 * @return {Void}
 		 */
 		function updateRelatives(newPos) {
-			$.extend(rel, getRelatives(newPos || pos.dest));
+			$.extend(rel, getRelatives(newPos));
 		}
 
 		/**
@@ -1233,13 +1231,14 @@
 	$.fn[pluginName] = function (options, returnInstance) {
 
 		var method = false,
-			instance;
+			methodArgs, instance;
 
 		// Attributes logic
 		if (!$.isPlainObject(options)) {
 			if (typeof options === 'string' || options === false) {
 				method = options === false ? 'destroy' : options;
-				Array.prototype.shift.call(arguments);
+				methodArgs = arguments;
+				Array.prototype.shift.call(methodArgs);
 			} else if (options === true) {
 				returnInstance = options;
 			}
@@ -1258,7 +1257,7 @@
 			} else if (plugin && method) {
 				// Call plugin method
 				if (plugin[method]) {
-					plugin[method].apply(plugin, arguments);
+					plugin[method].apply(plugin, methodArgs);
 				}
 			}
 
