@@ -846,6 +846,17 @@
 		};
 
 		/**
+		 * Calculate SLIDEE representation of handle position.
+		 *
+		 * @param  {Int} handlePos
+		 *
+		 * @return {Int}
+		 */
+		function handleToSlidee(handlePos) {
+			return Math.round(within(handlePos, hPos.min, hPos.max) / hPos.max * (pos.max - pos.min)) + pos.min;
+		}
+
+		/**
 		 * Crossbrowser reliable way to stop default event action.
 		 *
 		 * @param {Event} event     Event object.
@@ -973,6 +984,21 @@
 					} else {
 						slideBy(isForward ? o.scrollBy : -o.scrollBy);
 					}
+				});
+			}
+
+			// Clicking on scrollbar navigation
+			if (o.clickBar && $sb[0]) {
+				$sb.on('click.' + namespace, function (event) {
+					// Ignore other than left mouse button
+					if (event.which !== 1) {
+						return;
+					}
+
+					stopDefault(event);
+
+					// Calculate new handle position and sync SLIDEE to it
+					slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
 				});
 			}
 
@@ -1135,11 +1161,7 @@
 
 						var path = within((o.horizontal ? event.clientX : event.clientY) - initLoc, pathMin, pathMax);
 
-						slideTo(
-							Math.round((initPos + path) / hPos.max * (pos.max - pos.min)) + pos.min,
-							'handle',
-							event.type === 'mouseup'
-						);
+						slideTo(handleToSlidee(initPos + path), 'handle', event.type === 'mouseup');
 
 						// Cleanup and trigger :moveEnd event
 						if (event.type === 'mouseup') {
@@ -1284,6 +1306,7 @@
 		dragHandle:    0,    // Whether the scrollbar handle should be dragable.
 		dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
 		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
+		clickBar:      0,    // Enable navigation by clicking on scrollbar.
 		syncFactor:    0.50, // Handle => SLIDEE sync factor. 0-1 floating point, where 1 = immediate, 0 = infinity.
 
 		// Pagesbar
