@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.10.0
+ * jQuery Sly v0.11.0
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -857,32 +857,6 @@
 		}
 
 		/**
-		 * Crossbrowser reliable way to stop default event action.
-		 *
-		 * @param {Event} event     Event object.
-		 * @param {Bool}  noBubbles Cancel event bubbling.
-		 *
-		 * @return {Void}
-		 */
-		function stopDefault(event, noBubbles) {
-			event = event || window.event;
-
-			if (event.preventDefault) {
-				event.preventDefault();
-			} else {
-				event.returnValue = false;
-			}
-
-			if (noBubbles) {
-				if (event.stopPropagation) {
-					event.stopPropagation();
-				} else {
-					event.cancelBubble = true;
-				}
-			}
-		}
-
-		/**
 		 * Updates a signle or multiple option values.
 		 *
 		 * @param {Mixed} name  Name of the option that should be updated, or object that will extend the options.
@@ -910,6 +884,7 @@
 				.add($slidee)
 				.add($scrollSource)
 				.add($handle)
+				.add($sb)
 				.add($pb)
 				.add($prevButton)
 				.add($nextButton)
@@ -1188,6 +1163,32 @@
 				self[o.startPaused ? 'pause' : 'cycle']();
 			}
 		}());
+	}
+
+	/**
+	 * Crossbrowser reliable way to stop default event action.
+	 *
+	 * @param {Event} event     Event object.
+	 * @param {Bool}  noBubbles Cancel event bubbling.
+	 *
+	 * @return {Void}
+	 */
+	function stopDefault(event, noBubbles) {
+		event = event || window.event;
+
+		if (event.preventDefault) {
+			event.preventDefault();
+		} else {
+			event.returnValue = false;
+		}
+
+		if (noBubbles) {
+			if (event.stopPropagation) {
+				event.stopPropagation();
+			} else {
+				event.cancelBubble = true;
+			}
+		}
 	}
 
 	/**
