@@ -87,7 +87,6 @@ var sly = $('#frame').sly({
 
 To do before 1.0.0:
 
-- Navigation by clicking on scrollbar.
 - Extending events with jQuery.Callbacks API.
 
 Maybe in 1.0.0, maybe later:
