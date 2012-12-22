@@ -19,6 +19,6 @@ Sly is now as smooth as possible!
 
 **v0.9.7** - Added `.set()` method for changing options in runtime. Very limited though...
 
-**v0.9.0**-**v0.9.6** - Goofing around, tweaking and fixing.
+**v0.9.0-0.9.6** - Goofing around, tweaking and fixing.
 
 **v0.9.0** - First public version.
