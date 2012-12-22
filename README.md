@@ -40,6 +40,7 @@ var sly = $('#frame').sly({
 	dragHandle:    0,    // Whether the scrollbar handle should be dragable.
 	dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
 	minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
+	clickBar:      0,    // Enable navigation by clicking on scrollbar.
 	syncFactor:    0.50, // Handle => SLIDEE sync factor. 0-1 floating point, where 1 = immediate, 0 = infinity.
 
 	// Pagesbar
