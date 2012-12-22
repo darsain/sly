@@ -1,5 +1,9 @@
 ## Beta
 
+**v0.11.0** - Added navigation by clicking on scrollbar.
+
+- New option `clickBar` that enables this feature - disabled by default.
+
 **v0.10.0** - Minor plugin rewrite with huge performance improvements.
 
 - Implemented custom animation rendering with requestAnimationFrame (ditching jQuery.animate altogether).
