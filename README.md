@@ -26,7 +26,8 @@ read the [Roadmap section](#roadmap) below.
 
 ## Quick reference
 
-Call with all default options as defined in the source. Visit the [Options Wiki page](Options) for detailed documentation.
+Call with all default options as defined in the source. Visit the
+[Options Wiki page](https://github.com/Darsain/sly/wiki/Options) for more detailed documentation.
 
 ```js
 var sly = $('#frame').sly({
