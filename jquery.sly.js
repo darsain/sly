@@ -100,6 +100,8 @@
 			$nextPageButton = $(o.nextPage),
 			last            = {},
 			animation       = {},
+			dragging        = {},
+			dragEvents      = 'mousemove.' + namespace + ' mouseup.' + namespace,
 			renderID        = 0,
 			cycleID         = 0,
 			cycleIsPaused   = 0,
@@ -857,6 +859,102 @@
 		}
 
 		/**
+		 * Dragging initiator.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function dragInit(event) {
+			// Ignore other than left mouse button
+			if (event.which !== 1) {
+				return;
+			}
+
+			stopDefault(event);
+
+			var src = event.data.src,
+				isSlidee = src === 'slidee';
+
+			// Update a dragging object
+			dragging.src      = src;
+			dragging.init     = 0;
+			dragging.released = 0;
+			dragging.initLoc  = o.horizontal ? event.clientX : event.clientY;
+			dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
+			dragging.start    = +new Date();
+			dragging.time     = 0;
+			dragging.path     = 0;
+			dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
+			dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
+			dragging.$src     = $(event.target);
+
+			// Add dragging class
+			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+
+			// Bind dragging events
+			$doc.on(dragEvents, dragHandler);
+		}
+
+		/**
+		 * Handler for dragging scrollbar handle or SLIDEE.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function dragHandler(event) {
+			dragging.released = event.type === 'mouseup';
+			dragging.path     = within((o.horizontal ? event.clientX : event.clientY) - dragging.initLoc, dragging.pathMin, dragging.pathMax);
+
+			// Initialization
+			if (!dragging.init && Math.abs(dragging.path) > 10 || dragging.src === 'handle') {
+				dragging.init = 1;
+				if (dragging.src === 'slidee') {
+					ignoreNextClick = 1;
+				}
+
+				// Pause ongoing cycle
+				self.pause(1);
+
+				// Disable click actions on source element, as they are unwelcome when dragging
+				dragging.$src.on('click', function disableAction(event) {
+					stopDefault(event, 1);
+					if (dragging.src === 'slidee') {
+						ignoreNextClick = 0;
+					}
+					dragging.$src.off('click', disableAction);
+				});
+
+				// Trigger :moveStart event
+				$frame.trigger(pluginName + ':moveStart', [pos, $items, rel, dragging.src]);
+			}
+
+			// Proceed when initialized
+			if (dragging.init) {
+				stopDefault(event);
+
+				// Adjust path with a swing on mouse release
+				if (dragging.released && dragging.src === 'slidee' && o.speed > 33) {
+					dragging.path += dragging.path * 200 / (+new Date() - dragging.start);
+				}
+
+				slideTo(
+					dragging.src === 'slidee' ?
+					Math.round(dragging.initPos - dragging.path) :
+					handleToSlidee(dragging.initPos + dragging.path)
+				, dragging.src, dragging.released);
+			}
+
+			// Cleanup and trigger :moveEnd event on release
+			if (dragging.released) {
+				$doc.off(dragEvents, dragHandler);
+				(dragging.src === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
+				$frame.trigger(pluginName + ':moveEnd', [pos, $items, rel, dragging.src]);
+			}
+		}
+
+		/**
 		 * Updates a signle or multiple option values.
 		 *
 		 * @param {Mixed} name  Name of the option that should be updated, or object that will extend the options.
@@ -907,8 +1005,6 @@
 
 		/** Constructor */
 		(function () {
-			var dragEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
-
 			// Extend options
 			o = $.extend({}, $.fn[pluginName].defaults, o);
 
@@ -1041,111 +1137,12 @@
 
 			// Dragging navigation
 			if (o.dragContent) {
-				$dragSource.on('mousedown.' + namespace, function (event) {
-					// Ignore other than left mouse button
-					if (event.which !== 1) {
-						return;
-					}
-
-					stopDefault(event);
-
-					var initLoc = o.horizontal ? event.clientX : event.clientY,
-						initPos = pos.cur,
-						start   = +new Date(),
-						$srcEl  = $(event.target),
-						isInitialized = 0;
-
-					// Add dragging class
-					$slidee.addClass(o.draggedClass);
-
-					// Bind dragging events
-					$doc.on(dragEvents, function (event) {
-
-						var released = event.type === 'mouseup',
-							path     = (o.horizontal ? event.clientX : event.clientY) - initLoc;
-
-						// Initialization
-						if (!isInitialized && Math.abs(path) > 10) {
-							isInitialized = 1;
-							ignoreNextClick = 1;
-
-							// Pause ongoing cycle
-							self.pause(!cycleIsPaused);
-
-							// Disable click actions on source element, as they are unwelcome when dragging
-							$srcEl.on('click', function disableAction(event) {
-								stopDefault(event, 1);
-								ignoreNextClick = 0;
-								$srcEl.off('click', disableAction);
-							});
-
-							// Trigger :moveStart event
-							$frame.trigger(pluginName + ':moveStart', [pos, $items, rel, 'slidee']);
-						}
-
-						// Proceed when initialized
-						if (isInitialized) {
-							stopDefault(event);
-
-							// Adjust path with a swing on mouse release
-							if (released && o.speed > 33) {
-								path += path * 200 / (+new Date() - start);
-							}
-
-							slideTo(Math.round(initPos - path), 'slidee', released);
-						}
-
-						// Cleanup and trigger :moveEnd event on release
-						if (released) {
-							ignoreNextClick = 0;
-							$doc.off(dragEvents);
-							$slidee.removeClass(o.draggedClass);
-							$frame.trigger(pluginName + ':moveEnd', [pos, $items, rel, 'slidee']);
-						}
-					});
-				});
+				$dragSource.on('mousedown.' + namespace, { src: 'slidee' }, dragInit);
 			}
 
 			// Scrollbar dragging navigation
-			if ($handle && o.dragHandle) {
-				$handle.on('mousedown.' + namespace, function (event) {
-					// Ignore other than left mouse button
-					if (event.which !== 1) {
-						return;
-					}
-
-					stopDefault(event);
-
-					var initLoc = o.horizontal ? event.clientX : event.clientY,
-						initPos = hPos.cur,
-						pathMin = -hPos.cur,
-						pathMax = hPos.max - hPos.cur;
-
-					// Add dragging class
-					$handle.addClass(o.draggedClass);
-
-					// Trigger :moveStart event
-					$frame.trigger(pluginName + ':moveStart', [pos, $items, rel, 'scrollbar']);
-
-					// Pause ongoing cycle
-					self.pause(!cycleIsPaused);
-
-					// Bind dragging events
-					$doc.on(dragEvents, function (event) {
-						stopDefault(event);
-
-						var path = within((o.horizontal ? event.clientX : event.clientY) - initLoc, pathMin, pathMax);
-
-						slideTo(handleToSlidee(initPos + path), 'handle', event.type === 'mouseup');
-
-						// Cleanup and trigger :moveEnd event
-						if (event.type === 'mouseup') {
-							$doc.off(dragEvents);
-							$handle.removeClass(o.draggedClass);
-							$frame.trigger(pluginName + ':moveEnd', [pos, $items, rel, 'scrollbar']);
-						}
-					});
-				});
+			if (o.dragHandle && $handle) {
+				$handle.on('mousedown.' + namespace, { src: 'handle' }, dragInit);
 			}
 
 			// Automatic cycling
