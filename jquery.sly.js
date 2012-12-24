@@ -41,8 +41,9 @@
 	 */
 	function Plugin(frame, o) {
 
-		// Alias for this
-		var self = this,
+		// Private variables
+		var self        = this,
+			initialized = 0,
 
 			// Frame variables
 			$frame     = $(frame),
@@ -98,6 +99,7 @@
 			$nextButton     = $(o.next),
 			$prevPageButton = $(o.prevPage),
 			$nextPageButton = $(o.nextPage),
+			callbacks       = {},
 			last            = {},
 			animation       = {},
 			dragging        = {},
@@ -114,10 +116,12 @@
 		 *
 		 * @return {Void}
 		 */
-		var load = this.reload = function () {
+		var load = self.reload = function () {
 			// Local variables
-			var ignoredMargin = 0,
-				oldPos        = $.extend({}, pos);
+			var ignoredMargin = 0;
+
+			// Save old position
+			pos.old = $.extend({}, pos);
 
 			// Reset global variables
 			frameSize  = o.horizontal ? $frame.width() : $frame.height();
@@ -272,9 +276,7 @@
 			rel.handleSize = handleSize;
 
 			// Trigger :load event
-			$frame.trigger(pluginName + ':load', [$.extend({}, pos, {
-				old: oldPos
-			}), $items, rel]);
+			trigger('load');
 		};
 
 		/**
@@ -363,7 +365,7 @@
 				renderID = rAF(render);
 
 				if (!animation.dragging) {
-					$frame.trigger(pluginName + ':moveStart', [pos, $items, rel]);
+					trigger('moveStart');
 				}
 
 				return;
@@ -388,14 +390,13 @@
 				renderID = 0;
 
 				if (!animation.dragging) {
-					$frame.trigger(pluginName + ':moveEnd', [pos, $items, rel]);
+					trigger('moveEnd');
 				}
 			} else {
 				renderID = rAF(render);
 			}
 
-			// Trigger :move event
-			$frame.trigger(pluginName + ':move', [pos, $items, rel]);
+			trigger('move');
 
 			// Position SLIDEE
 			if (transform) {
@@ -445,7 +446,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.prev = function () {
+		self.prev = function () {
 			self.activate(rel.activeItem - 1);
 		};
 
@@ -454,7 +455,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.next = function () {
+		self.next = function () {
 			self.activate(rel.activeItem + 1);
 		};
 
@@ -463,7 +464,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.prevPage = function () {
+		self.prevPage = function () {
 			self.activatePage(rel.activePage - 1);
 		};
 
@@ -472,7 +473,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.nextPage = function () {
+		self.nextPage = function () {
 			self.activatePage(rel.activePage + 1);
 		};
 
@@ -483,7 +484,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.toStart = function (item) {
+		self.toStart = function (item) {
 			if (item === undefined) {
 				slideTo(pos.min);
 			} else if (itemNav) {
@@ -513,7 +514,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.toEnd = function (item) {
+		self.toEnd = function (item) {
 			if (item === undefined) {
 				slideTo(pos.max);
 			} else if (itemNav) {
@@ -544,7 +545,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.toCenter = function (item) {
+		self.toCenter = function (item) {
 			if (item === undefined) {
 				slideTo(Math.round(pos.max / 2 + pos.min / 2));
 			} else if (itemNav) {
@@ -599,7 +600,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.activate = function (item, noReposition) {
+		self.activate = function (item, noReposition) {
 			if (!itemNav || item === undefined) {
 				return;
 			}
@@ -614,9 +615,9 @@
 			$items.removeClass(o.activeClass).eq(index).addClass(o.activeClass);
 			updateNavButtonsState();
 
-			// Trigget :active event if a new element is being activated
+			// Trigget active event if a new element is being activated
 			if (index !== oldActive) {
-				$frame.trigger(pluginName + ':active', [$items.eq(index)]);
+				trigger('active', index);
 			}
 
 			if (!noReposition) {
@@ -646,10 +647,10 @@
 		 *
 		 * @return {Void}
 		 */
-		this.activatePage = function (index) {
-			// Fix overflowing
+		self.activatePage = function (index) {
 			index = within(index, 0, pages.length - 1);
 			slideTo(pages[index]);
+			trigger('activePage', index);
 		};
 
 		/**
@@ -788,7 +789,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.cycle = function (soft) {
+		self.cycle = function (soft) {
 			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && cycleIsPaused) {
 				return;
 			}
@@ -798,8 +799,7 @@
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
 			} else {
-				// Trigger :cycleStart event
-				$frame.trigger(pluginName + ':cycleStart', [pos, $items, rel]);
+				trigger('cycleStart');
 			}
 
 			cycleID = setTimeout(function () {
@@ -813,8 +813,7 @@
 						break;
 				}
 
-				// Trigger :cycle event
-				$frame.trigger(pluginName + ':cycle', [pos, $items, rel]);
+				trigger('cycle');
 			}, o.cycleInterval);
 		};
 
@@ -825,16 +824,14 @@
 		 *
 		 * @return {Void}
 		 */
-		this.pause = function (soft) {
+		self.pause = function (soft) {
 			if (!soft) {
 				cycleIsPaused = true;
 			}
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
-
-				// Trigger :cyclePause event
-				$frame.trigger(pluginName + ':cyclePause', [pos, $items, rel]);
+				trigger('cyclePause');
 			}
 		};
 
@@ -843,7 +840,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.toggle = function () {
+		self.toggle = function () {
 			self[cycleID ? 'pause' : 'cycle']();
 		};
 
@@ -926,8 +923,8 @@
 					dragging.$src.off('click', disableAction);
 				});
 
-				// Trigger :moveStart event
-				$frame.trigger(pluginName + ':moveStart', [pos, $items, rel, dragging.src]);
+				// Trigger moveStart event
+				trigger('moveStart', dragging.src);
 			}
 
 			// Proceed when initialized
@@ -950,7 +947,7 @@
 			if (dragging.released) {
 				$doc.off(dragEvents, dragHandler);
 				(dragging.src === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
-				$frame.trigger(pluginName + ':moveEnd', [pos, $items, rel, dragging.src]);
+				trigger('moveEnd', dragging.src);
 			}
 		}
 
@@ -962,7 +959,7 @@
 		 *
 		 * @return {Void}
 		 */
-		this.set = function (name, value) {
+		self.set = function (name, value) {
 			if ($.isPlainObject(name)) {
 				$.extend(o, name);
 			} else if (o.hasOwnProperty(name)) {
@@ -971,11 +968,93 @@
 		};
 
 		/**
+		 * Binds callbacks to events.
+		 *
+		 * @param  {String}   name Event name.
+		 * @param  {Function} fn    Callback function.
+		 *
+		 * @return {Void}
+		 */
+		self.on = function (name, fn) {
+			if (typeof fn === 'function') {
+				callbacks[name] = callbacks[name] || [];
+				for (var i = 0, l = callbacks[name].length; i < l; i++) {
+					// Abort if callback is already present
+					if (callbacks[name][i] === fn) {
+						return;
+					}
+				}
+				callbacks[name].push(fn);
+			}
+		};
+
+		/**
+		 * Remove one or all callbacks.
+		 *
+		 * @param  {String}   name Event name.
+		 * @param  {Function} fn    Callback function to be removed. Omit for all 'name' callbacks to be removed.
+		 *
+		 * @return {Void}
+		 */
+		self.off = function (name, fn) {
+			if (callbacks[name]) {
+				if (fn) {
+					for (var i = 0, l = callbacks[name].length; i < l; i++) {
+						if (callbacks[name][i] === fn) {
+							callbacks[name].splice(i, 1);
+						}
+					}
+				} else {
+					callbacks[name].length = 0;
+				}
+			}
+		};
+
+		/**
+		 * Trigger callbacks for event.
+		 *
+		 * @param  {String} name Event name.
+		 * @param  {Mixed}  argX  Arguments passed to callback.
+		 *
+		 * @return {Void}
+		 */
+		function trigger(name, arg1, arg2, arg3, arg4) {
+			// Common arguments for events
+			switch (name) {
+				case 'active':
+					arg2 = arg1;
+					arg1 = $items;
+					break;
+
+				case 'activePage':
+					arg2 = arg1;
+					arg1 = pages;
+					break;
+
+				default:
+					arg4 = arg1;
+					arg1 = pos;
+					arg2 = $items;
+					arg3 = rel;
+			}
+
+			if (callbacks[name]) {
+				for (var i = 0, l = callbacks[name].length; i < l; i++) {
+					callbacks[name][i].call($frame[0], arg1, arg2, arg3, arg4);
+				}
+			}
+
+			if (o.domEvents) {
+				$frame.trigger(pluginName + ':' + name, [arg1, arg2, arg3, arg4]);
+			}
+		}
+
+		/**
 		 * Destroys plugin instance and everything it created.
 		 *
 		 * @return {Void}
 		 */
-		this.destroy = function () {
+		self.destroy = function () {
 			// Unbind all events
 			$frame
 				.add($doc)
@@ -1003,8 +1082,16 @@
 			$.removeData(frame, namespace);
 		};
 
-		/** Constructor */
-		(function () {
+		/**
+		 * Initialize plugin.
+		 *
+		 * @return {Void}
+		 */
+		self.init = function () {
+			if (initialized) {
+				return;
+			}
+
 			// Extend options
 			o = $.extend({}, $.fn[pluginName].defaults, o);
 
@@ -1159,7 +1246,7 @@
 				// Initiate or pause cycling
 				self[o.startPaused ? 'pause' : 'cycle']();
 			}
-		}());
+		};
 	}
 
 	/**
@@ -1276,6 +1363,9 @@
 			if (!plugin && !method) {
 				// Create a new plugin object if it doesn't exist yet
 				plugin = $.data(element, namespace, new Plugin(element, options));
+				if (!returnInstance) {
+					plugin.init();
+				}
 			} else if (plugin && method) {
 				// Call plugin method
 				if (plugin[method]) {
@@ -1339,8 +1429,11 @@
 		keyboardNavByPages: 0,  // Whether the keyboard should navigate by pages instead of items.
 
 		// Classes
-		draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
-		activeClass:   'active',  // Class for active items and pages.
-		disabledClass: 'disabled' // Class for disabled navigation elements.
+		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
+		activeClass:   'active',   // Class for active items and pages.
+		disabledClass: 'disabled', // Class for disabled navigation elements.
+
+		// Performance
+		domEvents: 1 // Disable DOM events if you are not using them.
 	};
 }(jQuery));
