@@ -1,17 +1,16 @@
-# Sly
+# [Sly](http://darsa.in/sly)
 
-jQuery plugin for one-directional scrolling with item based navigation support.
-
-[See the DEMO](http://darsa.in/sly)
+jQuery plugin for one-directional scrolling with item based navigation support. 11.5KB minified, 4.5KB gzipped.
 
 #### Dependencies
 
-Except jQuery, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to slide a few items.
-Just this nice 11KB (minified) action - you are welcome :)
+Except jQuery, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to use it.
 
 #### Compatibility
 
 Works everywhere! I'm afraid even in IE6 (not intended, honest). Mobile is not tested.
+
+### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
 
 Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info,
 read the [Roadmap section](#roadmap) below.
@@ -22,7 +21,7 @@ read the [Roadmap section](#roadmap) below.
 - [Markup](https://github.com/Darsain/sly/wiki/Markup) - how should the HTML look like
 - [Options](https://github.com/Darsain/sly/wiki/Options)
 - [Methods](https://github.com/Darsain/sly/wiki/Methods)
-- [Events](https://github.com/Darsain/sly/wiki/Events)
+- [Callbacks & DOM Events](https://github.com/Darsain/sly/wiki/Callbacks-&-DOM-Events)
 
 ## Quick reference
 
@@ -64,20 +63,22 @@ var sly = $('#frame').sly({
 
 	// Mixed options
 	scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-	dragContent:   0,       // Enable navigation by dragging the SLIDEE.
+	drag:          0,       // Enable navigation by dragging the SLIDEE.
 	elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 	speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 	easing:        'swing', // Animations easing.
 	scrollSource:  null,    // Selector or DOM element for catching the mouse wheel event. Default is FRAME.
 	dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
 	startAt:       0,       // Starting offset in pixels or items.
-	keyboardNav:   0,       // Navigation by keyboard arrows.
-	keyboardNavByPages: 0,  // Whether the keyboard should navigate by pages instead of items.
+	keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
 
 	// Classes
-	draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
-	activeClass:   'active',  // Class for active items and pages.
-	disabledClass: 'disabled' // Class for disabled navigation elements.
+	draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
+	activeClass:   'active',   // Class for active items and pages.
+	disabledClass: 'disabled', // Class for disabled navigation elements.
+
+	// Performance
+	domEvents: 1 // Disable DOM events if you are not using them.
 }, true);
 ```
 
@@ -86,10 +87,6 @@ var sly = $('#frame').sly({
 **This plugin is in development!** and the API may change before the 1.0.0 release.
 
 To do before 1.0.0:
-
-- Extending events with jQuery.Callbacks API.
-
-Maybe in 1.0.0, maybe later:
 
 - Touch events support.
 
