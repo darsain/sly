@@ -974,8 +974,8 @@
 		/**
 		 * Registers callbacks.
 		 *
-		 * @param  {Mixed}    name  Event name, or callbacks map.
-		 * @param  {Function} fn    Callback function.
+		 * @param  {Mixed} name  Event name, or callbacks map.
+		 * @param  {Mixed} fn    Callback, or an array of callback functions.
 		 *
 		 * @return {Void}
 		 */
@@ -1008,14 +1008,18 @@
 		/**
 		 * Remove one or all callbacks.
 		 *
-		 * @param  {String}   name Event name.
-		 * @param  {Function} fn    Callback function to be removed. Omit for all 'name' callbacks to be removed.
+		 * @param  {String} name Event name.
+		 * @param  {Mixed}  fn   Callback, or an array of callback functions. Omit to remove all callbacks.
 		 *
 		 * @return {Void}
 		 */
 		self.off = function (name, fn) {
 			if (callbacks[name]) {
-				if (fn) {
+				if (fn instanceof Array) {
+					for (var f = 0, fl = fn.length; f < fl; f++) {
+						self.off(name, fn[f]);
+					}
+				} else if (typeof fn === 'function') {
 					for (var i = 0, l = callbacks[name].length; i < l; i++) {
 						if (callbacks[name][i] === fn) {
 							callbacks[name].splice(i, 1);
