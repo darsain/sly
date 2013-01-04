@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.11.0
+ * jQuery Sly v0.12.0
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -17,29 +17,33 @@
 	browser:true
 */
 /*global jQuery:false */
-;(function ($, undefined) {
+;(function ($, w, undefined) {
 	'use strict';
 
 	// Plugin names
-	var pluginName = 'sly',
-		namespace = pluginName,
+	var pluginName  = 'sly',
+		pluginClass = 'Sly',
+		namespace   = pluginName,
 
 		// Local WindowAnimationTiming interface
-		cAF = window.cancelAnimationFrame || window.cancelRequestAnimationFrame,
-		rAF = window.requestAnimationFrame,
+		cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame,
+		rAF = w.requestAnimationFrame,
 
 		// CSS transform property
 		transform;
 
 	/**
-	 * Plugin class
+	 * Sly.
 	 *
 	 * @class
 	 *
-	 * @param {Element} frame DOM element of sly container
-	 * @param {Object}  o     Object with plugin options
+	 * @param {Element} frame       DOM element of sly container.
+	 * @param {Object}  o           Object with plugin options.
+	 * @param {Object}  callbackMap Callbacks map.
 	 */
-	function Plugin(frame, o) {
+	function Sly(frame, o, callbackMap) {
+		// Extend options
+		o = $.extend({}, $.fn[pluginName].defaults, o);
 
 		// Private variables
 		var self        = this,
@@ -968,15 +972,28 @@
 		};
 
 		/**
-		 * Binds callbacks to events.
+		 * Registers callbacks.
 		 *
-		 * @param  {String}   name Event name.
+		 * @param  {Mixed}    name  Event name, or callbacks map.
 		 * @param  {Function} fn    Callback function.
 		 *
 		 * @return {Void}
 		 */
 		self.on = function (name, fn) {
-			if (typeof fn === 'function') {
+			// Callbacks map
+			if (typeof name === 'object') {
+				for (var key in name) {
+					if (name.hasOwnProperty(key)) {
+						self.on(key, name[key]);
+					}
+				}
+			// Callbacks array
+			} else if (fn instanceof Array) {
+				for (var f = 0, fl = fn.length; f < fl; f++) {
+					self.on(name, fn[f]);
+				}
+			// Callback
+			} else if (typeof fn === 'function') {
 				callbacks[name] = callbacks[name] || [];
 				for (var i = 0, l = callbacks[name].length; i < l; i++) {
 					// Abort if callback is already present
@@ -1085,15 +1102,15 @@
 		/**
 		 * Initialize plugin.
 		 *
-		 * @return {Void}
+		 * @return {Object}
 		 */
 		self.init = function () {
 			if (initialized) {
 				return;
 			}
 
-			// Extend options
-			o = $.extend({}, $.fn[pluginName].defaults, o);
+			// Register callbacks map
+			self.on(callbackMap);
 
 			// Set required styles to elements
 			$frame.css('overflow', 'hidden');
@@ -1161,19 +1178,19 @@
 			}
 
 			// Keyboard navigation
-			if (o.keyboardNav) {
+			if (o.keyboardNavBy) {
 				$doc.bind('keydown.' + namespace, function (event) {
 					switch (event.which) {
 						// Left or Up
 						case o.horizontal ? 37 : 38:
 							stopDefault(event);
-							self[o.keyboardNavByPages ? 'prevPage' : 'prev']();
+							self[o.keyboardNavBy === 'pages' ? 'prevPage' : 'prev']();
 							break;
 
 						// Right or Down
 						case o.horizontal ? 39 : 40:
 							stopDefault(event);
-							self[o.keyboardNavByPages ? 'nextPage' : 'next']();
+							self[o.keyboardNavBy === 'pages' ? 'nextPage' : 'next']();
 							break;
 					}
 				});
@@ -1223,7 +1240,7 @@
 			}
 
 			// Dragging navigation
-			if (o.dragContent) {
+			if (o.drag) {
 				$dragSource.on('mousedown.' + namespace, { src: 'slidee' }, dragInit);
 			}
 
@@ -1246,6 +1263,9 @@
 				// Initiate or pause cycling
 				self[o.startPaused ? 'pause' : 'cycle']();
 			}
+
+			// return plugin instance
+			return self;
 		};
 	}
 
@@ -1258,7 +1278,7 @@
 	 * @return {Void}
 	 */
 	function stopDefault(event, noBubbles) {
-		event = event || window.event;
+		event = event || w.event;
 
 		if (event.preventDefault) {
 			event.preventDefault();
@@ -1336,11 +1356,13 @@
 		}
 	}());
 
-	// jQuery plugin extension
-	$.fn[pluginName] = function (options, returnInstance) {
+	// Expose class globally
+	w[pluginClass] = Sly;
 
-		var method = false,
-			methodArgs, instance;
+	// Extend jQuery
+	$.fn[pluginName] = function (options, callbackMap) {
+
+		var method, methodArgs;
 
 		// Attributes logic
 		if (!$.isPlainObject(options)) {
@@ -1348,39 +1370,26 @@
 				method = options === false ? 'destroy' : options;
 				methodArgs = arguments;
 				Array.prototype.shift.call(methodArgs);
-			} else if (options === true) {
-				returnInstance = options;
 			}
 			options = {};
 		}
 
 		// Apply plugin to all elements
-		this.each(function (i, element) {
+		return this.each(function (i, element) {
 
 			// Plugin call with prevention against multiple instantiations
 			var plugin = $.data(element, namespace);
 
 			if (!plugin && !method) {
 				// Create a new plugin object if it doesn't exist yet
-				plugin = $.data(element, namespace, new Plugin(element, options));
-				if (!returnInstance) {
-					plugin.init();
-				}
+				plugin = $.data(element, namespace, new Sly(element, options, callbackMap).init());
 			} else if (plugin && method) {
 				// Call plugin method
 				if (plugin[method]) {
 					plugin[method].apply(plugin, methodArgs);
 				}
 			}
-
-			// Register plugin instance for a first element in set
-			if (!instance) {
-				instance = plugin;
-			}
 		});
-
-		// Return chainable jQuery object, or a plugin instance
-		return !method && returnInstance ? instance : this;
 	};
 
 	// Default options
@@ -1418,15 +1427,14 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-		dragContent:   0,       // Enable navigation by dragging the SLIDEE.
+		drag:          0,       // Enable navigation by dragging the SLIDEE.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Animations easing.
 		scrollSource:  null,    // Selector or DOM element for catching the mouse wheel event. Default is FRAME.
 		dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
 		startAt:       0,       // Starting offset in pixels or items.
-		keyboardNav:   0,       // Navigation by keyboard arrows.
-		keyboardNavByPages: 0,  // Whether the keyboard should navigate by pages instead of items.
+		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
 
 		// Classes
 		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
@@ -1436,4 +1444,4 @@
 		// Performance
 		domEvents: 1 // Disable DOM events if you are not using them.
 	};
-}(jQuery));
+}(jQuery, window));
