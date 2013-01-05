@@ -21,7 +21,7 @@ read the [Roadmap section](#roadmap) below.
 - [Markup](https://github.com/Darsain/sly/wiki/Markup) - how should the HTML look like
 - [Options](https://github.com/Darsain/sly/wiki/Options)
 - [Methods](https://github.com/Darsain/sly/wiki/Methods)
-- [Callbacks & DOM Events](https://github.com/Darsain/sly/wiki/Callbacks-&-DOM-Events)
+- [Events](https://github.com/Darsain/sly/wiki/Events)
 
 ## Quick reference
 
