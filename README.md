@@ -1,6 +1,6 @@
 # [Sly](http://darsa.in/sly)
 
-jQuery plugin for one-directional scrolling with item based navigation support. 11.5KB minified, 4.5KB gzipped.
+jQuery plugin for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
 
 #### Dependencies
 
@@ -87,6 +87,11 @@ var sly = $('#frame').sly({
 To do before 1.0.0:
 
 - Touch events support.
+- Support for frame-less call that provides API for parallax only usage.
+
+Maybe never, but it would be nice:
+
+- Dropping jQuery dependency.
 
 ## Contributing
 
