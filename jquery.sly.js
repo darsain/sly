@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.12.0
+ * jQuery Sly v0.13.0
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -107,7 +107,9 @@
 			last            = {},
 			animation       = {},
 			dragging        = {},
-			dragEvents      = 'mousemove.' + namespace + ' mouseup.' + namespace,
+			dragInitEvents  = 'touchstart.' + namespace + ' mousedown.' + namespace,
+			dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace,
+			dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace,
 			renderID        = 0,
 			cycleID         = 0,
 			cycleIsPaused   = 0,
@@ -286,18 +288,6 @@
 		/**
 		 * Animate to a position.
 		 *
-		 * @param {Int}   delta
-		 * @param {Mixed} drag
-		 *
-		 * @return {Void}
-		 */
-		function slideBy(delta) {
-			slideTo(pos.dest + delta);
-		}
-
-		/**
-		 * Animate to a position.
-		 *
 		 * @param {Int}   newPos
 		 * @param {Mixed} drag
 		 *
@@ -446,6 +436,24 @@
 		}
 
 		/**
+		 * Returns the position object.
+		 *
+		 * @return {Object}
+		 */
+		self.getPos = function () {
+			return pos;
+		};
+
+		/**
+		 * Returns the relatives object.
+		 *
+		 * @return {Object}
+		 */
+		self.getRel = function () {
+			return rel;
+		};
+
+		/**
 		 * Activate previous item.
 		 *
 		 * @return {Void}
@@ -479,6 +487,28 @@
 		 */
 		self.nextPage = function () {
 			self.activatePage(rel.activePage + 1);
+		};
+
+		/**
+		 * Slide SLIDEE by amount of pixels.
+		 *
+		 * @param {Int}   delta
+		 *
+		 * @return {Void}
+		 */
+		self.slideBy = function (delta) {
+			slideTo(pos.dest + delta);
+		};
+
+		/**
+		 * Animate SLIDEE to a specific position.
+		 *
+		 * @param {Int} pos
+		 *
+		 * @return {Void}
+		 */
+		self.slideTo = function (pos) {
+			slideTo(pos);
 		};
 
 		/**
@@ -616,7 +646,8 @@
 			rel.activeItem = index;
 
 			// Update classes
-			$items.removeClass(o.activeClass).eq(index).addClass(o.activeClass);
+			$items.eq(oldActive).removeClass(o.activeClass);
+			$items.eq(index).addClass(o.activeClass);
 			updateNavButtonsState();
 
 			// Trigget active event if a new element is being activated
@@ -867,21 +898,23 @@
 		 * @return {Void}
 		 */
 		function dragInit(event) {
+			var isTouch = event.type === 'touchstart',
+				src = event.data.src,
+				isSlidee = src === 'slidee';
+
 			// Ignore other than left mouse button
-			if (event.which !== 1) {
+			if (!isTouch && event.which !== 1) {
 				return;
 			}
 
 			stopDefault(event);
 
-			var src = event.data.src,
-				isSlidee = src === 'slidee';
-
 			// Update a dragging object
 			dragging.src      = src;
 			dragging.init     = 0;
 			dragging.released = 0;
-			dragging.initLoc  = o.horizontal ? event.clientX : event.clientY;
+			dragging.touch    = isTouch;
+			dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
 			dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
 			dragging.start    = +new Date();
 			dragging.time     = 0;
@@ -894,7 +927,7 @@
 			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
 
 			// Bind dragging events
-			$doc.on(dragEvents, dragHandler);
+			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
 		}
 
 		/**
@@ -905,8 +938,11 @@
 		 * @return {Void}
 		 */
 		function dragHandler(event) {
-			dragging.released = event.type === 'mouseup';
-			dragging.path     = within((o.horizontal ? event.clientX : event.clientY) - dragging.initLoc, dragging.pathMin, dragging.pathMax);
+			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
+			dragging.path     = within(
+				(dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event)[o.horizontal ? 'pageX' : 'pageY'] - dragging.initLoc,
+				dragging.pathMin, dragging.pathMax
+			);
 
 			// Initialization
 			if (!dragging.init && Math.abs(dragging.path) > 10 || dragging.src === 'handle') {
@@ -949,7 +985,7 @@
 
 			// Cleanup and trigger :moveEnd event on release
 			if (dragging.released) {
-				$doc.off(dragEvents, dragHandler);
+				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 				(dragging.src === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
 				trigger('moveEnd', dragging.src);
 			}
@@ -1090,11 +1126,19 @@
 				.add($nextPageButton)
 				.unbind('.' + namespace);
 
-			// Reset some styles
-			$slidee.add($handle).css(o.horizontal ? 'left' : 'top', 0);
+			// Reset SLIDEE and handle positions
+			$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
 
 			// Remove plugin classes
-			$prevButton.add($nextButton).removeClass(o.disabledClass);
+			$prevButton
+				.add($nextButton)
+				.add($prevPageButton)
+				.add($nextPageButton)
+				.removeClass(o.disabledClass);
+
+			if ($items) {
+				$items.eq(rel.activeItem).removeClass(o.activeClass);
+			}
 
 			// Remove page items
 			$pb.empty();
@@ -1161,7 +1205,7 @@
 						var nextItem = getIndex((centeredNav ? forceCenteredNav ? rel.activeItem : rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
 						self[centeredNav ? forceCenteredNav ? 'activate' : 'toCenter' : 'toStart'](nextItem);
 					} else {
-						slideBy(isForward ? o.scrollBy : -o.scrollBy);
+						self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
 					}
 				});
 			}
@@ -1245,12 +1289,14 @@
 
 			// Dragging navigation
 			if (o.drag) {
-				$dragSource.on('mousedown.' + namespace, { src: 'slidee' }, dragInit);
+				// $dragSource.on('mousedown.' + namespace, { src: 'slidee' }, dragInit);
+				$dragSource.on(dragInitEvents, { src: 'slidee' }, dragInit);
 			}
 
 			// Scrollbar dragging navigation
 			if (o.dragHandle && $handle) {
-				$handle.on('mousedown.' + namespace, { src: 'handle' }, dragInit);
+				// $handle.on('mousedown.' + namespace, { src: 'handle' }, dragInit);
+				$handle.on(dragInitEvents, { src: 'handle' }, dragInit);
 			}
 
 			// Automatic cycling
