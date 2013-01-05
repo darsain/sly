@@ -44,25 +44,19 @@ jQuery(function($){
 				var $frame = $section.find('.frame'),
 					$slidee = $frame.find('ul').eq(0),
 					$scrollbar = $section.find('.scrollbar'),
-					$buttons = $section.find('.controlbar [data-action]'),
-					reset = 0;
+					$buttons = $section.find('.controlbar [data-action]');
 
 				populate($slidee, 10);
 
-				$frame.on('sly:move', function (event, pos) {
-					// Append more items
-					if (pos.dest > pos.max - 100) {
-						populate($slidee, 10, $slidee.children().length-1);
-						$frame.sly('reload');
+				$frame.sly({ itemNav: 'basic', speed: 300, scrollBy: 1, dynamicHandle: 1, scrollBar: $scrollbar }, {
+					move: function (pos) {
+						// Append more items
+						if (pos.dest > pos.max - 100) {
+							populate($slidee, 10, $slidee.children().length-1);
+							$frame.sly('reload');
+						}
 					}
-				}).on('sly:moveEnd', function (event, pos) {
-					// Reload when requested
-					if (reset && pos.cur === pos.min) {
-						reset = 0;
-						$slidee.find('li').slice(10).remove();
-						$frame.sly('reload');
-					}
-				}).sly({ itemNav: 'basic', scrollBy: 1, dynamicHandle: 1, scrollBar: $scrollbar });
+				});
 
 				// Controls
 				$buttons.on('click', function () {
@@ -70,8 +64,9 @@ jQuery(function($){
 
 					switch (action) {
 						case 'reset':
-							reset = 1;
+							$slidee.find('li').slice(10).remove();
 							$frame.sly('toStart');
+							$frame.sly('reload');
 						break;
 
 						default:
