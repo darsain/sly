@@ -1439,13 +1439,11 @@
 		dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
 		startAt:       0,       // Starting offset in pixels or items.
 		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
+		domEvents:     0,       // Enable DOM events if you wish to use them instead of callbacks API (not recommended).
 
 		// Classes
 		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
 		activeClass:   'active',   // Class for active items and pages.
-		disabledClass: 'disabled', // Class for disabled navigation elements.
-
-		// Performance
-		domEvents: 1 // Disable DOM events if you are not using them.
+		disabledClass: 'disabled'  // Class for disabled navigation elements.
 	};
 }(jQuery, window));
