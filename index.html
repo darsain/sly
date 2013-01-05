@@ -558,18 +558,20 @@ $frame.sly({
 			</div>
 
 <pre class="prettyprint lang-js">
-$frame.on('sly:move', function( e, pos ){
-
-	// If close to end, append new items
-	if( pos.cur > pos.max - 100 ){
-
-		populate( $ul, 10);
-
+$('#frame').sly({
+	itemNav: 'basic',
+	speed: 300,
+	scrollBy: 1,
+	dynamicHandle: 1,
+	scrollBar: $scrollbar
+});
+$('#frame').sly('on', 'move', function (pos) {
+	// If close to the end, append new items
+	if (pos.cur > pos.max - 100) {
+		populate($ul, 10);
 		$frame.sly('reload');
-
 	}
-
-}).sly({ itemNav: 'basic', scrollBy: 1 });
+});
 </pre>
 
 		</div><!--end:#infinite-->
