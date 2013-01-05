@@ -86,7 +86,6 @@ var sly = $('#frame').sly({
 
 To do before 1.0.0:
 
-- Touch events support.
 - Support for frame-less call that provides API for parallax only usage.
 
 Maybe never, but it would be nice:
