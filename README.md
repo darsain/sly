@@ -2,13 +2,22 @@
 
 jQuery plugin for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
 
+Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, dragging the content, touch events,
+automated cycling ... and has a powerful API.
+
+That's all build around a custom [highly optimized 60FPS rendering](http://i.imgur.com/gx4RP.png) with
+requestAnimationFrame, and GPU accelerated positioning (in browsers that support it).
+
 #### Dependencies
 
-Except jQuery, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to use it.
+Except jQuery 1.7+, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to use it.
 
 #### Compatibility
 
-Works everywhere! I'm afraid even in IE6 (not intended, honest). Mobile is not tested.
+Works everywhere, even in IE6+ abominations, but that is a complete accident :) IE <8 is not officially supported.
+
+*Mobile:* Sly has a touch events support, but mobile is not tested. If you want to help with that,
+[you are welcome](https://github.com/Darsain/sly/issues/4).
 
 ### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
 
@@ -17,19 +26,19 @@ read the [Roadmap section](#roadmap) below.
 
 ## API documentation
 
-- [Introduction](https://github.com/Darsain/sly/wiki/Home) - how to call sly
-- [Markup](https://github.com/Darsain/sly/wiki/Markup) - how should the HTML look like
-- [Options](https://github.com/Darsain/sly/wiki/Options)
-- [Methods](https://github.com/Darsain/sly/wiki/Methods)
-- [Events](https://github.com/Darsain/sly/wiki/Events)
+- **[Introduction](https://github.com/Darsain/sly/wiki/Home) - how to call sly**
+- **[Markup](https://github.com/Darsain/sly/wiki/Markup) - how should the HTML look like**
+- **[Options](https://github.com/Darsain/sly/wiki/Options)**
+- **[Methods](https://github.com/Darsain/sly/wiki/Methods)**
+- **[Events](https://github.com/Darsain/sly/wiki/Events)**
 
 ## Quick reference
 
-Call with all default options as defined in the source. Visit the
+jQuery call with all default options as defined in the source. Visit the
 [Options Wiki page](https://github.com/Darsain/sly/wiki/Options) for more detailed documentation.
 
 ```js
-var sly = $('#frame').sly({
+$('#frame').sly({
 	// Sly direction
 	horizontal: 0,    // Change to horizontal direction.
 	itemNav:    null, // Item navigation type. Can be: basic, smart, centered, forceCentered.
@@ -77,7 +86,7 @@ var sly = $('#frame').sly({
 	draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
 	activeClass:   'active',   // Class for active items and pages.
 	disabledClass: 'disabled'  // Class for disabled navigation elements.
-}, true);
+});
 ```
 
 ## Roadmap
