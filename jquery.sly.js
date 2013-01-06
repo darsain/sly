@@ -1273,7 +1273,7 @@
 			// Click on items navigation
 			$slidee.on('click.' + namespace, '*', function (event) {
 				// Accept only right mouse button clicks on direct SLIDEE children
-				if (event.which === 1 && event.target.parentNode === event.delegateTarget && !ignoreNextClick) {
+				if (event.which <= 1 && this.parentNode === event.delegateTarget && !ignoreNextClick) {
 					self.activate(this);
 				}
 
