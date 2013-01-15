@@ -952,7 +952,7 @@
 			);
 
 			// Initialization
-			if (!dragging.init && Math.abs(dragging.path) > 10 || dragging.src === 'handle') {
+			if (!dragging.init && Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || dragging.src === 'handle') {
 				dragging.init = 1;
 				if (dragging.src === 'slidee') {
 					ignoreNextClick = 1;
