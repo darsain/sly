@@ -21,9 +21,9 @@
 	'use strict';
 
 	// Plugin names
-	var pluginName  = 'sly',
-		pluginClass = 'Sly',
-		namespace   = pluginName,
+	var pluginName = 'sly',
+		className  = 'Sly',
+		namespace  = pluginName,
 
 		// Local WindowAnimationTiming interface
 		cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame,
@@ -48,6 +48,8 @@
 		// Private variables
 		var self        = this,
 			initialized = 0,
+			parallax    = isNumber(frame),
+			$doc        = $(document),
 
 			// Frame variables
 			$frame     = $(frame),
@@ -82,10 +84,9 @@
 			smartNav    = o.itemNav === 'smart',
 			forceCenteredNav = o.itemNav === 'forceCentered',
 			centeredNav = o.itemNav === 'centered' || forceCenteredNav,
-			itemNav     = basicNav || smartNav || centeredNav || forceCenteredNav,
+			itemNav     = !parallax && (basicNav || smartNav || centeredNav || forceCenteredNav),
 
 			// Other variables
-			$doc   = $(document),
 			$items = 0,
 			items  = [],
 			rel    = {
@@ -130,9 +131,10 @@
 			pos.old = $.extend({}, pos);
 
 			// Reset global variables
-			frameSize  = o.horizontal ? $frame.width() : $frame.height();
-			sbSize     = o.horizontal ? $sb.width() : $sb.height();
-			slideeSize = o.horizontal ? $slidee.outerWidth() : $slidee.outerHeight();
+			frameSize  = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
+			sbSize     = $sb[o.horizontal ? 'width' : 'height']();
+			slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
+			pages      = [];
 
 			// Set position limits & relatives
 			pos.min = 0;
@@ -145,7 +147,6 @@
 				$items = $slidee.children(':visible');
 				rel.items = $items.length;
 				items  = [];
-				pages  = [];
 
 				// Needed variables
 				var paddingStart  = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop'),
@@ -237,38 +238,40 @@
 			}
 
 			// Pages
-			var tempPagePos = 0,
-				pagesHtml   = '',
-				pageIndex   = 0;
+			if (!parallax) {
+				var tempPagePos = 0,
+					pagesHtml   = '',
+					pageIndex   = 0;
 
-			// Populate pages array
-			if (forceCenteredNav) {
-				pages = $.map(items, function (data) {
-					return data.offCenter;
-				});
-			} else {
-				while (tempPagePos - frameSize < pos.max) {
-					var pagePos = Math.min(pos.max, tempPagePos);
+				// Populate pages array
+				if (forceCenteredNav) {
+					pages = $.map(items, function (data) {
+						return data.offCenter;
+					});
+				} else {
+					while (tempPagePos - frameSize < pos.max) {
+						var pagePos = Math.min(pos.max, tempPagePos);
 
-					pages.push(pagePos);
-					tempPagePos += frameSize;
+						pages.push(pagePos);
+						tempPagePos += frameSize;
 
-					// When item navigation, and last page is smaller than half of the last item size,
-					// adjust the last page position to pos.max and break the loop
-					if (tempPagePos > pos.max && itemNav && pos.max - pagePos < (items[items.length - 1].size - ignoredMargin) / 2) {
-						pages[pages.length - 1] = pos.max;
-						break;
+						// When item navigation, and last page is smaller than half of the last item size,
+						// adjust the last page position to pos.max and break the loop
+						if (tempPagePos > pos.max && itemNav && pos.max - pagePos < (items[items.length - 1].size - ignoredMargin) / 2) {
+							pages[pages.length - 1] = pos.max;
+							break;
+						}
 					}
 				}
-			}
 
-			// Pages bar
-			if ($pb[0]) {
-				for (var i = 0; i < pages.length; i++) {
-					pagesHtml += o.pageBuilder(pageIndex++);
+				// Pages bar
+				if ($pb[0]) {
+					for (var i = 0; i < pages.length; i++) {
+						pagesHtml += o.pageBuilder(pageIndex++);
+					}
+
+					$pages = $(pagesHtml).appendTo($pb.empty());
 				}
-
-				$pages = $(pagesHtml).appendTo($pb.empty());
 			}
 
 			// Fix possible overflowing
@@ -393,10 +396,12 @@
 			trigger('move');
 
 			// Position SLIDEE
-			if (transform) {
-				$slidee[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
-			} else {
-				$slidee[0].style[o.horizontal ? 'left' : 'top'] = -Math.round(pos.cur) + 'px';
+			if (!parallax) {
+				if (transform) {
+					$slidee[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
+				} else {
+					$slidee[0].style[o.horizontal ? 'left' : 'top'] = -Math.round(pos.cur) + 'px';
+				}
 			}
 
 			syncScrollbar();
@@ -702,15 +707,17 @@
 				centerOffset = forceCenteredNav ? 0 : frameSize / 2;
 
 			// Determine active page
-			for (var p = 0, pl = pages.length; p < pl; p++) {
-				if (slideePos >= pos.max || p === pages.length - 1) {
-					relatives.activePage = pages.length - 1;
-					break;
-				}
+			if (!parallax) {
+				for (var p = 0, pl = pages.length; p < pl; p++) {
+					if (slideePos >= pos.max || p === pages.length - 1) {
+						relatives.activePage = pages.length - 1;
+						break;
+					}
 
-				if (slideePos <= pages[p] + centerOffset) {
-					relatives.activePage = p;
-					break;
+					if (slideePos <= pages[p] + centerOffset) {
+						relatives.activePage = p;
+						break;
+					}
 				}
 			}
 
@@ -1097,11 +1104,11 @@
 
 			if (callbacks[name]) {
 				for (var i = 0, l = callbacks[name].length; i < l; i++) {
-					callbacks[name][i].call($frame[0], arg1, arg2, arg3, arg4);
+					callbacks[name][i].call(frame, arg1, arg2, arg3, arg4);
 				}
 			}
 
-			if (o.domEvents) {
+			if (o.domEvents && !parallax) {
 				$frame.trigger(pluginName + ':' + name, [arg1, arg2, arg3, arg4]);
 			}
 		}
@@ -1113,8 +1120,7 @@
 		 */
 		self.destroy = function () {
 			// Unbind all events
-			$frame
-				.add($doc)
+			$doc
 				.add($slidee)
 				.add($scrollSource)
 				.add($handle)
@@ -1125,9 +1131,6 @@
 				.add($prevPageButton)
 				.add($nextPageButton)
 				.unbind('.' + namespace);
-
-			// Reset SLIDEE and handle positions
-			$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
 
 			// Remove plugin classes
 			$prevButton
@@ -1143,8 +1146,14 @@
 			// Remove page items
 			$pb.empty();
 
-			// Remove plugin from element data storage
-			$.removeData(frame, namespace);
+			if (!parallax) {
+				// Unbind events from frame
+				$frame.unbind('.' + namespace);
+				// Reset SLIDEE and handle positions
+				$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
+				// Remove plugin from element data storage
+				$.removeData(frame, namespace);
+			}
 		};
 
 		/**
@@ -1161,14 +1170,16 @@
 			self.on(callbackMap);
 
 			// Set required styles to elements
-			$frame.css('overflow', 'hidden');
-			if ($frame.css('position') === 'static') {
-				$frame.css('position', 'relative');
+			if (!parallax) {
+				$frame.css('overflow', 'hidden');
+				if ($frame.css('position') === 'static') {
+					$frame.css('position', 'relative');
+				}
+				$slidee.add($handle).css($.extend({ position: 'absolute' }, o.horizontal ? { left: 0 } : { top: 0 }));
 			}
 			if ($sb.css('position') === 'static') {
 				$sb.css('position', 'relative');
 			}
-			$slidee.add($handle).css($.extend({ position: 'absolute' }, o.horizontal ? { left: 0 } : { top: 0 }));
 
 			// Load
 			load();
@@ -1300,7 +1311,7 @@
 			}
 
 			// Automatic cycling
-			if (o.cycleBy) {
+			if (o.cycleBy && !parallax) {
 				// Pause on hover
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
@@ -1407,7 +1418,7 @@
 	}());
 
 	// Expose class globally
-	w[pluginClass] = Sly;
+	w[className] = Sly;
 
 	// Extend jQuery
 	$.fn[pluginName] = function (options, callbackMap) {
