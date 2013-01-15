@@ -715,7 +715,7 @@
 					last = false,
 					center = false;
 
-				/* From start */
+				// From start
 				for (var i = 0, il = items.length; i < il; i++) {
 					// First item
 					if (first === false && slideePos <= items[i].offStart) {
@@ -1287,14 +1287,12 @@
 			}
 
 			// Dragging navigation
-			if (o.drag) {
-				// $dragSource.on('mousedown.' + namespace, { src: 'slidee' }, dragInit);
+			if (o.dragging) {
 				$dragSource.on(dragInitEvents, { src: 'slidee' }, dragInit);
 			}
 
 			// Scrollbar dragging navigation
 			if (o.dragHandle && $handle) {
-				// $handle.on('mousedown.' + namespace, { src: 'handle' }, dragInit);
 				$handle.on(dragInitEvents, { src: 'handle' }, dragInit);
 			}
 
@@ -1476,7 +1474,7 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-		drag:          0,       // Enable navigation by dragging the SLIDEE.
+		dragging:      0,       // Enable navigation by dragging the SLIDEE.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Animations easing.
