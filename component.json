@@ -1,0 +1,16 @@
+{
+	"name": "Sly",
+	"version": "1.0.0-rc",
+	"main": "./dist/jquery.sly.js",
+	"dependencies": {
+		"jquery": ">=1.7"
+	},
+	"description": "jQuery plugin for one-directional scrolling with item based navigation support.",
+	"homepage": "https://github.com/Darsain/sly",
+	"bugs": "https://github.com/Darsain/sly/issues",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/Darsain/sly.git"
+	},
+	"license": "MIT"
+}
