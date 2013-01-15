@@ -1,5 +1,5 @@
 /*!
- * jQuery Sly v0.13.1
+ * jQuery Sly v0.14.0
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
