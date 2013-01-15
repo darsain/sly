@@ -3,9 +3,9 @@
 jQuery plugin for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
 
 Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, dragging the content, touch events, automated
-cycling ... and has a powerful API.
+cycling, ... and has a powerful API.
 
-That's all build around a custom [highly optimized 60FPS rendering](http://i.imgur.com/gx4RP.png) with
+That's all build around a custom [highly optimized animation rendering](http://i.imgur.com/dk0nV.png) with
 requestAnimationFrame, and GPU accelerated positioning (in browsers that support it).
 
 #### Dependencies
@@ -14,24 +14,19 @@ Except jQuery 1.7+, there are **no other dependencies**. That means you don't ne
 
 #### Compatibility
 
-Works everywhere, even in IE6+ abominations, but that is a complete accident :) IE <8 is not officially supported.
+Works everywhere, even in IE6+ abominations, but that is a complete accident :) IE 6-7 are not officially supported.
 
-*Mobile:* Sly has a touch events support, but mobile is not tested. If you want to help with that,
-[you are welcome](https://github.com/Darsain/sly/issues/4).
+*Mobile:* Sly has a touch events support, but mobile is not tested. If you want to help with that, you are welcome!
 
 ### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
 
 Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info,
 read the [Roadmap section](#roadmap) below.
 
-## Forum
+### [Forum](https://groups.google.com/d/forum/sly-js)
 
-If you have a question about this library, you can use **[Sly forum](https://groups.google.com/d/forum/sly-js)**. There
-is no guarantee you'll receive an answer right away. This is a free open source project, I have only so much free time,
-and I'm not paid for support :) Also I've spent a lot of time documenting the API below, so every question is an INSLUT
-TO ME AND MY ANCESTORS!
-
-The point of this is: **Please do not populate Issues tracker with not issues :) Thank you.**
+**Please do not populate Issues tracker with non-issues!** If you have a question about Sly, you can use the
+**[Sly forum](https://groups.google.com/d/forum/sly-js)**.
 
 ## API documentation
 
@@ -82,7 +77,7 @@ $('#frame').sly({
 
 	// Mixed options
 	scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-	drag:          0,       // Enable navigation by dragging the SLIDEE.
+	dragging:      0,       // Enable navigation by dragging the SLIDEE.
 	elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 	speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 	easing:        'swing', // Animations easing.
@@ -101,11 +96,7 @@ $('#frame').sly({
 
 ## Roadmap
 
-**This plugin is in development!** and the API may change before the 1.0.0 release.
-
-To do before 1.0.0:
-
-- Support for frame-less call that provides API for parallax only usage.
+All of the wanted features have been implemented, and Sly is now in a **release candidate** state.
 
 Maybe never, but it would be nice:
 
@@ -117,5 +108,6 @@ Contributions are welcome! But please:
 
 - Maintain the coding style used throughout the project, and defined in the `.editorconfig` file.
 	[Editorcofig plugin for SublimText 2](https://github.com/sindresorhus/editorconfig-sublime).
-- The resulting code has to pass JSHint with options defined in the `.jshintrc` file.
-	[SublimeLinter plugin for SublimText 2](https://github.com/SublimeLinter/SublimeLinter).
+- The resulting code has to pass JSHint with options defined in the `.jshintrc` file. You can install
+	[SublimeLinter plugin for SublimText 2](https://github.com/SublimeLinter/SublimeLinter) to do it automatically, or
+	run `grunt lint` task.
