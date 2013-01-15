@@ -2,8 +2,8 @@
 
 jQuery plugin for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
 
-Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, dragging the content, touch events,
-automated cycling ... and has a powerful API.
+Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, dragging the content, touch events, automated
+cycling ... and has a powerful API.
 
 That's all build around a custom [highly optimized 60FPS rendering](http://i.imgur.com/gx4RP.png) with
 requestAnimationFrame, and GPU accelerated positioning (in browsers that support it).
@@ -24,6 +24,15 @@ Works everywhere, even in IE6+ abominations, but that is a complete accident :) 
 Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info,
 read the [Roadmap section](#roadmap) below.
 
+## Forum
+
+If you have a question about this library, you can use **[Sly forum](https://groups.google.com/d/forum/sly-js)**. There
+is no guarantee you'll receive an answer right away. This is a free open source project, I have only so much free time,
+and I'm not paid for support :) Also I've spent a lot of time documenting the API below, so every question is an INSLUT
+TO ME AND MY ANCESTORS!
+
+The point of this is: **Please do not populate Issues tracker with not issues :) Thank you.**
+
 ## API documentation
 
 - **[Introduction](https://github.com/Darsain/sly/wiki/Home) - how to call sly**
@@ -31,6 +40,7 @@ read the [Roadmap section](#roadmap) below.
 - **[Options](https://github.com/Darsain/sly/wiki/Options)**
 - **[Methods](https://github.com/Darsain/sly/wiki/Methods)**
 - **[Events](https://github.com/Darsain/sly/wiki/Events)**
+- **[Parallax](https://github.com/Darsain/sly/wiki/Parallax)**
 
 ## Quick reference
 
@@ -105,5 +115,7 @@ Maybe never, but it would be nice:
 
 Contributions are welcome! But please:
 
-- Maintain the coding style used throughout the project.
-- The resulting code has to pass JSHint with options defined in the header. [SublimeLinter FTW!](https://github.com/SublimeLinter/SublimeLinter)
+- Maintain the coding style used throughout the project, and defined in the `.editorconfig` file.
+	[Editorcofig plugin for SublimText 2](https://github.com/sindresorhus/editorconfig-sublime).
+- The resulting code has to pass JSHint with options defined in the `.jshintrc` file.
+	[SublimeLinter plugin for SublimText 2](https://github.com/SublimeLinter/SublimeLinter).
