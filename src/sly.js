@@ -1,10 +1,3 @@
-/*!
- * jQuery Sly v0.14.0
- * https://github.com/Darsain/sly
- *
- * Licensed under the MIT license.
- * http://www.opensource.org/licenses/MIT
- */
 ;(function ($, w, undefined) {
 	'use strict';
 
@@ -547,7 +540,7 @@
 			} else if (itemNav) {
 				var index = getIndex(item);
 
-				 if (index !== -1) {
+				if (index !== -1) {
 					// You can't align items to the end of the frame in centeredNav navigation
 					if (centeredNav) {
 						return;
