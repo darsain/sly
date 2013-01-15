@@ -5,18 +5,6 @@
  * Licensed under the MIT license.
  * http://www.opensource.org/licenses/MIT
  */
-/*jshint
-	bitwise:false, camelcase:false, curly:true, eqeqeq:true, forin:false, immed:true, latedef:true, newcap:true,
-	noarg:true, noempty:true, nonew:false, plusplus:false, quotmark:false, regexp:false, undef:true, unused:true,
-	strict:true, trailing:true,
-
-	asi:false, boss:false, debug:false, eqnull:true, es5:false, esnext:false, evil:false, expr:false, funcscope:false,
-	iterator:false, lastsemic:false, laxbreak:false, laxcomma:true, loopfunc:false, multistr:false, onecase:true,
-	proto:false, regexdash:false, scripturl:false, smarttabs:true, shadow:false, sub:false, supernew:false,
-
-	browser:true
-*/
-/*global jQuery:false */
 ;(function ($, w, undefined) {
 	'use strict';
 
