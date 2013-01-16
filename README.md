@@ -44,7 +44,7 @@ jQuery call with all default options as defined in the source. Visit the
 
 ```js
 $('#frame').sly({
-	// Sly direction
+	// Sly type
 	horizontal: 0,    // Change to horizontal direction.
 	itemNav:    null, // Item navigation type. Can be: basic, smart, centered, forceCentered.
 

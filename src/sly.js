@@ -1434,7 +1434,7 @@
 
 	// Default options
 	$.fn[pluginName].defaults = {
-		// Sly direction
+		// Sly type
 		horizontal: 0,    // Change to horizontal direction.
 		itemNav:    null, // Item navigation type. Can be: basic, smart, centered, forceCentered.
 
