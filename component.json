@@ -1,6 +1,6 @@
 {
 	"name": "Sly",
-	"version": "1.0.0-rc",
+	"version": "1.0.0-rc.1",
 	"main": "./dist/jquery.sly.js",
 	"dependencies": {
 		"jquery": ">=1.7"
@@ -12,5 +12,10 @@
 		"type": "git",
 		"url": "http://github.com/Darsain/sly.git"
 	},
-	"license": "MIT"
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://opensource.org/licenses/MIT"
+		}
+	]
 }

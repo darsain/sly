@@ -1,9 +1,9 @@
 /*!
- * Sly v1.0.0-rc - 15th Jan 2013
+ * Sly v1.0.0-rc.1 - 17th Jan 2013
  * https://github.com/Darsain/sly
  *
- * Licensed under the MIT license.
- * http://www.opensource.org/licenses/MIT
+ * Licensed under the  license.
+ * http://www.opensource.org/licenses/
  */
 
 ;(function ($, w, undefined) {
@@ -160,9 +160,9 @@
 						itemMarginEnd   = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom'),
 						itemData = {
 							size: itemSize,
-							offStart: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
-							offCenter: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
-							offEnd: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
+							start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
+							center: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
+							end: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
 						};
 
 					// Account for centerOffset & slidee padding
@@ -200,7 +200,7 @@
 
 				// Set limits
 				pos.min = centerOffset;
-				pos.max = forceCenteredNav ? items[items.length - 1].offCenter : Math.max(slideeSize - frameSize, 0);
+				pos.max = forceCenteredNav ? items[items.length - 1].center : Math.max(slideeSize - frameSize, 0);
 
 				// Fix overflowing activeItem
 				if (rel.activeItem >= items.length) {
@@ -235,7 +235,7 @@
 				// Populate pages array
 				if (forceCenteredNav) {
 					pages = $.map(items, function (data) {
-						return data.offCenter;
+						return data.center;
 					});
 				} else {
 					while (tempPagePos - frameSize < pos.max) {
@@ -291,12 +291,12 @@
 				var tempRel = getRelatives(newPos);
 
 				if (centeredNav) {
-					newPos = items[tempRel.centerItem].offCenter;
+					newPos = items[tempRel.centerItem].center;
 					if (forceCenteredNav) {
 						self.activate(tempRel.centerItem, 1);
 					}
 				} else if (newPos > pos.min && newPos < pos.max) {
-					newPos = items[tempRel.firstItem].offStart;
+					newPos = items[tempRel.firstItem].start;
 				}
 			}
 
@@ -432,10 +432,34 @@
 		/**
 		 * Returns the position object.
 		 *
+		 * @param {Mixed} item
+		 *
 		 * @return {Object}
 		 */
-		self.getPos = function () {
-			return pos;
+		self.getPos = function (item) {
+			if (item === undefined) {
+				return pos;
+			}
+
+			if (itemNav) {
+				var index = getIndex(item);
+				return index !== -1 ? items[index] : false;
+			} else {
+				var $item = $slidee.find(item).eq(0);
+
+				if ($item[0]) {
+					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top,
+						elementSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+
+					return {
+						start:  offset,
+						center: offset - frameSize / 2 + elementSize / 2,
+						end:    offset - frameSize + elementSize
+					};
+				} else {
+					return false;
+				}
+			}
 		};
 
 		/**
@@ -515,22 +539,16 @@
 		self.toStart = function (item) {
 			if (item === undefined) {
 				slideTo(pos.min);
-			} else if (itemNav) {
-				var index = getIndex(item);
-
-				if (index !== -1) {
-					// You can't align items to the start of the frame when centeredNav is enabled
-					if (centeredNav) {
-						return;
-					}
-
-					slideTo(items[index].offStart);
-				}
 			} else {
-				var $item = $slidee.find(item).eq(0);
+				// You can't align items to the start of the frame
+				// when centered navigation type is enabled
+				if (centeredNav) {
+					return;
+				}
 
-				if ($.contains($slidee[0], $item[0])) {
-					slideTo(o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top);
+				var position = self.getPos(item);
+				if (position) {
+					slideTo(position.start);
 				}
 			}
 		};
@@ -545,23 +563,16 @@
 		self.toEnd = function (item) {
 			if (item === undefined) {
 				slideTo(pos.max);
-			} else if (itemNav) {
-				var index = getIndex(item);
-
-				if (index !== -1) {
-					// You can't align items to the end of the frame in centeredNav navigation
-					if (centeredNav) {
-						return;
-					}
-
-					slideTo(items[index].offEnd);
-				}
 			} else {
-				var $item = $slidee.find(item).eq(0);
+				// You can't align items to the end of the frame
+				// when centered navigation type is enabled
+				if (centeredNav) {
+					return;
+				}
 
-				if ($.contains($slidee[0], $item[0])) {
-					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top;
-					slideTo(offset - frameSize + $item[o.horizontal ? 'outerWidth' : 'outerHeight']());
+				var position = self.getPos(item);
+				if (position) {
+					slideTo(position.end);
 				}
 			}
 		};
@@ -576,18 +587,10 @@
 		self.toCenter = function (item) {
 			if (item === undefined) {
 				slideTo(Math.round(pos.max / 2 + pos.min / 2));
-			} else if (itemNav) {
-				var index = getIndex(item);
-
-				if (index !== -1) {
-					slideTo(items[index].offCenter);
-				}
 			} else {
-				var $item = $slidee.find(item).eq(0);
-
-				if ($item[0]) {
-					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top;
-					slideTo(offset - frameSize / 2 + $item[o.horizontal ? 'outerWidth' : 'outerHeight']() / 2);
+				var position = self.getPos(item);
+				if (position) {
+					slideTo(position.center);
 				}
 			}
 		};
@@ -719,17 +722,17 @@
 				// From start
 				for (var i = 0, il = items.length; i < il; i++) {
 					// First item
-					if (first === false && slideePos <= items[i].offStart) {
+					if (first === false && slideePos <= items[i].start) {
 						first = i;
 					}
 
 					// Centered item
-					if (center === false && slideePos - items[i].size / 2 <= items[i].offCenter) {
+					if (center === false && slideePos - items[i].size / 2 <= items[i].center) {
 						center = i;
 					}
 
 					// Last item
-					if (i === items.length - 1 || (last === false && slideePos < items[i + 1].offEnd)) {
+					if (i === items.length - 1 || (last === false && slideePos < items[i + 1].end)) {
 						last = i;
 					}
 
@@ -899,31 +902,29 @@
 				isSlidee = src === 'slidee';
 
 			// Ignore other than left mouse button
-			if (!isTouch && event.which !== 1) {
-				return;
+			if (isTouch || event.which <= 1) {
+				stopDefault(event);
+
+				// Update a dragging object
+				dragging.src      = src;
+				dragging.init     = 0;
+				dragging.released = 0;
+				dragging.touch    = isTouch;
+				dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
+				dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
+				dragging.start    = +new Date();
+				dragging.time     = 0;
+				dragging.path     = 0;
+				dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
+				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
+				dragging.$src     = $(event.target);
+
+				// Add dragging class
+				(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+
+				// Bind dragging events
+				$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			}
-
-			stopDefault(event);
-
-			// Update a dragging object
-			dragging.src      = src;
-			dragging.init     = 0;
-			dragging.released = 0;
-			dragging.touch    = isTouch;
-			dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
-			dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
-			dragging.start    = +new Date();
-			dragging.time     = 0;
-			dragging.path     = 0;
-			dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
-			dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
-			dragging.$src     = $(event.target);
-
-			// Add dragging class
-			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
-
-			// Bind dragging events
-			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
 		}
 
 		/**
@@ -1214,14 +1215,12 @@
 			if (o.clickBar && $sb[0]) {
 				$sb.on('click.' + namespace, function (event) {
 					// Ignore other than left mouse button
-					if (event.which !== 1) {
-						return;
+					if (event.which <= 1) {
+						stopDefault(event);
+
+						// Calculate new handle position and sync SLIDEE to it
+						slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
 					}
-
-					stopDefault(event);
-
-					// Calculate new handle position and sync SLIDEE to it
-					slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
 				});
 			}
 
@@ -1442,7 +1441,7 @@
 
 	// Default options
 	$.fn[pluginName].defaults = {
-		// Sly direction
+		// Sly type
 		horizontal: 0,    // Change to horizontal direction.
 		itemNav:    null, // Item navigation type. Can be: basic, smart, centered, forceCentered.
 
