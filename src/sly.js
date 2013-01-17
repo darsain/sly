@@ -441,12 +441,13 @@
 
 				if ($item[0]) {
 					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top,
-						elementSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+						size = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
 					return {
 						start:  offset,
-						center: offset - frameSize / 2 + elementSize / 2,
-						end:    offset - frameSize + elementSize
+						center: offset - frameSize / 2 + size / 2,
+						end:    offset - frameSize + size,
+						size:   size
 					};
 				} else {
 					return false;
