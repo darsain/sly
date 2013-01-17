@@ -891,31 +891,29 @@
 				isSlidee = src === 'slidee';
 
 			// Ignore other than left mouse button
-			if (!isTouch && event.which !== 1) {
-				return;
+			if (isTouch || event.which <= 1) {
+				stopDefault(event);
+
+				// Update a dragging object
+				dragging.src      = src;
+				dragging.init     = 0;
+				dragging.released = 0;
+				dragging.touch    = isTouch;
+				dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
+				dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
+				dragging.start    = +new Date();
+				dragging.time     = 0;
+				dragging.path     = 0;
+				dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
+				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
+				dragging.$src     = $(event.target);
+
+				// Add dragging class
+				(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+
+				// Bind dragging events
+				$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			}
-
-			stopDefault(event);
-
-			// Update a dragging object
-			dragging.src      = src;
-			dragging.init     = 0;
-			dragging.released = 0;
-			dragging.touch    = isTouch;
-			dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
-			dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
-			dragging.start    = +new Date();
-			dragging.time     = 0;
-			dragging.path     = 0;
-			dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
-			dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
-			dragging.$src     = $(event.target);
-
-			// Add dragging class
-			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
-
-			// Bind dragging events
-			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
 		}
 
 		/**
@@ -1206,14 +1204,12 @@
 			if (o.clickBar && $sb[0]) {
 				$sb.on('click.' + namespace, function (event) {
 					// Ignore other than left mouse button
-					if (event.which !== 1) {
-						return;
+					if (event.which <= 1) {
+						stopDefault(event);
+
+						// Calculate new handle position and sync SLIDEE to it
+						slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
 					}
-
-					stopDefault(event);
-
-					// Calculate new handle position and sync SLIDEE to it
-					slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
 				});
 			}
 
