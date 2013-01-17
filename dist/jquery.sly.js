@@ -1,5 +1,5 @@
 /*!
- * Sly v1.0.0-rc.1 - 17th Jan 2013
+ * Sly v1.0.0-rc.2 - 17th Jan 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the  license.
@@ -449,12 +449,13 @@
 
 				if ($item[0]) {
 					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top,
-						elementSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+						size = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
 					return {
 						start:  offset,
-						center: offset - frameSize / 2 + elementSize / 2,
-						end:    offset - frameSize + elementSize
+						center: offset - frameSize / 2 + size / 2,
+						end:    offset - frameSize + size,
+						size:   size
 					};
 				} else {
 					return false;
