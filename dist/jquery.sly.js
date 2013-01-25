@@ -1,5 +1,5 @@
 /*!
- * Sly 1.0.0-rc.3 - 25th Jan 2013
+ * Sly 1.0.0-rc.4 - 25th Jan 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -331,7 +331,7 @@
 			pos.dest = newPos;
 
 			// Queue next cycle
-			if (!dragging.released && !cycleIsPaused) {
+			if (dragging.released && !cycleIsPaused) {
 				self.cycle();
 			}
 
