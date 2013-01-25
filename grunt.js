@@ -13,8 +13,8 @@ module.exports = function(grunt) {
 				' * <%= pkg.name %> v<%= pkg.version %> - <%= grunt.template.today("ddS mmm yyyy") %>\n' +
 				' * <%= pkg.homepage %>\n' +
 				' *\n' +
-				' * Licensed under the <%= pkg.license %> license.\n' +
-				' * http://www.opensource.org/licenses/<%= pkg.license %>\n' +
+				' * Licensed under the <%= pkg.licenses[0].type %> license.\n' +
+				' * <%= pkg.licenses[0].url %>\n' +
 				' */',
 			bannerLight: '/*! <%= pkg.name %> v<%= pkg.version %>' +
 				' <%= grunt.template.today("dd-mmm-yyyy") %> | <%= pkg.homepage %> */'
