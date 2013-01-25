@@ -323,7 +323,7 @@
 			pos.dest = newPos;
 
 			// Queue next cycle
-			if (!dragging.released && !cycleIsPaused) {
+			if (dragging.released && !cycleIsPaused) {
 				self.cycle();
 			}
 
