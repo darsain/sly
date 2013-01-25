@@ -1,9 +1,9 @@
 /*!
- * Sly v1.0.0-rc.2 - 17th Jan 2013
+ * Sly 1.0.0-rc.3 - 25th Jan 2013
  * https://github.com/Darsain/sly
  *
- * Licensed under the  license.
- * http://www.opensource.org/licenses/
+ * Licensed under the MIT license.
+ * http://opensource.org/licenses/MIT
  */
 
 ;(function ($, w, undefined) {
@@ -46,10 +46,11 @@
 			frameSize  = 0,
 			slideeSize = 0,
 			pos        = {
-				cur:  0,
-				dest: 0,
-				max:  0,
-				min:  0
+				start:  0,
+				center: 0,
+				end:    0,
+				cur:    0,
+				dest:   0
 			},
 
 			// Scrollbar variables
@@ -58,9 +59,9 @@
 			sbSize     = 0,
 			handleSize = 0,
 			hPos       = {
-				cur: 0,
-				max: 0,
-				min: 0
+				start: 0,
+				end:   0,
+				cur:   0
 			},
 
 			// Pagesbar variables
@@ -96,7 +97,7 @@
 			callbacks       = {},
 			last            = {},
 			animation       = {},
-			dragging        = {},
+			dragging        = { released: 1 },
 			dragInitEvents  = 'touchstart.' + namespace + ' mousedown.' + namespace,
 			dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace,
 			dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace,
@@ -126,9 +127,9 @@
 			pages      = [];
 
 			// Set position limits & relatives
-			pos.min = 0;
-			pos.max = Math.max(slideeSize - frameSize, 0);
-			last    = {};
+			pos.start = 0;
+			pos.end   = Math.max(slideeSize - frameSize, 0);
+			last      = {};
 
 			// Sizes & offsets for item based navigations
 			if (itemNav) {
@@ -199,8 +200,8 @@
 				slideeSize -= ignoredMargin;
 
 				// Set limits
-				pos.min = centerOffset;
-				pos.max = forceCenteredNav ? items[items.length - 1].center : Math.max(slideeSize - frameSize, 0);
+				pos.start = centerOffset;
+				pos.end   = forceCenteredNav ? items[items.length - 1].center : Math.max(slideeSize - frameSize, 0);
 
 				// Fix overflowing activeItem
 				if (rel.activeItem >= items.length) {
@@ -209,6 +210,9 @@
 					$items.eq(rel.activeItem).addClass(o.activeClass);
 				}
 			}
+
+			// Calculate SLIDEE center position
+			pos.center = Math.round(pos.end / 2 + pos.start / 2);
 
 			// Update relative positions
 			updateRelatives();
@@ -223,7 +227,11 @@
 					$handle[0].style[o.horizontal ? 'width' : 'height'] = handleSize + 'px';
 				}
 
-				hPos.max   = sbSize - handleSize;
+				hPos.end = sbSize - handleSize;
+
+				if (!renderID) {
+					syncScrollbar();
+				}
 			}
 
 			// Pages
@@ -238,16 +246,16 @@
 						return data.center;
 					});
 				} else {
-					while (tempPagePos - frameSize < pos.max) {
-						var pagePos = Math.min(pos.max, tempPagePos);
+					while (tempPagePos - frameSize < pos.end) {
+						var pagePos = Math.min(pos.end, tempPagePos);
 
 						pages.push(pagePos);
 						tempPagePos += frameSize;
 
 						// When item navigation, and last page is smaller than half of the last item size,
-						// adjust the last page position to pos.max and break the loop
-						if (tempPagePos > pos.max && itemNav && pos.max - pagePos < (items[items.length - 1].size - ignoredMargin) / 2) {
-							pages[pages.length - 1] = pos.max;
+						// adjust the last page position to pos.end and break the loop
+						if (tempPagePos > pos.end && itemNav && pos.end - pagePos < (items[items.length - 1].size - ignoredMargin) / 2) {
+							pages[pages.length - 1] = pos.end;
 							break;
 						}
 					}
@@ -264,7 +272,7 @@
 			}
 
 			// Fix possible overflowing
-			slideTo(within(pos.dest, pos.min, pos.max));
+			slideTo(within(pos.dest, pos.start, pos.end));
 
 			// Extend relative variables object with some useful info
 			rel.pages      = pages.length;
@@ -280,14 +288,14 @@
 		/**
 		 * Animate to a position.
 		 *
-		 * @param {Int}   newPos
-		 * @param {Mixed} drag
+		 * @param {Int}  newPos    New position.
+		 * @param {Bool} immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		function slideTo(newPos, dragging, released) {
+		function slideTo(newPos, immediate) {
 			// Align items
-			if (itemNav && (!dragging || released)) {
+			if (itemNav && dragging.released) {
 				var tempRel = getRelatives(newPos);
 
 				if (centeredNav) {
@@ -295,37 +303,35 @@
 					if (forceCenteredNav) {
 						self.activate(tempRel.centerItem, 1);
 					}
-				} else if (newPos > pos.min && newPos < pos.max) {
+				} else if (newPos > pos.start && newPos < pos.end) {
 					newPos = items[tempRel.firstItem].start;
 				}
 			}
 
 			// Handle overflowing position limits
-			if (dragging === 'slidee' && o.elasticBounds && !released) {
-				if (newPos > pos.max) {
-					newPos = pos.max + (newPos - pos.max) / 6;
-				} else if (newPos < pos.min) {
-					newPos = pos.min + (newPos - pos.min) / 6;
+			if (!dragging.released && dragging.source === 'slidee' && o.elasticBounds) {
+				if (newPos > pos.end) {
+					newPos = pos.end + (newPos - pos.end) / 6;
+				} else if (newPos < pos.start) {
+					newPos = pos.start + (newPos - pos.start) / 6;
 				}
 			} else {
-				newPos = within(newPos, pos.min, pos.max);
+				newPos = within(newPos, pos.start, pos.end);
 			}
 
 			// Update the animation object
-			animation.start    = +new Date();
-			animation.time     = 0;
-			animation.from     = pos.cur;
-			animation.to       = newPos;
-			animation.delta    = newPos - pos.cur;
-			animation.dragging = dragging;
-			animation.released = released;
-			animation.stillDragging = dragging && !released;
+			animation.start     = +new Date();
+			animation.time      = 0;
+			animation.from      = pos.cur;
+			animation.to        = newPos;
+			animation.delta     = newPos - pos.cur;
+			animation.immediate = immediate;
 
 			// Attach animation destination
 			pos.dest = newPos;
 
 			// Queue next cycle
-			if (!animation.stillDragging && !cycleIsPaused) {
+			if (!dragging.released && !cycleIsPaused) {
 				self.cycle();
 			}
 
@@ -335,8 +341,11 @@
 			syncPagesbar();
 
 			// Render the animation
-			if (newPos !== pos.cur && !renderID) {
-				render();
+			if (newPos !== pos.cur) {
+				trigger('change');
+				if (!renderID) {
+					render();
+				}
 			}
 		}
 
@@ -349,35 +358,32 @@
 			// If first render call, wait for next animationFrame
 			if (!renderID) {
 				renderID = rAF(render);
-
-				if (!animation.dragging) {
+				if (dragging.released) {
 					trigger('moveStart');
 				}
-
 				return;
 			}
 
-			// If dragging SLIDEE, or animation duration would take less than 2 frames, don't animate
-			if (animation.stillDragging ? animation.dragging === 'slidee' : o.speed < 33) {
+			// If immediate repositioning is requested, SLIDEE is being dragged, or animation duration would take
+			// less than 2 frames, don't animate
+			if (animation.immediate || (!dragging.released ? dragging.source === 'slidee' : o.speed < 33)) {
 				pos.cur = animation.to;
 			}
-			// Use tweesing for handle dragging
-			else if (animation.stillDragging && animation.dragging === 'handle') {
+			// Use tweesing for animations without known end point
+			else if (!dragging.released && dragging.source === 'handle') {
 				pos.cur += (animation.to - pos.cur) * o.syncFactor;
 			}
-			// jQuery easing for basic animations
+			// Use tweening for basic animations with known end point
 			else {
 				animation.time = Math.min(+new Date() - animation.start, o.speed);
 				pos.cur = animation.from + animation.delta * jQuery.easing[o.easing](animation.time/o.speed, animation.time, 0, 1, o.speed);
 			}
 
-			if (animation.to === Math.round(pos.cur) && (animation.stillDragging || animation.time >= o.speed)) {
+			// If there is nothing more to render (animation reached the end, or dragging has been released),
+			// break the rendering loop, otherwise request another animation frame
+			if (animation.to === Math.round(pos.cur) && (!dragging.released || animation.time >= o.speed)) {
 				pos.cur = pos.dest;
 				renderID = 0;
-
-				if (!animation.dragging) {
-					trigger('moveEnd');
-				}
 			} else {
 				renderID = rAF(render);
 			}
@@ -393,6 +399,11 @@
 				}
 			}
 
+			// When animation reached the end, and dragging is not active, trigger moveEnd
+			if (!renderID && dragging.released) {
+				trigger('moveEnd');
+			}
+
 			syncScrollbar();
 		}
 
@@ -403,8 +414,8 @@
 		 */
 		function syncScrollbar() {
 			if ($handle) {
-				hPos.cur = pos.min === pos.max ? 0 : ((animation.dragging === 'handle' ? pos.dest : pos.cur) - pos.min) / (pos.max - pos.min) * hPos.max;
-				hPos.cur = within(Math.round(hPos.cur), hPos.min, hPos.max);
+				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && dragging.source === 'handle') ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
+				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
 
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
@@ -449,7 +460,7 @@
 
 				if ($item[0]) {
 					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top,
-						size = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+						size   = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
 					return {
 						start:  offset,
@@ -511,89 +522,93 @@
 		/**
 		 * Slide SLIDEE by amount of pixels.
 		 *
-		 * @param {Int}   delta
+		 * @param {Int}  delta     Difference in position. Positive means forward, negative means backward.
+		 * @param {Bool} immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		self.slideBy = function (delta) {
-			slideTo(pos.dest + delta);
+		self.slideBy = function (delta, immediate) {
+			slideTo(pos.dest + delta, immediate);
 		};
 
 		/**
 		 * Animate SLIDEE to a specific position.
 		 *
-		 * @param {Int} pos
+		 * @param {Int}  pos       New position.
+		 * @param {Bool} immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		self.slideTo = function (pos) {
-			slideTo(pos);
+		self.slideTo = function (pos, immediate) {
+			slideTo(pos, immediate);
 		};
+
+		/**
+		 * Core method for handling `toLocation` methods.
+		 *
+		 * @param  {String} location
+		 * @param  {Mixed}  item
+		 * @param  {Bool}   immediate
+		 *
+		 * @return {Void}
+		 */
+		function to(location, item, immediate) {
+			// Optional arguments logic
+			if (typeof item === 'boolean') {
+				immediate = item;
+				item = undefined;
+			}
+
+			if (item === undefined) {
+				slideTo(pos[location]);
+			} else {
+				// You can't align items to sides of the frame
+				// when centered navigation type is enabled
+				if (centeredNav && location !== 'center') {
+					return;
+				}
+
+				var itemPos = self.getPos(item);
+				if (itemPos) {
+					slideTo(itemPos[location], immediate);
+				}
+			}
+		}
 
 		/**
 		 * Animate element or the whole SLIDEE to the start of the frame.
 		 *
-		 * @param {Mixed} item Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Mixed} item      Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Bool}  immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		self.toStart = function (item) {
-			if (item === undefined) {
-				slideTo(pos.min);
-			} else {
-				// You can't align items to the start of the frame
-				// when centered navigation type is enabled
-				if (centeredNav) {
-					return;
-				}
-
-				var position = self.getPos(item);
-				if (position) {
-					slideTo(position.start);
-				}
-			}
+		self.toStart = function (item, immediate) {
+			to('start', item, immediate);
 		};
 
 		/**
 		 * Animate element or the whole SLIDEE to the end of the frame.
 		 *
-		 * @param {Mixed} item Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Mixed} item      Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Bool}  immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		self.toEnd = function (item) {
-			if (item === undefined) {
-				slideTo(pos.max);
-			} else {
-				// You can't align items to the end of the frame
-				// when centered navigation type is enabled
-				if (centeredNav) {
-					return;
-				}
-
-				var position = self.getPos(item);
-				if (position) {
-					slideTo(position.end);
-				}
-			}
+		self.toEnd = function (item, immediate) {
+			to('end', item, immediate);
 		};
 
 		/**
 		 * Animate element or the whole SLIDEE to the center of the frame.
 		 *
-		 * @param {Mixed} item Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Mixed} item      Item DOM element, or index starting at 0. Omitting will animate SLIDEE.
+		 * @param {Bool}  immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
-		self.toCenter = function (item) {
-			if (item === undefined) {
-				slideTo(Math.round(pos.max / 2 + pos.min / 2));
-			} else {
-				var position = self.getPos(item);
-				if (position) {
-					slideTo(position.center);
-				}
-			}
+		self.toCenter = function (item, immediate) {
+			to('center', item, immediate);
 		};
 
 		/**
@@ -681,9 +696,11 @@
 		 * @return {Void}
 		 */
 		self.activatePage = function (index) {
-			index = within(index, 0, pages.length - 1);
-			slideTo(pages[index]);
-			trigger('activePage', index);
+			if (pages.length) {
+				index = within(index, 0, pages.length - 1);
+				slideTo(pages[index]);
+				trigger('activePage', index);
+			}
 		};
 
 		/**
@@ -694,7 +711,7 @@
 		 * @return {Void}
 		 */
 		function getRelatives(slideePos) {
-			slideePos = within(isNumber(slideePos) ? slideePos : pos.dest, pos.min, pos.max);
+			slideePos = within(isNumber(slideePos) ? slideePos : pos.dest, pos.start, pos.end);
 
 			var relatives = {},
 				centerOffset = forceCenteredNav ? 0 : frameSize / 2;
@@ -702,7 +719,7 @@
 			// Determine active page
 			if (!parallax) {
 				for (var p = 0, pl = pages.length; p < pl; p++) {
-					if (slideePos >= pos.max || p === pages.length - 1) {
+					if (slideePos >= pos.end || p === pages.length - 1) {
 						relatives.activePage = pages.length - 1;
 						break;
 					}
@@ -795,8 +812,8 @@
 
 			// Page navigation
 			if ($pages[0]) {
-				var isStart = pos.dest <= pos.min,
-					isEnd = pos.dest >= pos.max,
+				var isStart = pos.dest <= pos.start,
+					isEnd = pos.dest >= pos.end,
 					pagesButtonState = isStart ? 'first' : isEnd ? 'last' : 'middle';
 
 				// Update paging buttons only if there has been a change in their state
@@ -887,7 +904,7 @@
 		 * @return {Int}
 		 */
 		function handleToSlidee(handlePos) {
-			return Math.round(within(handlePos, hPos.min, hPos.max) / hPos.max * (pos.max - pos.min)) + pos.min;
+			return Math.round(within(handlePos, hPos.start, hPos.end) / hPos.end * (pos.end - pos.start)) + pos.start;
 		}
 
 		/**
@@ -899,15 +916,16 @@
 		 */
 		function dragInit(event) {
 			var isTouch = event.type === 'touchstart',
-				src = event.data.src,
-				isSlidee = src === 'slidee';
+				source = event.data.source,
+				isSlidee = source === 'slidee';
 
 			// Ignore other than left mouse button
 			if (isTouch || event.which <= 1) {
 				stopDefault(event);
 
 				// Update a dragging object
-				dragging.src      = src;
+				dragging.source   = source;
+				dragging.$source  = $(event.target);
 				dragging.init     = 0;
 				dragging.released = 0;
 				dragging.touch    = isTouch;
@@ -917,8 +935,7 @@
 				dragging.time     = 0;
 				dragging.path     = 0;
 				dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
-				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.max - hPos.cur;
-				dragging.$src     = $(event.target);
+				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
 				// Add dragging class
 				(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
@@ -943,9 +960,9 @@
 			);
 
 			// Initialization
-			if (!dragging.init && Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || dragging.src === 'handle') {
+			if (!dragging.init && (Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || dragging.source === 'handle')) {
 				dragging.init = 1;
-				if (dragging.src === 'slidee') {
+				if (dragging.source === 'slidee') {
 					ignoreNextClick = 1;
 				}
 
@@ -953,16 +970,16 @@
 				self.pause(1);
 
 				// Disable click actions on source element, as they are unwelcome when dragging
-				dragging.$src.on('click', function disableAction(event) {
+				dragging.$source.on('click', function disableAction(event) {
 					stopDefault(event, 1);
-					if (dragging.src === 'slidee') {
+					if (dragging.source === 'slidee') {
 						ignoreNextClick = 0;
 					}
-					dragging.$src.off('click', disableAction);
+					dragging.$source.off('click', disableAction);
 				});
 
 				// Trigger moveStart event
-				trigger('moveStart', dragging.src);
+				trigger('moveStart');
 			}
 
 			// Proceed when initialized
@@ -970,22 +987,22 @@
 				stopDefault(event);
 
 				// Adjust path with a swing on mouse release
-				if (dragging.released && dragging.src === 'slidee' && o.speed > 33) {
+				if (dragging.released && dragging.source === 'slidee' && o.speed > 33) {
 					dragging.path += dragging.path * 200 / (+new Date() - dragging.start);
 				}
 
-				slideTo(
-					dragging.src === 'slidee' ?
-					Math.round(dragging.initPos - dragging.path) :
-					handleToSlidee(dragging.initPos + dragging.path)
-				, dragging.src, dragging.released);
+				slideTo(dragging.source === 'slidee' ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
 			}
 
 			// Cleanup and trigger :moveEnd event on release
 			if (dragging.released) {
 				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
-				(dragging.src === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
-				trigger('moveEnd', dragging.src);
+				(dragging.source === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
+
+				// Account for item snapping position adjustment.
+				if (pos.cur === pos.dest) {
+					trigger('moveEnd');
+				}
 			}
 		}
 
@@ -1069,7 +1086,7 @@
 		 * Trigger callbacks for event.
 		 *
 		 * @param  {String} name Event name.
-		 * @param  {Mixed}  argX  Arguments passed to callback.
+		 * @param  {Mixed}  argX Arguments passed to callback.
 		 *
 		 * @return {Void}
 		 */
@@ -1184,9 +1201,9 @@
 
 			// Scrolling navigation
 			if (o.scrollBy) {
-				$scrollSource.bind('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, function (event) {
+				$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, function (event) {
 					// If there is no scrolling to be done, leave the default event alone
-					if (pos.min === pos.max) {
+					if (pos.start === pos.end) {
 						return;
 					}
 
@@ -1289,12 +1306,12 @@
 
 			// Dragging navigation
 			if (o.dragging) {
-				$dragSource.on(dragInitEvents, { src: 'slidee' }, dragInit);
+				$dragSource.on(dragInitEvents, { source: 'slidee' }, dragInit);
 			}
 
 			// Scrollbar dragging navigation
 			if (o.dragHandle && $handle) {
-				$handle.on(dragInitEvents, { src: 'handle' }, dragInit);
+				$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
 			}
 
 			// Automatic cycling
@@ -1312,7 +1329,10 @@
 				self[o.startPaused ? 'pause' : 'cycle']();
 			}
 
-			// return plugin instance
+			// Mark instance as initialized
+			initialized = 1;
+
+			// Return plugin instance
 			return self;
 		};
 	}
@@ -1409,7 +1429,6 @@
 
 	// Extend jQuery
 	$.fn[pluginName] = function (options, callbackMap) {
-
 		var method, methodArgs;
 
 		// Attributes logic
@@ -1424,7 +1443,6 @@
 
 		// Apply plugin to all elements
 		return this.each(function (i, element) {
-
 			// Plugin call with prevention against multiple instantiations
 			var plugin = $.data(element, namespace);
 
