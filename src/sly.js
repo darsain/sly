@@ -1421,7 +1421,6 @@
 
 	// Extend jQuery
 	$.fn[pluginName] = function (options, callbackMap) {
-
 		var method, methodArgs;
 
 		// Attributes logic
@@ -1436,7 +1435,6 @@
 
 		// Apply plugin to all elements
 		return this.each(function (i, element) {
-
 			// Plugin call with prevention against multiple instantiations
 			var plugin = $.data(element, namespace);
 
