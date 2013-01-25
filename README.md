@@ -20,8 +20,8 @@ Works everywhere, even in IE6+ abominations, but that is a complete accident :) 
 
 ### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
 
-Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **beta**. For more info,
-read the [Roadmap section](#roadmap) below.
+Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **release candidate** state.
+For more info, read the [Roadmap section](#roadmap) below.
 
 ### [Forum](https://groups.google.com/d/forum/sly-js)
 
@@ -30,8 +30,8 @@ read the [Roadmap section](#roadmap) below.
 
 ## API documentation
 
-- **[Introduction](https://github.com/Darsain/sly/wiki/Home) - how to call sly**
-- **[Markup](https://github.com/Darsain/sly/wiki/Markup) - how should the HTML look like**
+- **[Markup](https://github.com/Darsain/sly/wiki/Markup)** - how should the HTML look like
+- **[Calling](https://github.com/Darsain/sly/wiki/Calling)** - how to call Sly
 - **[Options](https://github.com/Darsain/sly/wiki/Options)**
 - **[Methods](https://github.com/Darsain/sly/wiki/Methods)**
 - **[Events](https://github.com/Darsain/sly/wiki/Events)**
@@ -96,7 +96,7 @@ $('#frame').sly({
 
 ## Roadmap
 
-All of the wanted features have been implemented, and Sly is now in a **release candidate** state.
+All of the desired features have been implemented, and Sly is now in a **release candidate** state.
 
 Maybe never, but it would be nice:
 
@@ -108,6 +108,6 @@ Contributions are welcome! But please:
 
 - Maintain the coding style used throughout the project, and defined in the `.editorconfig` file.
 	[Editorcofig plugin for SublimText 2](https://github.com/sindresorhus/editorconfig-sublime).
-- The resulting code has to pass JSHint with options defined in the `.jshintrc` file. You can install
+- Resulting code has to pass JSHint with options defined in the `.jshintrc` file. You can install
 	[SublimeLinter plugin for SublimText 2](https://github.com/SublimeLinter/SublimeLinter) to do it automatically, or
 	run `grunt lint` task.
