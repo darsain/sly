@@ -220,6 +220,10 @@
 				}
 
 				hPos.end = sbSize - handleSize;
+
+				if (!renderID) {
+					syncScrollbar();
+				}
 			}
 
 			// Pages
