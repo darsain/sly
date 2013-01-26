@@ -1427,8 +1427,7 @@
 		if (!$.isPlainObject(options)) {
 			if (typeof options === 'string' || options === false) {
 				method = options === false ? 'destroy' : options;
-				methodArgs = arguments;
-				Array.prototype.shift.call(methodArgs);
+				methodArgs = Array.prototype.slice.call(arguments, 1);
 			}
 			options = {};
 		}
