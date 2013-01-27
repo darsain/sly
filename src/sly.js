@@ -126,9 +126,9 @@
 			// Sizes & offsets for item based navigations
 			if (itemNav) {
 				// Reset itemNav related variables
-				$items = $slidee.children(':visible');
+				$items    = $slidee.children(':visible');
 				rel.items = $items.length;
-				items  = [];
+				items     = [];
 
 				// Needed variables
 				var paddingStart  = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop'),
@@ -228,28 +228,23 @@
 
 			// Pages
 			if (!parallax) {
-				var tempPagePos = 0,
+				var tempPagePos = pos.start,
 					pagesHtml   = '',
 					pageIndex   = 0;
 
 				// Populate pages array
-				if (forceCenteredNav) {
-					pages = $.map(items, function (data) {
-						return data.center;
+				if (itemNav) {
+					$.each(items, function (i, item) {
+						if (forceCenteredNav || item.start + item.size > tempPagePos) {
+							tempPagePos = item[forceCenteredNav ? 'center' : 'start'];
+							pages.push(tempPagePos);
+							tempPagePos += frameSize;
+						}
 					});
 				} else {
-					while (tempPagePos - frameSize < pos.end) {
-						var pagePos = Math.min(pos.end, tempPagePos);
-
-						pages.push(pagePos);
+					while (tempPagePos - frameSize <= pos.end) {
+						pages.push(tempPagePos);
 						tempPagePos += frameSize;
-
-						// When item navigation, and last page is smaller than half of the last item size,
-						// adjust the last page position to pos.end and break the loop
-						if (tempPagePos > pos.end && itemNav && pos.end - pagePos < (items[items.length - 1].size - ignoredMargin) / 2) {
-							pages[pages.length - 1] = pos.end;
-							break;
-						}
 					}
 				}
 
