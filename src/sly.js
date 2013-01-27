@@ -320,10 +320,8 @@
 			// Attach animation destination
 			pos.dest = newPos;
 
-			// Queue next cycle
-			if (dragging.released && !cycleIsPaused) {
-				self.cycle();
-			}
+			// Reset next cycle timeout
+			resetCycle();
 
 			// Synchronize states
 			updateRelatives();
@@ -671,7 +669,7 @@
 					} else if (index <= rel.firstItem) {
 						self.toEnd(index);
 					} else {
-						self.cycle();
+						resetCycle();
 					}
 				}
 			}
@@ -885,6 +883,17 @@
 		self.toggle = function () {
 			self[cycleID ? 'pause' : 'cycle']();
 		};
+
+		/**
+		 * Reset next cycle timeout.
+		 *
+		 * @return {Void}
+		 */
+		function resetCycle() {
+			if (dragging.released && !cycleIsPaused) {
+				self.cycle();
+			}
+		}
 
 		/**
 		 * Calculate SLIDEE representation of handle position.
