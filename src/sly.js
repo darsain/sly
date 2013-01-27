@@ -283,14 +283,17 @@
 		function slideTo(newPos, immediate) {
 			// Align items
 			if (itemNav && dragging.released) {
-				var tempRel = getRelatives(newPos);
+				var tempRel = getRelatives(newPos),
+					isDetached = newPos > pos.start && newPos < pos.end;
 
 				if (centeredNav) {
-					newPos = items[tempRel.centerItem].center;
+					if (isDetached) {
+						newPos = items[tempRel.centerItem].center;
+					}
 					if (forceCenteredNav) {
 						self.activate(tempRel.centerItem, 1);
 					}
-				} else if (newPos > pos.start && newPos < pos.end) {
+				} else if (isDetached) {
 					newPos = items[tempRel.firstItem].start;
 				}
 			}
