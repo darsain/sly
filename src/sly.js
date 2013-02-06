@@ -611,18 +611,6 @@
 		}
 
 		/**
-		 * Parse style to pixels.
-		 *
-		 * @param {Object}   $item    jQuery object with element.
-		 * @param {Property} property CSS property to get the pixels from.
-		 *
-		 * @return {Int}
-		 */
-		function getPx($item, property) {
-			return parseInt($item.css(property), 10);
-		}
-
-		/**
 		 * Activates an element.
 		 *
 		 * Element is positioned to one of the sides of the frame, based on it's current position.
@@ -1371,6 +1359,18 @@
 	 */
 	function isNumber(value) {
 		return !isNaN(parseFloat(value)) && isFinite(value);
+	}
+
+	/**
+	 * Parse style to pixels.
+	 *
+	 * @param {Object}   $item    jQuery object with element.
+	 * @param {Property} property CSS property to get the pixels from.
+	 *
+	 * @return {Int}
+	 */
+	function getPx($item, property) {
+		return parseInt($item.css(property), 10) || 0;
 	}
 
 	/**
