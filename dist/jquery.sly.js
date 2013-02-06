@@ -1,5 +1,5 @@
 /*!
- * Sly 1.0.0-rc.5 - 27th Jan 2013
+ * Sly 1.0.0-rc.6 - 6th Feb 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -18,8 +18,8 @@
 		cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame,
 		rAF = w.requestAnimationFrame,
 
-		// CSS transform property
-		transform;
+		// Support indicators
+		transform, gpuAcceleration;
 
 	/**
 	 * Sly.
@@ -386,10 +386,10 @@
 
 			trigger('move');
 
-			// Position SLIDEE
+			// Update SLIDEE position
 			if (!parallax) {
 				if (transform) {
-					$slidee[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
+					$slidee[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
 				} else {
 					$slidee[0].style[o.horizontal ? 'left' : 'top'] = -Math.round(pos.cur) + 'px';
 				}
@@ -412,11 +412,10 @@
 			if ($handle) {
 				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && dragging.source === 'handle') ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
-
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
 					if (transform) {
-						$handle[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
+						$handle[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
 					} else {
 						$handle[0].style[o.horizontal ? 'left' : 'top'] = hPos.cur + 'px';
 					}
@@ -616,18 +615,6 @@
 		 */
 		function getIndex(item) {
 			return isNumber(item) ? within(item, 0, items.length - 1) : item === undefined ? -1 : $items.index(item);
-		}
-
-		/**
-		 * Parse style to pixels.
-		 *
-		 * @param {Object}   $item    jQuery object with element.
-		 * @param {Property} property CSS property to get the pixels from.
-		 *
-		 * @return {Int}
-		 */
-		function getPx($item, property) {
-			return parseInt($item.css(property), 10);
 		}
 
 		/**
@@ -1187,12 +1174,19 @@
 			// Set required styles to elements
 			if (!parallax) {
 				$frame.css('overflow', 'hidden');
-				if ($frame.css('position') === 'static') {
-					$frame.css('position', 'relative');
+				var $movables = $slidee.add($handle);
+				if (!transform) {
+					if ($frame.css('position') === 'static') {
+						$frame.css('position', 'relative');
+					}
+					$movables.css({ position: 'absolute' });
+				} else {
+					var props = {};
+					props[transform] = 'translateZ(0)';
+					$movables.css(props);
 				}
-				$slidee.add($handle).css($.extend({ position: 'absolute' }, o.horizontal ? { left: 0 } : { top: 0 }));
 			}
-			if ($sb.css('position') === 'static') {
+			if (!transform && $sb.css('position') === 'static') {
 				$sb.css('position', 'relative');
 			}
 
@@ -1382,6 +1376,18 @@
 	}
 
 	/**
+	 * Parse style to pixels.
+	 *
+	 * @param {Object}   $item    jQuery object with element.
+	 * @param {Property} property CSS property to get the pixels from.
+	 *
+	 * @return {Int}
+	 */
+	function getPx($item, property) {
+		return parseInt($item.css(property), 10) || 0;
+	}
+
+	/**
 	 * Make sure that number is within the limits.
 	 *
 	 * @param {Number} number
@@ -1420,15 +1426,23 @@
 		}
 	}(window));
 
-	// Detect CSS 2D transforms
+	// Feature detects
 	(function () {
-		var prefixes = ['transform', 'webkitTransform', 'msTransform'],
+		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'],
 			el = document.createElement('div');
-		for (var i = 0, l = prefixes.length; i < l && !transform; i++) {
-			if (el.style[prefixes[i]] !== undefined) {
-				transform = prefixes[i];
+
+		function testProp(prop) {
+			for (var p = 0, pl = prefixes.length; p < pl; p++) {
+				var prefixedProp = prefixes[p] ? prefixes[p] + prop.charAt(0).toUpperCase() + prop.slice(1) : prop;
+				if (el.style[prefixedProp] !== undefined) {
+					return prefixedProp;
+				}
 			}
 		}
+
+		// Global support indicators
+		transform = testProp('transform');
+		gpuAcceleration = testProp('perspective') ? 'translateZ(0) ' : '';
 	}());
 
 	// Expose class globally
