@@ -378,7 +378,7 @@
 
 			trigger('move');
 
-			// Position SLIDEE
+			// Update SLIDEE position
 			if (!parallax) {
 				if (transform) {
 					$slidee[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
@@ -404,7 +404,6 @@
 			if ($handle) {
 				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && dragging.source === 'handle') ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
-
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
 					if (transform) {
@@ -1167,12 +1166,19 @@
 			// Set required styles to elements
 			if (!parallax) {
 				$frame.css('overflow', 'hidden');
-				if ($frame.css('position') === 'static') {
-					$frame.css('position', 'relative');
+				var $movables = $slidee.add($handle);
+				if (!transform) {
+					if ($frame.css('position') === 'static') {
+						$frame.css('position', 'relative');
+					}
+					$movables.css({ position: 'absolute' });
+				} else {
+					var props = {};
+					props[transform] = 'translateZ(0)';
+					$movables.css(props);
 				}
-				$slidee.add($handle).css($.extend({ position: 'absolute' }, o.horizontal ? { left: 0 } : { top: 0 }));
 			}
-			if ($sb.css('position') === 'static') {
+			if (!transform && $sb.css('position') === 'static') {
 				$sb.css('position', 'relative');
 			}
 
