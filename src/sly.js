@@ -10,8 +10,8 @@
 		cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame,
 		rAF = w.requestAnimationFrame,
 
-		// CSS transform property
-		transform;
+		// Support indicators
+		transform, gpuAcceleration;
 
 	/**
 	 * Sly.
@@ -381,7 +381,7 @@
 			// Position SLIDEE
 			if (!parallax) {
 				if (transform) {
-					$slidee[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
+					$slidee[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
 				} else {
 					$slidee[0].style[o.horizontal ? 'left' : 'top'] = -Math.round(pos.cur) + 'px';
 				}
@@ -408,7 +408,7 @@
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
 					if (transform) {
-						$handle[0].style[transform] = (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
+						$handle[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
 					} else {
 						$handle[0].style[o.horizontal ? 'left' : 'top'] = hPos.cur + 'px';
 					}
@@ -1412,15 +1412,23 @@
 		}
 	}(window));
 
-	// Detect CSS 2D transforms
+	// Feature detects
 	(function () {
-		var prefixes = ['transform', 'webkitTransform', 'msTransform'],
+		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'],
 			el = document.createElement('div');
-		for (var i = 0, l = prefixes.length; i < l && !transform; i++) {
-			if (el.style[prefixes[i]] !== undefined) {
-				transform = prefixes[i];
+
+		function testProp(prop) {
+			for (var p = 0, pl = prefixes.length; p < pl; p++) {
+				var prefixedProp = prefixes[p] ? prefixes[p] + prop.charAt(0).toUpperCase() + prop.slice(1) : prop;
+				if (el.style[prefixedProp] !== undefined) {
+					return prefixedProp;
+				}
 			}
 		}
+
+		// Global support indicators
+		transform = testProp('transform');
+		gpuAcceleration = testProp('perspective') ? 'translateZ(0) ' : '';
 	}());
 
 	// Expose class globally
