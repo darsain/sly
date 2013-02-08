@@ -193,7 +193,7 @@
 
 				// Set limits
 				pos.start = centerOffset;
-				pos.end   = forceCenteredNav ? items[items.length - 1].center : Math.max(slideeSize - frameSize, 0);
+				pos.end   = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
 
 				// Fix overflowing activeItem
 				if (rel.activeItem >= items.length) {
