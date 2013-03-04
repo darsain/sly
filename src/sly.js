@@ -325,7 +325,7 @@
 
 			// Synchronize states
 			updateRelatives();
-			updateNavButtonsState();
+			updateButtonsState();
 			syncPagesbar();
 
 			// Render the animation
@@ -636,7 +636,7 @@
 			// Update classes
 			$items.eq(oldActive).removeClass(o.activeClass);
 			$items.eq(index).addClass(o.activeClass);
-			updateNavButtonsState();
+			updateButtonsState();
 
 			// Trigget active event if a new element is being activated
 			if (index !== oldActive) {
@@ -762,12 +762,31 @@
 		 *
 		 * @return {Void}
 		 */
-		function updateNavButtonsState() {
+		function updateButtonsState() {
+			var isStart = pos.dest <= pos.start,
+				isEnd = pos.dest >= pos.end,
+				slideePosState = isStart ? 's' : isEnd ? 'e' : 'm';
+
+			// Update paging buttons only if there has been a change in SLIDEE position
+			if (last.slideePosState !== slideePosState) {
+				last.slideePosState = slideePosState;
+				if ($prevPageButton.is('button,input')) {
+					$prevPageButton.prop('disabled', isStart);
+				}
+
+				if ($nextPageButton.is('button,input')) {
+					$nextPageButton.prop('disabled', isEnd);
+				}
+
+				$prevPageButton[isStart ? 'addClass' : 'removeClass'](o.disabledClass);
+				$nextPageButton[isEnd ? 'addClass' : 'removeClass'](o.disabledClass);
+			}
+
 			// Item navigation
 			if (itemNav) {
 				var isFirst = rel.activeItem === 0,
 					isLast  = rel.activeItem >= items.length - 1,
-					itemsButtonState = isFirst ? 'first' : isLast ? 'last' : 'middle';
+					itemsButtonState = isFirst ? 'f' : isLast ? 'l' : 'm';
 
 				if (last.itemsButtonState !== itemsButtonState) {
 					last.itemsButtonState = itemsButtonState;
@@ -780,31 +799,8 @@
 						$nextButton.prop('disabled', isLast);
 					}
 
-					$prevButton[isFirst ? 'removeClass' : 'addClass'](o.disabledClass);
-					$nextButton[isLast ? 'removeClass' : 'addClass'](o.disabledClass);
-				}
-			}
-
-			// Page navigation
-			if ($pages[0]) {
-				var isStart = pos.dest <= pos.start,
-					isEnd = pos.dest >= pos.end,
-					pagesButtonState = isStart ? 'first' : isEnd ? 'last' : 'middle';
-
-				// Update paging buttons only if there has been a change in their state
-				if (last.pagesButtonState !== pagesButtonState) {
-					last.pagesButtonState = pagesButtonState;
-
-					if ($prevPageButton.is('button,input')) {
-						$prevPageButton.prop('disabled', isStart);
-					}
-
-					if ($nextPageButton.is('button,input')) {
-						$nextPageButton.prop('disabled', isEnd);
-					}
-
-					$prevPageButton[isStart ? 'removeClass' : 'addClass'](o.disabledClass);
-					$nextPageButton[isEnd ? 'removeClass' : 'addClass'](o.disabledClass);
+					$prevButton[isFirst ? 'addClass' : 'removeClass'](o.disabledClass);
+					$nextButton[isLast ? 'addClass' : 'removeClass'](o.disabledClass);
 				}
 			}
 		}
