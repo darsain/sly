@@ -82,6 +82,8 @@
 			},
 			$scrollSource   = o.scrollSource ? $(o.scrollSource) : $frame,
 			$dragSource     = o.dragSource ? $(o.dragSource) : $frame,
+			$forwardButton  = $(o.forward),
+			$backwardButton = $(o.backward),
 			$prevButton     = $(o.prev),
 			$nextButton     = $(o.next),
 			$prevPageButton = $(o.prevPage),
@@ -93,6 +95,8 @@
 			dragInitEvents  = 'touchstart.' + namespace + ' mousedown.' + namespace,
 			dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace,
 			dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace,
+			clickEvent      = 'click.' + namespace,
+			mouseDUEvent    = 'mousedown.' + namespace + ' mouseup.' + namespace,
 			renderID        = 0,
 			cycleID         = 0,
 			cycleIsPaused   = 0,
@@ -299,7 +303,7 @@
 			}
 
 			// Handle overflowing position limits
-			if (!dragging.released && dragging.source === 'slidee' && o.elasticBounds) {
+			if (!dragging.released && dragging.slidee && o.elasticBounds) {
 				if (newPos > pos.end) {
 					newPos = pos.end + (newPos - pos.end) / 6;
 				} else if (newPos < pos.start) {
@@ -354,11 +358,11 @@
 
 			// If immediate repositioning is requested, SLIDEE is being dragged, or animation duration would take
 			// less than 2 frames, don't animate
-			if (animation.immediate || (!dragging.released ? dragging.source === 'slidee' : o.speed < 33)) {
+			if (animation.immediate || (!dragging.released ? dragging.slidee : o.speed < 33)) {
 				pos.cur = animation.to;
 			}
 			// Use tweesing for animations without known end point
-			else if (!dragging.released && dragging.source === 'handle') {
+			else if (!dragging.released && !dragging.slidee) {
 				pos.cur += (animation.to - pos.cur) * o.syncFactor;
 			}
 			// Use tweening for basic animations with known end point
@@ -402,7 +406,7 @@
 		 */
 		function syncScrollbar() {
 			if ($handle) {
-				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && dragging.source === 'handle') ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
+				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
@@ -468,6 +472,53 @@
 		 */
 		self.getRel = function () {
 			return rel;
+		};
+
+		/**
+		 * Continuous move in a specified direction.
+		 *
+		 * @param  {String} direction forward or backward
+		 *
+		 * @return {Void}
+		 */
+		function continuously(direction) {
+			continuousInit('button');
+
+			(function continuousLoop() {
+				if (!dragging.released) {
+					rAF(continuousLoop);
+				}
+				slideTo(within(pos.dest + Math.round((direction === 'forward' ? o.moveBy : -o.moveBy) / 60, pos.start, pos.end)));
+			}());
+		}
+
+		/**
+		 * Continuously move forward.
+		 *
+		 * @return {Void}
+		 */
+		self.forward = function () {
+			continuously('forward');
+		};
+
+		/**
+		 * Continuously move backward.
+		 *
+		 * @return {Void}
+		 */
+		self.backward = function () {
+			continuously('backward');
+		};
+
+		/**
+		 * Stops continuous movement.
+		 *
+		 * @return {Void}
+		 */
+		self.stop = function () {
+			if (dragging.source === 'button') {
+				dragging.released = 1;
+			}
 		};
 
 		/**
@@ -770,6 +821,7 @@
 			// Update paging buttons only if there has been a change in SLIDEE position
 			if (last.slideePosState !== slideePosState) {
 				last.slideePosState = slideePosState;
+
 				if ($prevPageButton.is('button,input')) {
 					$prevPageButton.prop('disabled', isStart);
 				}
@@ -778,8 +830,22 @@
 					$nextPageButton.prop('disabled', isEnd);
 				}
 
-				$prevPageButton[isStart ? 'addClass' : 'removeClass'](o.disabledClass);
-				$nextPageButton[isEnd ? 'addClass' : 'removeClass'](o.disabledClass);
+				$prevPageButton.add($backwardButton)[isStart ? 'addClass' : 'removeClass'](o.disabledClass);
+				$nextPageButton.add($forwardButton)[isEnd ? 'addClass' : 'removeClass'](o.disabledClass);
+			}
+
+			// Forward & Backward buttons need a separate state caching because we cannot "property disable"
+			// them while they are being used, as disabled buttons stop emitting mouse events.
+			if (last.fwdbwdState !== slideePosState && dragging.released) {
+				last.fwdbwdState = slideePosState;
+
+				if ($backwardButton.is('button,input')) {
+					$backwardButton.prop('disabled', isStart);
+				}
+
+				if ($forwardButton.is('button,input')) {
+					$forwardButton.prop('disabled', isEnd);
+				}
 			}
 
 			// Item navigation
@@ -890,6 +956,17 @@
 		}
 
 		/**
+		 * Initialize continuous movement.
+		 *
+		 * @return {Void}
+		 */
+		function continuousInit(source) {
+			dragging.released = 0;
+			dragging.source   = source;
+			dragging.slidee   = source === 'slidee';
+		}
+
+		/**
 		 * Dragging initiator.
 		 *
 		 * @param  {Event} event
@@ -905,11 +982,12 @@
 			if (isTouch || event.which <= 1) {
 				stopDefault(event);
 
-				// Update a dragging object
-				dragging.source   = source;
+				// Reset dragging object
+				continuousInit(source);
+
+				// Variables used in dragHandler
 				dragging.$source  = $(event.target);
 				dragging.init     = 0;
-				dragging.released = 0;
 				dragging.touch    = isTouch;
 				dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
 				dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
@@ -942,9 +1020,9 @@
 			);
 
 			// Initialization
-			if (!dragging.init && (Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || dragging.source === 'handle')) {
+			if (!dragging.init && (Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || !dragging.slidee)) {
 				dragging.init = 1;
-				if (dragging.source === 'slidee') {
+				if (dragging.slidee) {
 					ignoreNextClick = 1;
 				}
 
@@ -952,12 +1030,12 @@
 				self.pause(1);
 
 				// Disable click actions on source element, as they are unwelcome when dragging
-				dragging.$source.on('click', function disableAction(event) {
+				dragging.$source.on(clickEvent, function disableAction(event) {
 					stopDefault(event, 1);
-					if (dragging.source === 'slidee') {
+					if (dragging.slidee) {
 						ignoreNextClick = 0;
 					}
-					dragging.$source.off('click', disableAction);
+					dragging.$source.off(clickEvent, disableAction);
 				});
 
 				// Trigger moveStart event
@@ -969,22 +1047,56 @@
 				stopDefault(event);
 
 				// Adjust path with a swing on mouse release
-				if (dragging.released && dragging.source === 'slidee' && o.speed > 33) {
+				if (dragging.released && dragging.slidee && o.speed > 33) {
 					dragging.path += dragging.path * 200 / (+new Date() - dragging.start);
 				}
 
-				slideTo(dragging.source === 'slidee' ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
+				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
 			}
 
 			// Cleanup and trigger :moveEnd event on release
 			if (dragging.released) {
 				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
-				(dragging.source === 'slidee' ? $slidee : $handle).removeClass(o.draggedClass);
+				(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
 				// Account for item snapping position adjustment.
 				if (pos.cur === pos.dest) {
 					trigger('moveEnd');
 				}
+			}
+		}
+
+		/**
+		 * Buttons navigation handler.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function buttonsHandler(event) {
+			/*jshint validthis:true */
+			stopDefault(event);
+			switch (this) {
+				case $forwardButton[0]:
+				case $backwardButton[0]:
+					if (event.type === 'mousedown') {
+						continuously($forwardButton.is(this) ? 'forward' : 'backward');
+					} else {
+						self.stop();
+					}
+					break;
+				case $prevButton[0]:
+					self.prev();
+					break;
+				case $nextButton[0]:
+					self.next();
+					break;
+				case $prevPageButton[0]:
+					self.prevPage();
+					break;
+				case $nextPageButton[0]:
+					self.nextPage();
+					break;
 			}
 		}
 
@@ -1116,6 +1228,8 @@
 				.add($handle)
 				.add($sb)
 				.add($pb)
+				.add($forwardButton)
+				.add($backwardButton)
 				.add($prevButton)
 				.add($nextButton)
 				.add($prevPageButton)
@@ -1220,7 +1334,7 @@
 
 			// Clicking on scrollbar navigation
 			if (o.clickBar && $sb[0]) {
-				$sb.on('click.' + namespace, function (event) {
+				$sb.on(clickEvent, function (event) {
 					// Ignore other than left mouse button
 					if (event.which <= 1) {
 						stopDefault(event);
@@ -1251,33 +1365,27 @@
 			}
 
 			// Navigation buttons
+			if (o.forward) {
+				$forwardButton.on(mouseDUEvent, buttonsHandler);
+			}
+			if (o.backward) {
+				$backwardButton.on(mouseDUEvent, buttonsHandler);
+			}
 			if (o.prev) {
-				$prevButton.on('click.' + namespace, function (event) {
-					stopDefault(event);
-					self.prev();
-				});
+				$prevButton.on(clickEvent, buttonsHandler);
 			}
 			if (o.next) {
-				$nextButton.on('click.' + namespace, function (event) {
-					stopDefault(event);
-					self.next();
-				});
+				$nextButton.on(clickEvent, buttonsHandler);
 			}
 			if (o.prevPage) {
-				$prevPageButton.on('click.' + namespace, function (event) {
-					stopDefault(event);
-					self.prevPage();
-				});
+				$prevPageButton.on(clickEvent, buttonsHandler);
 			}
 			if (o.nextPage) {
-				$nextPageButton.on('click.' + namespace, function (event) {
-					stopDefault(event);
-					self.nextPage();
-				});
+				$nextPageButton.on(clickEvent, buttonsHandler);
 			}
 
 			// Click on items navigation
-			$slidee.on('click.' + namespace, '*', function (event) {
+			$slidee.on(clickEvent, '*', function (event) {
 				// Accept only right mouse button clicks on direct SLIDEE children
 				if (event.which <= 1 && this.parentNode === event.delegateTarget && !ignoreNextClick) {
 					self.activate(this);
@@ -1288,7 +1396,7 @@
 
 			// Pages navigation
 			if ($pb[0]) {
-				$pb.on('click.' + namespace, '*', function () {
+				$pb.on(clickEvent, '*', function () {
 					self.activatePage($pages.index(this));
 				});
 			}
@@ -1501,6 +1609,7 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
+		moveBy:        500,     // Number of pixels to move per second in continuous animations (fwd/bwd).
 		dragging:      0,       // Enable navigation by dragging the SLIDEE.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
