@@ -157,6 +157,7 @@
 						itemMarginEnd   = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom'),
 						itemData = {
 							size: itemSize,
+							half: itemSize / 2,
 							start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
 							center: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
 							end: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
@@ -766,22 +767,18 @@
 				// From start
 				for (var i = 0, il = items.length; i < il; i++) {
 					// First item
-					if (first === false && slideePos <= items[i].start) {
+					if (first === false && slideePos <= items[i].start + items[i].half) {
 						first = i;
 					}
 
-					// Centered item
-					if (center === false && slideePos - items[i].size / 2 <= items[i].center) {
+					// Center item
+					if (center === false && slideePos <= items[i].center + items[i].half) {
 						center = i;
 					}
 
 					// Last item
-					if (i === items.length - 1 || (last === false && slideePos < items[i + 1].end)) {
+					if (i === il - 1 || slideePos <= items[i].end + items[i].half) {
 						last = i;
-					}
-
-					// Terminate if all are assigned
-					if (last !== false) {
 						break;
 					}
 				}
@@ -1609,7 +1606,7 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-		moveBy:        500,     // Number of pixels to move per second in continuous animations (fwd/bwd).
+		moveBy:        300,     // Number of pixels to move per second in continuous animations (forward/backward).
 		dragging:      0,       // Enable navigation by dragging the SLIDEE.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
