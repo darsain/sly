@@ -1024,19 +1024,19 @@
 				dragging.init = 1;
 				if (dragging.slidee) {
 					ignoreNextClick = 1;
+
+					// Disable click actions on source element, as they are unwelcome when dragging
+					dragging.$source.on(clickEvent, function disableAction(event) {
+						stopDefault(event, 1);
+						if (dragging.slidee) {
+							ignoreNextClick = 0;
+						}
+						dragging.$source.off(clickEvent, disableAction);
+					});
 				}
 
 				// Pause ongoing cycle
 				self.pause(1);
-
-				// Disable click actions on source element, as they are unwelcome when dragging
-				dragging.$source.on(clickEvent, function disableAction(event) {
-					stopDefault(event, 1);
-					if (dragging.slidee) {
-						ignoreNextClick = 0;
-					}
-					dragging.$source.off(clickEvent, disableAction);
-				});
 
 				// Trigger moveStart event
 				trigger('moveStart');
