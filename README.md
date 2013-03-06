@@ -1,16 +1,18 @@
 # [Sly](http://darsa.in/sly)
 
-jQuery plugin for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
+JavaScript library for one-directional scrolling with item based navigation support. 12KB minified, 4.5KB gzipped.
 
-Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, dragging the content, touch events, automated
-cycling, ... and has a powerful API.
+Sly supports navigation with mouse wheel scrolling, scrollbar, pages bar, navigation buttons, content dragging, touch
+events, automated cycling, ... and has a powerful developer friendly API.
 
 That's all build around a custom [highly optimized animation rendering](http://i.imgur.com/dk0nV.png) with
-requestAnimationFrame, and GPU accelerated positioning (in browsers that support it).
+requestAnimationFrame, and GPU accelerated positioning with fallbacks for browsers that do not support it.
 
 #### Dependencies
 
-Except jQuery 1.7+, there are **no other dependencies**. That means you don't need 200kB of jQuery-UI to use it.
+- jQuery 1.7+
+
+Thats it. You don't need 200kB of jQuery-UI to Sly :)
 
 #### Compatibility
 
@@ -20,8 +22,7 @@ Works everywhere, even in IE6+ abominations, but that is a complete accident :) 
 
 ### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
 
-Sly upholds the [Semantic Versioning Specification](http://semver.org/), and right now is in **release candidate** state.
-For more info, read the [Roadmap section](#roadmap) below.
+Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 
 ### [Forum](https://groups.google.com/d/forum/sly-js)
 
@@ -39,7 +40,7 @@ For more info, read the [Roadmap section](#roadmap) below.
 
 ## Quick reference
 
-jQuery call with all default options as defined in the source. Visit the
+Call via a jQuery proxy with all default options as defined in the source. Visit the
 [Options Wiki page](https://github.com/Darsain/sly/wiki/Options) for more detailed documentation.
 
 ```js
@@ -64,6 +65,8 @@ $('#frame').sly({
 		},
 
 	// Navigation buttons
+	forward:  null, // Selector or DOM element for "forward movement" button.
+	backward: null, // Selector or DOM element for "backward movement" button.
 	prev:     null, // Selector or DOM element for "previous item" button.
 	next:     null, // Selector or DOM element for "next item" button.
 	prevPage: null, // Selector or DOM element for "previous page" button.
@@ -77,6 +80,7 @@ $('#frame').sly({
 
 	// Mixed options
 	scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
+	moveBy:        300,     // Number of pixels to move per second in continuous animations (forward/backward).
 	dragging:      0,       // Enable navigation by dragging the SLIDEE.
 	elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 	speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
@@ -96,18 +100,13 @@ $('#frame').sly({
 
 ## Roadmap
 
-All of the desired features have been implemented, and Sly is now in a **release candidate** state.
+All of the desired features have been implemented.
 
-Maybe never, but it would be nice:
+Maaaaybe never, but I'd liked to:
 
-- Dropping jQuery dependency.
+- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) compoment.
+- RTL layout support.
 
 ## Contributing
 
-Contributions are welcome! But please:
-
-- Maintain the coding style used throughout the project, and defined in the `.editorconfig` file.
-	[Editorcofig plugin for SublimText 2](https://github.com/sindresorhus/editorconfig-sublime).
-- Resulting code has to pass JSHint with options defined in the `.jshintrc` file. You can install
-	[SublimeLinter plugin for SublimText 2](https://github.com/SublimeLinter/SublimeLinter) to do it automatically, or
-	run `grunt lint` task.
+Please, read the [Contributing Guidelines](CONTRIBUTING.md) for this project.
