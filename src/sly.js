@@ -96,7 +96,7 @@
 			dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace,
 			dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace,
 			clickEvent      = 'click.' + namespace,
-			mouseDUEvent    = 'mousedown.' + namespace + ' mouseup.' + namespace,
+			mouseDownEvent  = 'mousedown.' + namespace,
 			renderID        = 0,
 			historyID       = 0,
 			cycleID         = 0,
@@ -1100,11 +1100,11 @@
 			switch (this) {
 				case $forwardButton[0]:
 				case $backwardButton[0]:
-					if (event.type === 'mousedown') {
-						continuously($forwardButton.is(this) ? 'forward' : 'backward');
-					} else {
+					continuously($forwardButton.is(this) ? 'forward' : 'backward');
+					$doc.on('mouseup', function stopContinuously() {
 						self.stop();
-					}
+						$doc.off('mouseup', stopContinuously);
+					});
 					break;
 				case $prevButton[0]:
 					self.prev();
@@ -1387,10 +1387,10 @@
 
 			// Navigation buttons
 			if (o.forward) {
-				$forwardButton.on(mouseDUEvent, buttonsHandler);
+				$forwardButton.on(mouseDownEvent, buttonsHandler);
 			}
 			if (o.backward) {
-				$backwardButton.on(mouseDUEvent, buttonsHandler);
+				$backwardButton.on(mouseDownEvent, buttonsHandler);
 			}
 			if (o.prev) {
 				$prevButton.on(clickEvent, buttonsHandler);
