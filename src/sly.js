@@ -98,6 +98,7 @@
 			clickEvent      = 'click.' + namespace,
 			mouseDUEvent    = 'mousedown.' + namespace + ' mouseup.' + namespace,
 			renderID        = 0,
+			historyID       = 0,
 			cycleID         = 0,
 			cycleIsPaused   = 0,
 			ignoreNextClick = 0;
@@ -359,7 +360,7 @@
 
 			// If immediate repositioning is requested, SLIDEE is being dragged, or animation duration would take
 			// less than 2 frames, don't animate
-			if (animation.immediate || (!dragging.released ? dragging.slidee : o.speed < 33)) {
+			if (animation.immediate || !dragging.released && dragging.slidee) {
 				pos.cur = animation.to;
 			}
 			// Use tweesing for animations without known end point
@@ -953,6 +954,21 @@
 		}
 
 		/**
+		 * Keeps track of a dragging path history.
+		 *
+		 * @return {Void}
+		 */
+		function draggingHistoryTick() {
+			// Looking at this, I know what you're thinking :) But as we need only 4 history states, doing it this way
+			// as opposed to a proper loop is ~25 bytes smaller (when minified with GCC), a lot faster, and doesn't
+			// generate garbage. The loop version would create 2 new variables on every tick. Unexaptable!
+			dragging.history[0] = dragging.history[1];
+			dragging.history[1] = dragging.history[2];
+			dragging.history[2] = dragging.history[3];
+			dragging.history[3] = dragging.path;
+		}
+
+		/**
 		 * Initialize continuous movement.
 		 *
 		 * @return {Void}
@@ -982,7 +998,7 @@
 				// Reset dragging object
 				continuousInit(source);
 
-				// Variables used in dragHandler
+				// Properties used in dragHandler
 				dragging.$source  = $(event.target);
 				dragging.init     = 0;
 				dragging.touch    = isTouch;
@@ -991,6 +1007,7 @@
 				dragging.start    = +new Date();
 				dragging.time     = 0;
 				dragging.path     = 0;
+				dragging.history  = [0, 0, 0, 0];
 				dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
 				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
@@ -999,6 +1016,12 @@
 
 				// Bind dragging events
 				$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+
+				// Keep track of a dragging path history. This is later used in the
+				// dragging release swing calculation when dragging SLIDEE.
+				if (isSlidee) {
+					historyID = setInterval(draggingHistoryTick, 5);
+				}
 			}
 		}
 
@@ -1044,8 +1067,8 @@
 				stopDefault(event);
 
 				// Adjust path with a swing on mouse release
-				if (dragging.released && dragging.slidee && o.speed > 33) {
-					dragging.path += dragging.path * 200 / (+new Date() - dragging.start);
+				if (dragging.released && dragging.slidee) {
+					dragging.path += (dragging.path - dragging.history[0]) / 20 * within(o.speed, 0, 300);
 				}
 
 				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
@@ -1053,6 +1076,7 @@
 
 			// Cleanup and trigger :moveEnd event on release
 			if (dragging.released) {
+				clearInterval(historyID);
 				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 				(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
