@@ -1080,7 +1080,8 @@
 				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 				(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
-				// Account for item snapping position adjustment.
+				// Normally, this is triggered in render(), but if there
+				// is nothing to render, we have to do it manually here.
 				if (pos.cur === pos.dest) {
 					trigger('moveEnd');
 				}
@@ -1356,12 +1357,12 @@
 			// Clicking on scrollbar navigation
 			if (o.clickBar && $sb[0]) {
 				$sb.on(clickEvent, function (event) {
-					// Ignore other than left mouse button
-					if (event.which <= 1) {
+					// Only left mouse button clicks on scroll bar. Ignore clicks on handle.
+					if (event.which <= 1 && event.target === $sb[0]) {
 						stopDefault(event);
 
 						// Calculate new handle position and sync SLIDEE to it
-						slideTo(handleToSlidee((o.horizontal ? event.clientX - $sb.offset().left : event.clientY - $sb.offset().top) - handleSize / 2));
+						slideTo(handleToSlidee((o.horizontal ? event.pageX - $sb.offset().left : event.pageY - $sb.offset().top) - handleSize / 2));
 					}
 				});
 			}
