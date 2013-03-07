@@ -995,7 +995,7 @@
 
 			// Ignore other than left mouse button
 			if (isTouch || event.which <= 1) {
-				stopDefault(event);
+				stopDefault(event, 1);
 
 				// Reset dragging object
 				continuousInit(source);
