@@ -297,7 +297,7 @@
 						newPos = items[tempRel.centerItem].center;
 					}
 					if (forceCenteredNav) {
-						self.activate(tempRel.centerItem, 1);
+						self.activate(tempRel.centerItem, 0, 1);
 					}
 				} else if (isDetached) {
 					newPos = items[tempRel.firstItem].start;
@@ -671,11 +671,12 @@
 		 * the need for navigation buttons, scrolling, or keyboard arrows.
 		 *
 		 * @param {Mixed} item         Item DOM element, or index starting at 0.
+		 * @param {Bool}  immediate    Whether to reposition immediately without animation.
 		 * @param {Bool}  noReposition Activate item without repositioning it.
 		 *
 		 * @return {Void}
 		 */
-		self.activate = function (item, noReposition) {
+		self.activate = function (item, immediate, noReposition) {
 			if (!itemNav || item === undefined) {
 				return;
 			}
@@ -719,14 +720,15 @@
 		/**
 		 * Activates a page.
 		 *
-		 * @param {Int} index Page index, starting from 0.
+		 * @param {Int}  index     Page index, starting from 0.
+		 * @param {Bool} immediate Whether to reposition immediately without animation.
 		 *
 		 * @return {Void}
 		 */
-		self.activatePage = function (index) {
+		self.activatePage = function (index, immediate) {
 			if (pages.length) {
 				index = within(index, 0, pages.length - 1);
-				slideTo(pages[index]);
+				slideTo(pages[index], immediate);
 				trigger('activePage', index);
 			}
 		};
@@ -1319,9 +1321,9 @@
 
 			// Activate requested position
 			if (itemNav) {
-				self.activate(o.startAt);
+				self.activate(o.startAt, 1);
 			} else {
-				slideTo(o.startAt);
+				slideTo(o.startAt, 1);
 			}
 
 			// Scrolling navigation
