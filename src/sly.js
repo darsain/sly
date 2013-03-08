@@ -321,7 +321,7 @@
 			animation.from      = pos.cur;
 			animation.to        = newPos;
 			animation.delta     = newPos - pos.cur;
-			animation.immediate = immediate;
+			animation.immediate = immediate || !dragging.released && dragging.slidee || o.speed < 20;
 
 			// Attach animation destination
 			pos.dest = newPos;
@@ -360,7 +360,7 @@
 
 			// If immediate repositioning is requested, SLIDEE is being dragged, or animation duration would take
 			// less than 2 frames, don't animate
-			if (animation.immediate || !dragging.released && dragging.slidee) {
+			if (animation.immediate) {
 				pos.cur = animation.to;
 			}
 			// Use tweesing for animations without known end point
