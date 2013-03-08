@@ -375,8 +375,8 @@
 
 			// If there is nothing more to render (animation reached the end, or dragging has been released),
 			// break the rendering loop, otherwise request another animation frame
-			if (animation.to === Math.round(pos.cur) && (!dragging.released || animation.time >= o.speed)) {
-				pos.cur = pos.dest;
+			if (animation.to === Math.round(pos.cur) && (!dragging.released || animation.time >= o.speed || animation.immediate)) {
+				pos.cur = animation.to;
 				renderID = 0;
 			} else {
 				renderID = rAF(render);
