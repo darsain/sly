@@ -1087,6 +1087,9 @@
 				if (pos.cur === pos.dest) {
 					trigger('moveEnd');
 				}
+				if (dragging.init == 0 && event.type==='touchend') {
+					trigger('touchclick', event.target);
+				}
 			}
 		}
 
@@ -1211,6 +1214,11 @@
 		function trigger(name, arg1, arg2, arg3, arg4) {
 			// Common arguments for events
 			switch (name) {
+				case 'touchclick':
+					arg2 = arg1;
+					arg1 = pos;
+					break;
+					
 				case 'active':
 					arg2 = arg1;
 					arg1 = $items;
