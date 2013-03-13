@@ -998,6 +998,11 @@
 		 * @return {Void}
 		 */
 		function dragInit(event) {
+			// Ignore when already in progress
+			if (dragging.init) {
+				return;
+			}
+
 			var isTouch = event.type === 'touchstart',
 				source = event.data.source,
 				isSlidee = source === 'slidee';
@@ -1010,17 +1015,17 @@
 				continuousInit(source);
 
 				// Properties used in dragHandler
-				dragging.$source  = $(event.target);
-				dragging.init     = 0;
-				dragging.touch    = isTouch;
-				dragging.initLoc  = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
-				dragging.initPos  = isSlidee ? pos.cur : hPos.cur;
-				dragging.start    = +new Date();
-				dragging.time     = 0;
-				dragging.path     = 0;
-				dragging.history  = [0, 0, 0, 0];
-				dragging.pathMin  = isSlidee ? -dragging.initLoc : -hPos.cur;
-				dragging.pathMax  = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
+				dragging.$source = $(event.target);
+				dragging.init    = 0;
+				dragging.touch   = isTouch;
+				dragging.initLoc = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
+				dragging.initPos = isSlidee ? pos.cur : hPos.cur;
+				dragging.start   = +new Date();
+				dragging.time    = 0;
+				dragging.path    = 0;
+				dragging.history = [0, 0, 0, 0];
+				dragging.pathMin = isSlidee ? -dragging.initLoc : -hPos.cur;
+				dragging.pathMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
 				// Add dragging class
 				(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
