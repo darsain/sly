@@ -63,10 +63,9 @@
 
 			// Navigation type booleans
 			basicNav    = o.itemNav === 'basic',
-			smartNav    = o.itemNav === 'smart',
 			forceCenteredNav = o.itemNav === 'forceCentered',
 			centeredNav = o.itemNav === 'centered' || forceCenteredNav,
-			itemNav     = !parallax && (basicNav || smartNav || centeredNav || forceCenteredNav),
+			itemNav     = !parallax && (basicNav || centeredNav || forceCenteredNav),
 
 			// Other variables
 			$items = 0,
@@ -203,9 +202,9 @@
 
 				// Fix overflowing activeItem
 				if (rel.activeItem >= items.length) {
-					self.activate(items.length - 1);
+					activate(items.length - 1);
 				} else if (items.length === 1) {
-					$items.eq(rel.activeItem).addClass(o.activeClass);
+					activate(0);
 				}
 			}
 
@@ -290,22 +289,22 @@
 			// Align items
 			if (itemNav && dragging.released) {
 				var tempRel = getRelatives(newPos),
-					isDetached = newPos > pos.start && newPos < pos.end;
+					isNotBordering = newPos > pos.start && newPos < pos.end;
 
 				if (centeredNav) {
-					if (isDetached) {
+					if (isNotBordering) {
 						newPos = items[tempRel.centerItem].center;
 					}
-					if (forceCenteredNav) {
-						self.activate(tempRel.centerItem, 0, 1);
+					if (forceCenteredNav && o.activateMiddle) {
+						activate(tempRel.centerItem);
 					}
-				} else if (isDetached) {
+				} else if (isNotBordering) {
 					newPos = items[tempRel.firstItem].start;
 				}
 			}
 
 			// Handle overflowing position limits
-			if (!dragging.released && dragging.slidee && o.elasticBounds) {
+			if (dragging.init && dragging.slidee && o.elasticBounds) {
 				if (newPos > pos.end) {
 					newPos = pos.end + (newPos - pos.end) / 6;
 				} else if (newPos < pos.start) {
@@ -321,7 +320,7 @@
 			animation.from      = pos.cur;
 			animation.to        = newPos;
 			animation.delta     = newPos - pos.cur;
-			animation.immediate = immediate || !dragging.released && dragging.slidee || o.speed < 20;
+			animation.immediate = immediate || dragging.init && dragging.slidee || o.speed < 20;
 
 			// Attach animation destination
 			pos.dest = newPos;
@@ -358,13 +357,12 @@
 				return;
 			}
 
-			// If immediate repositioning is requested, SLIDEE is being dragged, or animation duration would take
-			// less than 2 frames, don't animate
+			// If immediate repositioning is requested, don't animate.
 			if (animation.immediate) {
 				pos.cur = animation.to;
 			}
 			// Use tweesing for animations without known end point
-			else if (!dragging.released && !dragging.slidee) {
+			else if (dragging.init && !dragging.slidee) {
 				pos.cur += (animation.to - pos.cur) * o.syncFactor;
 			}
 			// Use tweening for basic animations with known end point
@@ -375,7 +373,7 @@
 
 			// If there is nothing more to render (animation reached the end, or dragging has been released),
 			// break the rendering loop, otherwise request another animation frame
-			if (animation.to === Math.round(pos.cur) && (!dragging.released || animation.time >= o.speed || animation.immediate)) {
+			if (animation.to === Math.round(pos.cur) && (dragging.init || animation.time >= o.speed || animation.immediate)) {
 				pos.cur = animation.to;
 				renderID = 0;
 			} else {
@@ -408,7 +406,7 @@
 		 */
 		function syncScrollbar() {
 			if ($handle) {
-				hPos.cur = pos.start === pos.end ? 0 : (((!dragging.released && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
+				hPos.cur = pos.start === pos.end ? 0 : (((dragging.init && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
@@ -485,12 +483,13 @@
 		 */
 		function continuously(direction) {
 			continuousInit('button');
+			dragging.init = 1;
 
 			(function continuousLoop() {
-				if (!dragging.released) {
+				if (dragging.init) {
 					rAF(continuousLoop);
 				}
-				slideTo(within(pos.dest + Math.round((direction === 'forward' ? o.moveBy : -o.moveBy) / 60, pos.start, pos.end)));
+				slideTo(within(pos.dest + Math.round((direction === 'f' ? o.moveBy : -o.moveBy) / 60, pos.start, pos.end)));
 			}());
 		}
 
@@ -500,7 +499,7 @@
 		 * @return {Void}
 		 */
 		self.forward = function () {
-			continuously('forward');
+			continuously('f');
 		};
 
 		/**
@@ -509,7 +508,7 @@
 		 * @return {Void}
 		 */
 		self.backward = function () {
-			continuously('backward');
+			continuously('b');
 		};
 
 		/**
@@ -519,6 +518,7 @@
 		 */
 		self.stop = function () {
 			if (dragging.source === 'button') {
+				dragging.init = 0;
 				dragging.released = 1;
 			}
 		};
@@ -663,22 +663,15 @@
 		}
 
 		/**
-		 * Activates an element.
+		 * Activates an item.
 		 *
-		 * Element is positioned to one of the sides of the frame, based on it's current position.
-		 * If the element is close to the right frame border, it will be animated to the start of the left border,
-		 * and vice versa. This helps user to navigate through the elements only by clicking on them, without
-		 * the need for navigation buttons, scrolling, or keyboard arrows.
+		 * @param  {Mixed} item Item DOM element, or index starting at 0.
 		 *
-		 * @param {Mixed} item         Item DOM element, or index starting at 0.
-		 * @param {Bool}  immediate    Whether to reposition immediately without animation.
-		 * @param {Bool}  noReposition Activate item without repositioning it.
-		 *
-		 * @return {Void}
+		 * @return {Mixed} Activated item index or false on fail.
 		 */
-		self.activate = function (item, immediate, noReposition) {
+		function activate(item) {
 			if (!itemNav || item === undefined) {
-				return;
+				return false;
 			}
 
 			var index = getIndex(item),
@@ -692,30 +685,46 @@
 			$items.eq(index).addClass(o.activeClass);
 			updateButtonsState();
 
-			// Trigget active event if a new element is being activated
+			// Trigger active event if a new element is being activated
 			if (index !== oldActive) {
 				trigger('active', index);
 			}
 
-			if (!noReposition) {
-				// When centeredNav is enabled, center the element
-				if (centeredNav) {
-					self.toCenter(index);
-				// Otherwise determine where to position the element
-				} else if (smartNav) {
-					// If activated element is currently on the far right side of the frame, assume that
-					// user is moving forward and animate it to the start of the visible frame, and vice versa
-					if (index >= rel.lastItem) {
-						self.toStart(index);
+			return index;
+		}
+
+		/**
+		 * Activates an item and helps with further navigation when o.smart is enabled.
+		 *
+		 * @param {Mixed} item      Item DOM element, or index starting at 0.
+		 * @param {Bool}  immediate Whether to reposition immediately in smart navigation.
+		 *
+		 * @return {Void}
+		 */
+		self.activate = function (item, immediate) {
+			var index = activate(item);
+
+			if (index !== false) {
+				// Smart navigation
+				if (o.smart) {
+					// When centeredNav is enabled, center the element.
+					// Otherwise, determine where to position the element based on its current position.
+					// If the element is currently on the far end side of the frame, assume that user is
+					// moving forward and animate it to the start of the visible frame, and vice versa.
+					if (centeredNav) {
+						self.toCenter(index, immediate);
+					} else if (index >= rel.lastItem) {
+						self.toStart(index, immediate);
 					} else if (index <= rel.firstItem) {
-						self.toEnd(index);
+						self.toEnd(index, immediate);
 					} else {
 						resetCycle();
 					}
+				} else {
+					resetCycle();
 				}
 			}
 		};
-
 
 		/**
 		 * Activates a page.
@@ -925,7 +934,7 @@
 		};
 
 		/**
-		 * Toggle cycling
+		 * Toggle cycling.
 		 *
 		 * @return {Void}
 		 */
@@ -1068,9 +1077,13 @@
 			if (dragging.init) {
 				stopDefault(event);
 
-				// Adjust path with a swing on mouse release
-				if (dragging.released && dragging.slidee) {
-					dragging.path += (dragging.path - dragging.history[0]) / 20 * within(o.speed, 0, 300);
+				if (dragging.released) {
+					dragging.init = 0;
+
+					// Adjust path with a swing on mouse release
+					if (dragging.slidee) {
+						dragging.path += (dragging.path - dragging.history[0]) / 20 * within(o.speed, 0, 300);
+					}
 				}
 
 				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
@@ -1103,7 +1116,7 @@
 			switch (this) {
 				case $forwardButton[0]:
 				case $backwardButton[0]:
-					continuously($forwardButton.is(this) ? 'forward' : 'backward');
+					continuously($forwardButton.is(this) ? 'f' : 'b');
 					$doc.on('mouseup', function stopContinuously() {
 						self.stop();
 						$doc.off('mouseup', stopContinuously);
@@ -1247,7 +1260,7 @@
 		self.destroy = function () {
 			// Unbind all events
 			$doc
-				.add($slidee)
+				.add($frame)
 				.add($scrollSource)
 				.add($handle)
 				.add($sb)
@@ -1321,7 +1334,8 @@
 
 			// Activate requested position
 			if (itemNav) {
-				self.activate(o.startAt, 1);
+				activate(o.startAt);
+				self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
 			} else {
 				slideTo(o.startAt, 1);
 			}
@@ -1348,8 +1362,8 @@
 					}
 
 					if (itemNav) {
-						var nextItem = getIndex((centeredNav ? forceCenteredNav ? rel.activeItem : rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
-						self[centeredNav ? forceCenteredNav ? 'activate' : 'toCenter' : 'toStart'](nextItem);
+						var nextItem = getIndex((centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
+						self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
 					} else {
 						self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
 					}
@@ -1409,12 +1423,11 @@
 			}
 
 			// Click on items navigation
-			$slidee.on(clickEvent, '*', function (event) {
+			$frame.on(o.activateOn + '.' + namespace, '*', function (event) {
 				// Accept only right mouse button clicks on direct SLIDEE children
-				if (event.which <= 1 && this.parentNode === event.delegateTarget && !ignoreNextClick) {
+				if (event.which <= 1 && this.parentNode === $slidee[0] && !ignoreNextClick) {
 					self.activate(this);
 				}
-
 				ignoreNextClick = 0;
 			});
 
@@ -1600,13 +1613,17 @@
 
 	// Default options
 	$.fn[pluginName].defaults = {
-		// Sly type
-		horizontal: 0,    // Change to horizontal direction.
-		itemNav:    null, // Item navigation type. Can be: basic, smart, centered, forceCentered.
+		horizontal: 0, // Change to horizontal direction.
+
+		// Item based navigation
+		itemNav:    null,  // Item navigation type. Can be: basic, centered, forceCentered.
+		smart:      0,     // Repositions the activated item to help with further navigation.
+		activateOn: null,  // Activate an item when it receives this event. Can be: click, mouseenter, ...
+		activateMiddle: 0, // In forceCentered navigation, always activate an item in the middle of the FRAME.
 
 		// Scrollbar
 		scrollBar:     null, // Selector or DOM element for scrollbar container.
-		dragHandle:    0,    // Whether the scrollbar handle should be dragable.
+		dragHandle:    0,    // Whether the scrollbar handle should be draggable.
 		dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
 		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
 		clickBar:      0,    // Enable navigation by clicking on scrollbar.
@@ -1620,6 +1637,8 @@
 			},
 
 		// Navigation buttons
+		forward:  null, // Selector or DOM element for "forward movement" button.
+		backward: null, // Selector or DOM element for "backward movement" button.
 		prev:     null, // Selector or DOM element for "previous item" button.
 		next:     null, // Selector or DOM element for "next item" button.
 		prevPage: null, // Selector or DOM element for "previous page" button.
