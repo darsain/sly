@@ -705,22 +705,18 @@
 		self.activate = function (item, immediate) {
 			var index = activate(item);
 
-			if (index !== false) {
-				// Smart navigation
-				if (o.smart) {
-					// When centeredNav is enabled, center the element.
-					// Otherwise, determine where to position the element based on its current position.
-					// If the element is currently on the far end side of the frame, assume that user is
-					// moving forward and animate it to the start of the visible frame, and vice versa.
-					if (centeredNav) {
-						self.toCenter(index, immediate);
-					} else if (index >= rel.lastItem) {
-						self.toStart(index, immediate);
-					} else if (index <= rel.firstItem) {
-						self.toEnd(index, immediate);
-					} else {
-						resetCycle();
-					}
+			// Smart navigation
+			if (o.smart && index !== false) {
+				// When centeredNav is enabled, center the element.
+				// Otherwise, determine where to position the element based on its current position.
+				// If the element is currently on the far end side of the frame, assume that user is
+				// moving forward and animate it to the start of the visible frame, and vice versa.
+				if (centeredNav) {
+					self.toCenter(index, immediate);
+				} else if (index >= rel.lastItem) {
+					self.toStart(index, immediate);
+				} else if (index <= rel.firstItem) {
+					self.toEnd(index, immediate);
 				} else {
 					resetCycle();
 				}
@@ -882,13 +878,13 @@
 		}
 
 		/**
-		 * Start cycling.
+		 * Resume cycling.
 		 *
-		 * @param {Bool} soft Start cycle only when soft paused.
+		 * @param {Bool} soft Resume cycle only when soft paused.
 		 *
 		 * @return {Void}
 		 */
-		self.cycle = function (soft) {
+		self.resume = function (soft) {
 			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && isPaused) {
 				return;
 			}
@@ -898,10 +894,11 @@
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
 			} else {
-				trigger('cycleStart');
+				trigger('resume');
 			}
 
 			cycleID = setTimeout(function () {
+				trigger('cycle');
 				switch (o.cycleBy) {
 					case 'items':
 						self.activate(rel.activeItem >= items.length - 1 ? 0 : rel.activeItem + 1);
@@ -911,8 +908,6 @@
 						self.activatePage(rel.activePage >= pages.length - 1 ? 0 : rel.activePage + 1);
 						break;
 				}
-
-				trigger('cycle');
 			}, o.cycleInterval);
 		};
 
@@ -932,7 +927,7 @@
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
-				trigger('cyclePause');
+				trigger('pause');
 			}
 		};
 
@@ -942,7 +937,7 @@
 		 * @return {Void}
 		 */
 		self.toggle = function () {
-			self[cycleID ? 'pause' : 'cycle']();
+			self[cycleID ? 'pause' : 'resume']();
 		};
 
 		/**
@@ -952,7 +947,7 @@
 		 */
 		function resetCycle() {
 			if (dragging.released && !isPaused && !isSoftPaused) {
-				self.cycle();
+				self.resume();
 			}
 		}
 
@@ -1462,13 +1457,13 @@
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
 						if (!isPaused) {
-							self[event.type === 'mouseenter' ? 'pause' : 'cycle'](1);
+							self[event.type === 'mouseenter' ? 'pause' : 'resume'](1);
 						}
 					});
 				}
 
 				// Initiate or pause cycling
-				self[o.startPaused ? 'pause' : 'cycle']();
+				self[o.startPaused ? 'pause' : 'resume']();
 			}
 
 			// Mark instance as initialized
