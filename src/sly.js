@@ -99,7 +99,8 @@
 			renderID        = 0,
 			historyID       = 0,
 			cycleID         = 0,
-			cycleIsPaused   = 0,
+			isPaused        = 0,
+			isSoftPaused    = 0,
 			ignoreNextClick = 0;
 
 		/**
@@ -888,11 +889,11 @@
 		 * @return {Void}
 		 */
 		self.cycle = function (soft) {
-			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && cycleIsPaused) {
+			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && isPaused) {
 				return;
 			}
 
-			cycleIsPaused = 0;
+			isSoftPaused = isPaused = 0;
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
@@ -918,13 +919,15 @@
 		/**
 		 * Pause cycling.
 		 *
-		 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set cycleIsPaused state to true.
+		 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set isPaused state to true.
 		 *
 		 * @return {Void}
 		 */
 		self.pause = function (soft) {
-			if (!soft) {
-				cycleIsPaused = true;
+			if (soft) {
+				isSoftPaused = 1;
+			} else {
+				isPaused = 1;
 			}
 
 			if (cycleID) {
@@ -948,7 +951,7 @@
 		 * @return {Void}
 		 */
 		function resetCycle() {
-			if (dragging.released && !cycleIsPaused) {
+			if (dragging.released && !isPaused && !isSoftPaused) {
 				self.cycle();
 			}
 		}
@@ -1458,7 +1461,7 @@
 				// Pause on hover
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
-						if (!cycleIsPaused) {
+						if (!isPaused) {
 							self[event.type === 'mouseenter' ? 'pause' : 'cycle'](1);
 						}
 					});
