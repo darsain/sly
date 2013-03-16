@@ -590,7 +590,7 @@
 		 */
 		function to(location, item, immediate) {
 			// Optional arguments logic
-			if (typeof item === 'boolean') {
+			if (type(item) === 'boolean') {
 				immediate = item;
 				item = undefined;
 			}
@@ -1148,6 +1148,23 @@
 		};
 
 		/**
+		 * Returns callback array index.
+		 *
+		 * @param  {String}   name Event name.
+		 * @param  {Function} fn   Function
+		 *
+		 * @return {Int} Callback array index, or -1 if isn't registered.
+		 */
+		function callbackIndex(name, fn) {
+			for (var i = 0, l = callbacks[name].length; i < l; i++) {
+				if (callbacks[name][i] === fn) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		/**
 		 * Registers callbacks.
 		 *
 		 * @param  {Mixed} name  Event name, or callbacks map.
@@ -1157,27 +1174,26 @@
 		 */
 		self.on = function (name, fn) {
 			// Callbacks map
-			if (typeof name === 'object') {
+			if (type(name) === 'object') {
 				for (var key in name) {
 					if (name.hasOwnProperty(key)) {
 						self.on(key, name[key]);
 					}
 				}
+			// Callback
+			} else if (type(fn) === 'function') {
+				var names = name.split(' ');
+				for (var n = 0, nl = names.length; n < nl; n++) {
+					callbacks[names[n]] = callbacks[names[n]] || [];
+					if (callbackIndex(names[n], fn) === -1) {
+						callbacks[names[n]].push(fn);
+					}
+				}
 			// Callbacks array
-			} else if (fn instanceof Array) {
+			} else if (type(fn) === 'array') {
 				for (var f = 0, fl = fn.length; f < fl; f++) {
 					self.on(name, fn[f]);
 				}
-			// Callback
-			} else if (typeof fn === 'function') {
-				callbacks[name] = callbacks[name] || [];
-				for (var i = 0, l = callbacks[name].length; i < l; i++) {
-					// Abort if callback is already present
-					if (callbacks[name][i] === fn) {
-						return;
-					}
-				}
-				callbacks[name].push(fn);
 			}
 		};
 
@@ -1190,19 +1206,22 @@
 		 * @return {Void}
 		 */
 		self.off = function (name, fn) {
-			if (callbacks[name]) {
-				if (fn instanceof Array) {
-					for (var f = 0, fl = fn.length; f < fl; f++) {
-						self.off(name, fn[f]);
-					}
-				} else if (typeof fn === 'function') {
-					for (var i = 0, l = callbacks[name].length; i < l; i++) {
-						if (callbacks[name][i] === fn) {
-							callbacks[name].splice(i, 1);
+			if (fn instanceof Array) {
+				for (var f = 0, fl = fn.length; f < fl; f++) {
+					self.off(name, fn[f]);
+				}
+			} else {
+				var names = name.split(' ');
+				for (var n = 0, nl = names.length; n < nl; n++) {
+					callbacks[names[n]] = callbacks[names[n]] || [];
+					if (type(fn) === 'undefined') {
+						callbacks[names[n]].length = 0;
+					} else {
+						var index = callbackIndex(names[n], fn);
+						if (index !== -1) {
+							callbacks[names[n]].splice(index, 1);
 						}
 					}
-				} else {
-					callbacks[name].length = 0;
 				}
 			}
 		};
@@ -1211,38 +1230,15 @@
 		 * Trigger callbacks for event.
 		 *
 		 * @param  {String} name Event name.
-		 * @param  {Mixed}  argX Arguments passed to callback.
+		 * @param  {Mixed}  argX Arguments passed to callbacks.
 		 *
 		 * @return {Void}
 		 */
-		function trigger(name, arg1, arg2, arg3, arg4) {
-			// Common arguments for events
-			switch (name) {
-				case 'active':
-					arg2 = arg1;
-					arg1 = $items;
-					break;
-
-				case 'activePage':
-					arg2 = arg1;
-					arg1 = pages;
-					break;
-
-				default:
-					arg4 = arg1;
-					arg1 = pos;
-					arg2 = $items;
-					arg3 = rel;
-			}
-
+		function trigger(name, arg1) {
 			if (callbacks[name]) {
 				for (var i = 0, l = callbacks[name].length; i < l; i++) {
-					callbacks[name][i].call(frame, arg1, arg2, arg3, arg4);
+					callbacks[name][i].call(self, name, arg1);
 				}
-			}
-
-			if (o.domEvents && !parallax) {
-				$frame.trigger(pluginName + ':' + name, [arg1, arg2, arg3, arg4]);
 			}
 		}
 
@@ -1254,7 +1250,6 @@
 		self.destroy = function () {
 			// Unbind all events
 			$doc
-				.add($frame)
 				.add($scrollSource)
 				.add($handle)
 				.add($sb)
@@ -1417,13 +1412,15 @@
 			}
 
 			// Click on items navigation
-			$frame.on(o.activateOn + '.' + namespace, '*', function (event) {
-				// Accept only right mouse button clicks on direct SLIDEE children
-				if (event.which <= 1 && this.parentNode === $slidee[0] && !ignoreNextClick) {
-					self.activate(this);
-				}
-				ignoreNextClick = 0;
-			});
+			if (itemNav) {
+				$frame.on(o.activateOn + '.' + namespace, '*', function (event) {
+					// Accept only right mouse button clicks on direct SLIDEE children
+					if (event.which <= 1 && this.parentNode === $slidee[0] && !ignoreNextClick) {
+						self.activate(this);
+					}
+					ignoreNextClick = 0;
+				});
+			}
 
 			// Pages navigation
 			if ($pb[0]) {
@@ -1463,6 +1460,17 @@
 			// Return plugin instance
 			return self;
 		};
+	}
+
+	/**
+	 * Return type of the value.
+	 *
+	 * @param  {Mixed} value
+	 *
+	 * @return {String}
+	 */
+	function type(value) {
+		return {}.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
 	}
 
 	/**
@@ -1581,7 +1589,7 @@
 
 		// Attributes logic
 		if (!$.isPlainObject(options)) {
-			if (typeof options === 'string' || options === false) {
+			if (type(options) === 'string' || options === false) {
 				method = options === false ? 'destroy' : options;
 				methodArgs = Array.prototype.slice.call(arguments, 1);
 			}
@@ -1655,7 +1663,6 @@
 		dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
 		startAt:       0,       // Starting offset in pixels or items.
 		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
-		domEvents:     0,       // Enable DOM events if you wish to use them instead of callbacks API (not recommended).
 
 		// Classes
 		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
