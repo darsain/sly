@@ -1089,6 +1089,9 @@
 				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 				(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
+				// Resume ongoing cycle
+				self.resume(1);
+
 				// Normally, this is triggered in render(), but if there
 				// is nothing to render, we have to do it manually here.
 				if (pos.cur === pos.dest) {
@@ -1443,7 +1446,7 @@
 				// Pause on hover
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
-						self[event.type === 'mouseenter' ? 'pause' : 'resume'](1);
+						self[event.type === 'mouseenter' ? 'pause' : 'resume'](2);
 					});
 				}
 
