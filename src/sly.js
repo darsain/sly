@@ -2,16 +2,16 @@
 	'use strict';
 
 	// Plugin names
-	var pluginName = 'sly',
-		className  = 'Sly',
-		namespace  = pluginName,
+	var pluginName = 'sly';
+	var className  = 'Sly';
+	var namespace  = pluginName;
 
-		// Local WindowAnimationTiming interface
-		cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame,
-		rAF = w.requestAnimationFrame,
+	// Local WindowAnimationTiming interface
+	var cAF = w.cancelAnimationFrame || w.cancelRequestAnimationFrame;
+	var rAF = w.requestAnimationFrame;
 
-		// Support indicators
-		transform, gpuAcceleration;
+	// Support indicators
+	var transform, gpuAcceleration;
 
 	/**
 	 * Sly.
@@ -27,78 +27,78 @@
 		o = $.extend({}, Sly.defaults, o);
 
 		// Private variables
-		var self        = this,
-			initialized = 0,
-			parallax    = isNumber(frame),
-			$doc        = $(document),
+		var self = this;
+		var initialized = 0;
+		var parallax = isNumber(frame);
+		var $doc = $(document);
 
-			// Frame variables
-			$frame     = $(frame),
-			$slidee    = $frame.children().eq(0),
-			frameSize  = 0,
-			slideeSize = 0,
-			pos        = {
-				start:  0,
-				center: 0,
-				end:    0,
-				cur:    0,
-				dest:   0
-			},
+		// Frame
+		var $frame = $(frame);
+		var $slidee = $frame.children().eq(0);
+		var frameSize = 0;
+		var slideeSize = 0;
+		var pos = {
+			start: 0,
+			center: 0,
+			end: 0,
+			cur: 0,
+			dest: 0
+		};
 
-			// Scrollbar variables
-			$sb        = $(o.scrollBar).eq(0),
-			$handle    = $sb.length ? $sb.children().eq(0) : 0,
-			sbSize     = 0,
-			handleSize = 0,
-			hPos       = {
-				start: 0,
-				end:   0,
-				cur:   0
-			},
+		// Scrollbar
+		var $sb = $(o.scrollBar).eq(0);
+		var $handle = $sb.length ? $sb.children().eq(0) : 0;
+		var sbSize = 0;
+		var handleSize = 0;
+		var hPos = {
+			start: 0,
+			end: 0,
+			cur: 0
+		};
 
-			// Pagesbar variables
-			$pb    = $(o.pagesBar),
-			$pages = 0,
-			pages  = [],
+		// Pagesbar
+		var $pb = $(o.pagesBar);
+		var $pages = 0;
+		var pages = [];
 
-			// Navigation type booleans
-			basicNav    = o.itemNav === 'basic',
-			forceCenteredNav = o.itemNav === 'forceCentered',
-			centeredNav = o.itemNav === 'centered' || forceCenteredNav,
-			itemNav     = !parallax && (basicNav || centeredNav || forceCenteredNav),
+		// Navigation type booleans
+		var basicNav = o.itemNav === 'basic';
+		var forceCenteredNav = o.itemNav === 'forceCentered';
+		var centeredNav = o.itemNav === 'centered' || forceCenteredNav;
+		var itemNav = !parallax && (basicNav || centeredNav || forceCenteredNav);
 
-			// Other variables
-			$items = 0,
-			items  = [],
-			rel    = {
-				firstItem: 0,
-				lastItem: 1,
-				centerItem: 1,
-				activeItem: -1,
-				activePage: 0,
-				items: 0,
-				pages: 0
-			},
-			$scrollSource   = o.scrollSource ? $(o.scrollSource) : $frame,
-			$dragSource     = o.dragSource ? $(o.dragSource) : $frame,
-			$forwardButton  = $(o.forward),
-			$backwardButton = $(o.backward),
-			$prevButton     = $(o.prev),
-			$nextButton     = $(o.next),
-			$prevPageButton = $(o.prevPage),
-			$nextPageButton = $(o.nextPage),
-			callbacks       = {},
-			last            = {},
-			animation       = {},
-			dragging        = { released: 1 },
-			dragInitEvents  = 'touchstart.' + namespace + ' mousedown.' + namespace,
-			dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace,
-			dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace,
-			clickEvent      = 'click.' + namespace,
-			mouseDownEvent  = 'mousedown.' + namespace,
-			renderID        = 0,
-			historyID       = 0,
-			cycleID         = 0;
+		// Miscellaneous
+		var $items = 0;
+		var items = [];
+		var rel = {
+			firstItem: 0,
+			lastItem: 1,
+			centerItem: 1,
+			activeItem: -1,
+			activePage: 0,
+			items: 0,
+			pages: 0
+		};
+		var $scrollSource = o.scrollSource ? $(o.scrollSource) : $frame;
+		var $dragSource = o.dragSource ? $(o.dragSource) : $frame;
+		var $forwardButton = $(o.forward);
+		var $backwardButton = $(o.backward);
+		var $prevButton = $(o.prev);
+		var $nextButton = $(o.next);
+		var $prevPageButton = $(o.prevPage);
+		var $nextPageButton = $(o.nextPage);
+		var callbacks = {};
+		var last = {};
+		var animation = {};
+		var dragging = { released: 1 };
+		var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
+		var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
+		var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
+		var clickEvent = 'click.' + namespace;
+		var mouseDownEvent = 'mousedown.' + namespace;
+		var renderID = 0;
+		var historyID = 0;
+		var cycleID = 0;
 
 		// Expose properties
 		self.frame = $frame[0];
@@ -143,12 +143,12 @@
 				items.length = 0;
 
 				// Needed variables
-				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop'),
-					paddingEnd   = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom'),
-					marginStart  = getPx($items, o.horizontal ? 'marginLeft' : 'marginTop'),
-					marginEnd    = getPx($items.slice(-1), o.horizontal ? 'marginRight' : 'marginBottom'),
-					centerOffset = 0,
-					areFloated   = $items.css('float') !== 'none';
+				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop');
+				var paddingEnd = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom');
+				var marginStart = getPx($items, o.horizontal ? 'marginLeft' : 'marginTop');
+				var marginEnd = getPx($items.slice(-1), o.horizontal ? 'marginRight' : 'marginBottom');
+				var centerOffset = 0;
+				var areFloated = $items.css('float') !== 'none';
 
 				// Update ignored margin
 				ignoredMargin = marginStart ? 0 : marginEnd;
@@ -159,23 +159,23 @@
 				// Iterate through items
 				$items.each(function (i, element) {
 					// Item
-					var $item     = $(element),
-						itemSize  = $item[o.horizontal ? 'outerWidth' : 'outerHeight'](true),
-						itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop'),
-						itemMarginEnd   = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom'),
-						itemData = {
-							el: element,
-							size: itemSize,
-							half: itemSize / 2,
-							start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
-							center: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
-							end: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
-						};
+					var $item = $(element);
+					var itemSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight'](true);
+					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
+					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
+					var itemData = {
+						el: element,
+						size: itemSize,
+						half: itemSize / 2,
+						start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
+						center: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
+						end: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
+					};
 
 					// Account for centerOffset & slidee padding
 					if (!i) {
 						centerOffset = -(forceCenteredNav ? Math.round(frameSize / 2 - itemSize / 2) : 0) + paddingStart;
-						slideeSize  += paddingStart;
+						slideeSize += paddingStart;
 					}
 
 					// Increment slidee size for size of the active element
@@ -242,9 +242,9 @@
 
 			// Pages
 			if (!parallax) {
-				var tempPagePos = pos.start,
-					pagesHtml   = '',
-					pageIndex   = 0;
+				var tempPagePos = pos.start;
+				var pagesHtml = '';
+				var pageIndex = 0;
 
 				// Populate pages array
 				if (itemNav) {
@@ -297,8 +297,8 @@
 		function slideTo(newPos, immediate) {
 			// Align items
 			if (itemNav && dragging.released) {
-				var tempRel = getRelatives(newPos),
-					isNotBordering = newPos > pos.start && newPos < pos.end;
+				var tempRel = getRelatives(newPos);
+				var isNotBordering = newPos > pos.start && newPos < pos.end;
 
 				if (centeredNav) {
 					if (isNotBordering) {
@@ -455,14 +455,14 @@
 				var $item = $slidee.find(item).eq(0);
 
 				if ($item[0]) {
-					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top,
-						size   = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top;
+					var size = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
 					return {
-						start:  offset,
+						start: offset,
 						center: offset - frameSize / 2 + size / 2,
-						end:    offset - frameSize + size,
-						size:   size
+						end: offset - frameSize + size,
+						size: size
 					};
 				} else {
 					return false;
@@ -670,8 +670,8 @@
 				return false;
 			}
 
-			var index = getIndex(item),
-				oldActive = rel.activeItem;
+			var index = getIndex(item);
+			var oldActive = rel.activeItem;
 
 			// Update activeItem index
 			rel.activeItem = index;
@@ -744,8 +744,8 @@
 		function getRelatives(slideePos) {
 			slideePos = within(isNumber(slideePos) ? slideePos : pos.dest, pos.start, pos.end);
 
-			var relatives = {},
-				centerOffset = forceCenteredNav ? 0 : frameSize / 2;
+			var relatives = {};
+			var centerOffset = forceCenteredNav ? 0 : frameSize / 2;
 
 			// Determine active page
 			if (!parallax) {
@@ -764,9 +764,9 @@
 
 			// Relative item indexes
 			if (itemNav) {
-				var first = false,
-					last = false,
-					center = false;
+				var first = false;
+				var last = false;
+				var center = false;
 
 				// From start
 				for (var i = 0, il = items.length; i < il; i++) {
@@ -815,9 +815,9 @@
 		 * @return {Void}
 		 */
 		function updateButtonsState() {
-			var isStart = pos.dest <= pos.start,
-				isEnd = pos.dest >= pos.end,
-				slideePosState = isStart ? 's' : isEnd ? 'e' : 'm';
+			var isStart = pos.dest <= pos.start;
+			var isEnd = pos.dest >= pos.end;
+			var slideePosState = isStart ? 's' : isEnd ? 'e' : 'm';
 
 			// Update paging buttons only if there has been a change in SLIDEE position
 			if (last.slideePosState !== slideePosState) {
@@ -851,9 +851,9 @@
 
 			// Item navigation
 			if (itemNav) {
-				var isFirst = rel.activeItem === 0,
-					isLast  = rel.activeItem >= items.length - 1,
-					itemsButtonState = isFirst ? 'f' : isLast ? 'l' : 'm';
+				var isFirst = rel.activeItem === 0;
+				var isLast  = rel.activeItem >= items.length - 1;
+				var itemsButtonState = isFirst ? 'f' : isLast ? 'l' : 'm';
 
 				if (last.itemsButtonState !== itemsButtonState) {
 					last.itemsButtonState = itemsButtonState;
@@ -996,9 +996,9 @@
 				return;
 			}
 
-			var isTouch = event.type === 'touchstart',
-				source = event.data.source,
-				isSlidee = source === 'slidee';
+			var isTouch = event.type === 'touchstart';
+			var source = event.data.source;
+			var isSlidee = source === 'slidee';
 
 			// Ignore other than left mouse button
 			if (isTouch || event.which <= 1) {
@@ -1339,8 +1339,8 @@
 
 					stopDefault(event, 1);
 
-					var orgEvent = event.originalEvent,
-						isForward = 0;
+					var orgEvent = event.originalEvent;
+					var isForward = 0;
 
 					// Old school scrollwheel delta
 					if (orgEvent.wheelDelta) {
@@ -1534,8 +1534,8 @@
 
 	// Local WindowAnimationTiming interface polyfill
 	(function (w) {
-		var vendors = ['moz', 'webkit', 'o'],
-			lastTime = 0;
+		var vendors = ['moz', 'webkit', 'o'];
+		var lastTime = 0;
 
 		// For a more accurate WindowAnimationTiming interface implementation, ditch the native
 		// requestAnimationFrame when cancelAnimationFrame is not present (older versions of Firefox)
@@ -1546,8 +1546,8 @@
 
 		if (!cAF) {
 			rAF = function (callback) {
-				var currTime = +new Date(),
-					timeToCall = Math.max(0, 16 - (currTime - lastTime));
+				var currTime = +new Date();
+				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
 				lastTime = currTime + timeToCall;
 				return w.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
 			};
@@ -1560,8 +1560,8 @@
 
 	// Feature detects
 	(function () {
-		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'],
-			el = document.createElement('div');
+		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'];
+		var el = document.createElement('div');
 
 		function testProp(prop) {
 			for (var p = 0, pl = prefixes.length; p < pl; p++) {
