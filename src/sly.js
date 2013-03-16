@@ -876,12 +876,12 @@
 		/**
 		 * Resume cycling.
 		 *
-		 * @param {Bool} soft Resume cycle only when soft paused.
+		 * @param {Int} priority Resume pause with priority lower or equal than this. Used internally for pauseOnHover.
 		 *
 		 * @return {Void}
 		 */
-		self.resume = function (soft) {
-			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && self.isPaused === 1) {
+		self.resume = function (priority) {
+			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || priority < self.isPaused) {
 				return;
 			}
 
@@ -910,12 +910,16 @@
 		/**
 		 * Pause cycling.
 		 *
-		 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set self.isPaused state to true.
+		 * @param {Int} priority Pause priority. 100 is default. Used internally for pauseOnHover.
 		 *
 		 * @return {Void}
 		 */
-		self.pause = function (soft) {
-			self.isPaused = soft ? 2 : 1;
+		self.pause = function (priority) {
+			if (priority < self.isPaused) {
+				return;
+			}
+
+			self.isPaused = priority || 100;
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
@@ -1445,9 +1449,7 @@
 				// Pause on hover
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
-						if (!self.isPaused) {
-							self[event.type === 'mouseenter' ? 'pause' : 'resume'](1);
-						}
+						self[event.type === 'mouseenter' ? 'pause' : 'resume'](1);
 					});
 				}
 
