@@ -99,9 +99,16 @@
 			renderID        = 0,
 			historyID       = 0,
 			cycleID         = 0,
-			isPaused        = 0,
-			isSoftPaused    = 0,
 			ignoreNextClick = 0;
+
+		// Expose properties
+		self.frame = $frame[0];
+		self.slidee = $slidee[0];
+		self.pos = pos;
+		self.rel = rel;
+		self.items = items;
+		self.pages = pages;
+		self.isPaused = 0;
 
 		/**
 		 * (Re)Loading function.
@@ -121,7 +128,7 @@
 			frameSize  = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
 			sbSize     = $sb[o.horizontal ? 'width' : 'height']();
 			slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
-			pages      = [];
+			pages.length = 0;
 
 			// Set position limits & relatives
 			pos.start = 0;
@@ -133,15 +140,15 @@
 				// Reset itemNav related variables
 				$items    = $slidee.children(':visible');
 				rel.items = $items.length;
-				items     = [];
+				items.length = 0;
 
 				// Needed variables
-				var paddingStart  = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop'),
-					paddingEnd    = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom'),
-					marginStart   = getPx($items, o.horizontal ? 'marginLeft' : 'marginTop'),
-					marginEnd     = getPx($items.slice(-1), o.horizontal ? 'marginRight' : 'marginBottom'),
-					centerOffset  = 0,
-					areFloated    = $items.css('float') !== 'none';
+				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop'),
+					paddingEnd   = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom'),
+					marginStart  = getPx($items, o.horizontal ? 'marginLeft' : 'marginTop'),
+					marginEnd    = getPx($items.slice(-1), o.horizontal ? 'marginRight' : 'marginBottom'),
+					centerOffset = 0,
+					areFloated   = $items.css('float') !== 'none';
 
 				// Update ignored margin
 				ignoredMargin = marginStart ? 0 : marginEnd;
@@ -157,6 +164,7 @@
 						itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop'),
 						itemMarginEnd   = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom'),
 						itemData = {
+							el: element,
 							size: itemSize,
 							half: itemSize / 2,
 							start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
@@ -440,10 +448,6 @@
 		 * @return {Object}
 		 */
 		self.getPos = function (item) {
-			if (item === undefined) {
-				return pos;
-			}
-
 			if (itemNav) {
 				var index = getIndex(item);
 				return index !== -1 ? items[index] : false;
@@ -464,15 +468,6 @@
 					return false;
 				}
 			}
-		};
-
-		/**
-		 * Returns the relatives object.
-		 *
-		 * @return {Object}
-		 */
-		self.getRel = function () {
-			return rel;
 		};
 
 		/**
@@ -885,11 +880,11 @@
 		 * @return {Void}
 		 */
 		self.resume = function (soft) {
-			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && isPaused) {
+			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || soft && self.isPaused === 1) {
 				return;
 			}
 
-			isSoftPaused = isPaused = 0;
+			self.isPaused = 0;
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
@@ -914,16 +909,12 @@
 		/**
 		 * Pause cycling.
 		 *
-		 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set isPaused state to true.
+		 * @param {Bool} soft Soft pause intended for pauseOnHover - won't set self.isPaused state to true.
 		 *
 		 * @return {Void}
 		 */
 		self.pause = function (soft) {
-			if (soft) {
-				isSoftPaused = 1;
-			} else {
-				isPaused = 1;
-			}
+			self.isPaused = soft ? 2 : 1;
 
 			if (cycleID) {
 				cycleID = clearTimeout(cycleID);
@@ -946,7 +937,7 @@
 		 * @return {Void}
 		 */
 		function resetCycle() {
-			if (dragging.released && !isPaused && !isSoftPaused) {
+			if (dragging.released && !self.isPaused) {
 				self.resume();
 			}
 		}
@@ -1456,7 +1447,7 @@
 				// Pause on hover
 				if (o.pauseOnHover) {
 					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
-						if (!isPaused) {
+						if (!self.isPaused) {
 							self[event.type === 'mouseenter' ? 'pause' : 'resume'](1);
 						}
 					});
