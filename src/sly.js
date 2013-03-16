@@ -98,8 +98,7 @@
 			mouseDownEvent  = 'mousedown.' + namespace,
 			renderID        = 0,
 			historyID       = 0,
-			cycleID         = 0,
-			ignoreNextClick = 0;
+			cycleID         = 0;
 
 		// Expose properties
 		self.frame = $frame[0];
@@ -1052,15 +1051,11 @@
 			// Initialization
 			if (!dragging.init && (Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || !dragging.slidee)) {
 				dragging.init = 1;
-				if (dragging.slidee) {
-					ignoreNextClick = 1;
 
-					// Disable click actions on source element, as they are unwelcome when dragging
+				// Disable click on a source element, as it is unwelcome when dragging SLIDEE
+				if (dragging.slidee) {
 					dragging.$source.on(clickEvent, function disableAction(event) {
 						stopDefault(event, 1);
-						if (dragging.slidee) {
-							ignoreNextClick = 0;
-						}
 						dragging.$source.off(clickEvent, disableAction);
 					});
 				}
@@ -1420,10 +1415,9 @@
 			if (itemNav) {
 				$frame.on(o.activateOn + '.' + namespace, '*', function (event) {
 					// Accept only right mouse button clicks on direct SLIDEE children
-					if (event.which <= 1 && this.parentNode === $slidee[0] && !ignoreNextClick) {
+					if (event.which <= 1 && this.parentNode === $slidee[0]) {
 						self.activate(this);
 					}
-					ignoreNextClick = 0;
 				});
 			}
 
