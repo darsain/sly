@@ -1029,7 +1029,7 @@
 				// Keep track of a dragging path history. This is later used in the
 				// dragging release swing calculation when dragging SLIDEE.
 				if (isSlidee) {
-					historyID = setInterval(draggingHistoryTick, 5);
+					historyID = setInterval(draggingHistoryTick, 10);
 				}
 			}
 		}
@@ -1076,7 +1076,7 @@
 
 					// Adjust path with a swing on mouse release
 					if (dragging.slidee) {
-						dragging.path += (dragging.path - dragging.history[0]) / 20 * within(o.speed, 0, 300);
+						dragging.path += (dragging.path - dragging.history[0]) / 40 * within(o.speed, 0, 300);
 					}
 				}
 
