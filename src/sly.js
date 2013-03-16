@@ -24,7 +24,7 @@
 	 */
 	function Sly(frame, o, callbackMap) {
 		// Extend options
-		o = $.extend({}, $.fn[pluginName].defaults, o);
+		o = $.extend({}, Sly.defaults, o);
 
 		// Private variables
 		var self        = this,
@@ -109,6 +109,7 @@
 		self.items = items;
 		self.pages = pages;
 		self.isPaused = 0;
+		self.options = o;
 
 		/**
 		 * (Re)Loading function.
@@ -1583,7 +1584,7 @@
 	// Expose class globally
 	w[className] = Sly;
 
-	// Extend jQuery
+	// jQuery proxy
 	$.fn[pluginName] = function (options, callbackMap) {
 		var method, methodArgs;
 
@@ -1614,7 +1615,7 @@
 	};
 
 	// Default options
-	$.fn[pluginName].defaults = {
+	Sly.defaults = {
 		horizontal: 0, // Change to horizontal direction.
 
 		// Item based navigation
