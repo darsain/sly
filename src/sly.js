@@ -936,6 +936,101 @@
 		};
 
 		/**
+		 * Updates a signle or multiple option values.
+		 *
+		 * @param {Mixed} name  Name of the option that should be updated, or object that will extend the options.
+		 * @param {Mixed} value New option value.
+		 *
+		 * @return {Void}
+		 */
+		self.set = function (name, value) {
+			if ($.isPlainObject(name)) {
+				$.extend(o, name);
+			} else if (o.hasOwnProperty(name)) {
+				o[name] = value;
+			}
+		};
+
+		/**
+		 * Registers callbacks.
+		 *
+		 * @param  {Mixed} name  Event name, or callbacks map.
+		 * @param  {Mixed} fn    Callback, or an array of callback functions.
+		 *
+		 * @return {Void}
+		 */
+		self.on = function (name, fn) {
+			// Callbacks map
+			if (type(name) === 'object') {
+				for (var key in name) {
+					if (name.hasOwnProperty(key)) {
+						self.on(key, name[key]);
+					}
+				}
+			// Callback
+			} else if (type(fn) === 'function') {
+				var names = name.split(' ');
+				for (var n = 0, nl = names.length; n < nl; n++) {
+					callbacks[names[n]] = callbacks[names[n]] || [];
+					if (callbackIndex(names[n], fn) === -1) {
+						callbacks[names[n]].push(fn);
+					}
+				}
+			// Callbacks array
+			} else if (type(fn) === 'array') {
+				for (var f = 0, fl = fn.length; f < fl; f++) {
+					self.on(name, fn[f]);
+				}
+			}
+		};
+
+		/**
+		 * Remove one or all callbacks.
+		 *
+		 * @param  {String} name Event name.
+		 * @param  {Mixed}  fn   Callback, or an array of callback functions. Omit to remove all callbacks.
+		 *
+		 * @return {Void}
+		 */
+		self.off = function (name, fn) {
+			if (fn instanceof Array) {
+				for (var f = 0, fl = fn.length; f < fl; f++) {
+					self.off(name, fn[f]);
+				}
+			} else {
+				var names = name.split(' ');
+				for (var n = 0, nl = names.length; n < nl; n++) {
+					callbacks[names[n]] = callbacks[names[n]] || [];
+					if (type(fn) === 'undefined') {
+						callbacks[names[n]].length = 0;
+					} else {
+						var index = callbackIndex(names[n], fn);
+						if (index !== -1) {
+							callbacks[names[n]].splice(index, 1);
+						}
+					}
+				}
+			}
+		};
+
+		/**
+		 * Returns callback array index.
+		 *
+		 * @param  {String}   name Event name.
+		 * @param  {Function} fn   Function
+		 *
+		 * @return {Int} Callback array index, or -1 if isn't registered.
+		 */
+		function callbackIndex(name, fn) {
+			for (var i = 0, l = callbacks[name].length; i < l; i++) {
+				if (callbacks[name][i] === fn) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		/**
 		 * Reset next cycle timeout.
 		 *
 		 * @return {Void}
@@ -1132,99 +1227,118 @@
 		}
 
 		/**
-		 * Updates a signle or multiple option values.
+		 * Mouse scrolling handler.
 		 *
-		 * @param {Mixed} name  Name of the option that should be updated, or object that will extend the options.
-		 * @param {Mixed} value New option value.
+		 * @param  {Event} event
 		 *
 		 * @return {Void}
 		 */
-		self.set = function (name, value) {
-			if ($.isPlainObject(name)) {
-				$.extend(o, name);
-			} else if (o.hasOwnProperty(name)) {
-				o[name] = value;
+		function scrollHandler(event) {
+			// Ignore if there is no scrolling to be done
+			if (pos.start === pos.end) {
+				return;
 			}
-		};
 
-		/**
-		 * Returns callback array index.
-		 *
-		 * @param  {String}   name Event name.
-		 * @param  {Function} fn   Function
-		 *
-		 * @return {Int} Callback array index, or -1 if isn't registered.
-		 */
-		function callbackIndex(name, fn) {
-			for (var i = 0, l = callbacks[name].length; i < l; i++) {
-				if (callbacks[name][i] === fn) {
-					return i;
-				}
+			stopDefault(event, 1);
+
+			var orgEvent = event.originalEvent;
+			var isForward = 0;
+
+			// Old school scrollwheel delta
+			if (orgEvent.wheelDelta) {
+				isForward = orgEvent.wheelDelta / 120 < 0;
 			}
-			return -1;
+			if (orgEvent.detail) {
+				isForward = -orgEvent.detail / 3 < 0;
+			}
+
+			if (itemNav) {
+				var nextItem = getIndex((centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
+				self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
+			} else {
+				self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
+			}
 		}
 
 		/**
-		 * Registers callbacks.
+		 * Scrollbar click handler.
 		 *
-		 * @param  {Mixed} name  Event name, or callbacks map.
-		 * @param  {Mixed} fn    Callback, or an array of callback functions.
+		 * @param  {Event} event
 		 *
 		 * @return {Void}
 		 */
-		self.on = function (name, fn) {
-			// Callbacks map
-			if (type(name) === 'object') {
-				for (var key in name) {
-					if (name.hasOwnProperty(key)) {
-						self.on(key, name[key]);
-					}
-				}
-			// Callback
-			} else if (type(fn) === 'function') {
-				var names = name.split(' ');
-				for (var n = 0, nl = names.length; n < nl; n++) {
-					callbacks[names[n]] = callbacks[names[n]] || [];
-					if (callbackIndex(names[n], fn) === -1) {
-						callbacks[names[n]].push(fn);
-					}
-				}
-			// Callbacks array
-			} else if (type(fn) === 'array') {
-				for (var f = 0, fl = fn.length; f < fl; f++) {
-					self.on(name, fn[f]);
-				}
+		function scrollbarHandler(event) {
+			// Only clicks on scroll bar. Ignore the handle.
+			if (event.target === $sb[0]) {
+				stopDefault(event);
+				// Calculate new handle position and sync SLIDEE to it
+				slideTo(handleToSlidee((o.horizontal ? event.pageX - $sb.offset().left : event.pageY - $sb.offset().top) - handleSize / 2));
 			}
-		};
+		}
 
 		/**
-		 * Remove one or all callbacks.
+		 * Keyboard input handler.
 		 *
-		 * @param  {String} name Event name.
-		 * @param  {Mixed}  fn   Callback, or an array of callback functions. Omit to remove all callbacks.
+		 * @param  {Event} event
 		 *
 		 * @return {Void}
 		 */
-		self.off = function (name, fn) {
-			if (fn instanceof Array) {
-				for (var f = 0, fl = fn.length; f < fl; f++) {
-					self.off(name, fn[f]);
-				}
-			} else {
-				var names = name.split(' ');
-				for (var n = 0, nl = names.length; n < nl; n++) {
-					callbacks[names[n]] = callbacks[names[n]] || [];
-					if (type(fn) === 'undefined') {
-						callbacks[names[n]].length = 0;
-					} else {
-						var index = callbackIndex(names[n], fn);
-						if (index !== -1) {
-							callbacks[names[n]].splice(index, 1);
-						}
-					}
-				}
+		function keyboardHandler(event) {
+			switch (event.which) {
+				// Left or Up
+				case o.horizontal ? 37 : 38:
+					stopDefault(event);
+					self[o.keyboardNavBy === 'pages' ? 'prevPage' : 'prev']();
+					break;
+
+				// Right or Down
+				case o.horizontal ? 39 : 40:
+					stopDefault(event);
+					self[o.keyboardNavBy === 'pages' ? 'nextPage' : 'next']();
+					break;
 			}
-		};
+		}
+
+		/**
+		 * Click on item activation handler.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function activateHandler() {
+			/*jshint validthis:true */
+			// Accept only events from direct SLIDEE children.
+			if (this.parentNode === $slidee[0]) {
+				self.activate(this);
+			}
+		}
+
+		/**
+		 * Click on page button handler.
+		 *
+		 * @param {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function activatePageHandler() {
+			/*jshint validthis:true */
+			// Accept only events from direct pages bar children.
+			if (this.parentNode === $pb[0]) {
+				self.activatePage($pages.index(this));
+			}
+		}
+
+		/**
+		 * Pause on hover handler.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Void}
+		 */
+		function pauseOnHoverHandler(event) {
+			self[event.type === 'mouseenter' ? 'pause' : 'resume'](2);
+		}
 
 		/**
 		 * Trigger callbacks for event.
@@ -1329,68 +1443,6 @@
 				slideTo(o.startAt, 1);
 			}
 
-			// Scrolling navigation
-			if (o.scrollBy) {
-				$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, function (event) {
-					// If there is no scrolling to be done, leave the default event alone
-					if (pos.start === pos.end) {
-						return;
-					}
-
-					stopDefault(event, 1);
-
-					var orgEvent = event.originalEvent;
-					var isForward = 0;
-
-					// Old school scrollwheel delta
-					if (orgEvent.wheelDelta) {
-						isForward = orgEvent.wheelDelta / 120 < 0;
-					}
-					if (orgEvent.detail) {
-						isForward = -orgEvent.detail / 3 < 0;
-					}
-
-					if (itemNav) {
-						var nextItem = getIndex((centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
-						self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
-					} else {
-						self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
-					}
-				});
-			}
-
-			// Clicking on scrollbar navigation
-			if (o.clickBar && $sb[0]) {
-				$sb.on(clickEvent, function (event) {
-					// Only left mouse button clicks on scroll bar. Ignore clicks on handle.
-					if (event.which <= 1 && event.target === $sb[0]) {
-						stopDefault(event);
-
-						// Calculate new handle position and sync SLIDEE to it
-						slideTo(handleToSlidee((o.horizontal ? event.pageX - $sb.offset().left : event.pageY - $sb.offset().top) - handleSize / 2));
-					}
-				});
-			}
-
-			// Keyboard navigation
-			if (o.keyboardNavBy) {
-				$doc.bind('keydown.' + namespace, function (event) {
-					switch (event.which) {
-						// Left or Up
-						case o.horizontal ? 37 : 38:
-							stopDefault(event);
-							self[o.keyboardNavBy === 'pages' ? 'prevPage' : 'prev']();
-							break;
-
-						// Right or Down
-						case o.horizontal ? 39 : 40:
-							stopDefault(event);
-							self[o.keyboardNavBy === 'pages' ? 'nextPage' : 'next']();
-							break;
-					}
-				});
-			}
-
 			// Navigation buttons
 			if (o.forward) {
 				$forwardButton.on(mouseDownEvent, buttonsHandler);
@@ -1411,21 +1463,24 @@
 				$nextPageButton.on(clickEvent, buttonsHandler);
 			}
 
+			// Scrolling navigation
+			if (o.scrollBy) {
+				$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
+			}
+
+			// Clicking on scrollbar navigation
+			if (o.clickBar && $sb[0]) {
+				$sb.on(clickEvent, scrollbarHandler);
+			}
+
 			// Click on items navigation
 			if (itemNav) {
-				$frame.on(o.activateOn + '.' + namespace, '*', function (event) {
-					// Accept only right mouse button clicks on direct SLIDEE children
-					if (event.which <= 1 && this.parentNode === $slidee[0]) {
-						self.activate(this);
-					}
-				});
+				$frame.on(o.activateOn + '.' + namespace, '*', activateHandler);
 			}
 
 			// Pages navigation
 			if ($pb[0]) {
-				$pb.on(o.activatePageOn + '.' + namespace, '*', function () {
-					self.activatePage($pages.index(this));
-				});
+				$pb.on(o.activatePageOn + '.' + namespace, '*', activatePageHandler);
 			}
 
 			// Dragging navigation
@@ -1438,13 +1493,16 @@
 				$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
 			}
 
+			// Keyboard navigation
+			if (o.keyboardNavBy) {
+				$doc.bind('keydown.' + namespace, keyboardHandler);
+			}
+
 			// Automatic cycling
 			if (o.cycleBy && !parallax) {
 				// Pause on hover
 				if (o.pauseOnHover) {
-					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, function (event) {
-						self[event.type === 'mouseenter' ? 'pause' : 'resume'](2);
-					});
+					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
 				}
 
 				// Initiate or pause cycling
