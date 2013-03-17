@@ -1423,7 +1423,7 @@
 
 			// Pages navigation
 			if ($pb[0]) {
-				$pb.on(clickEvent, '*', function () {
+				$pb.on(o.activatePageOn + '.' + namespace, '*', function () {
 					self.activatePage($pages.index(this));
 				});
 			}
@@ -1630,8 +1630,9 @@
 		syncFactor:    0.50, // Handle => SLIDEE sync factor. 0-1 floating point, where 1 = immediate, 0 = infinity.
 
 		// Pagesbar
-		pagesBar:    null, // Selector or DOM element for pages bar container.
-		pageBuilder:       // Page item generator.
+		pagesBar:       null,    // Selector or DOM element for pages bar container.
+		activatePageOn: 'click', // Event used to activate page.
+		pageBuilder:             // Page item generator.
 			function (index) {
 				return '<li>' + (index + 1) + '</li>';
 			},
