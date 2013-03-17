@@ -1054,10 +1054,7 @@
 
 				// Disable click on a source element, as it is unwelcome when dragging SLIDEE
 				if (dragging.slidee) {
-					dragging.$source.on(clickEvent, function disableAction(event) {
-						stopDefault(event, 1);
-						dragging.$source.off(clickEvent, disableAction);
-					});
+					dragging.$source.on(clickEvent, disableOneEvent);
 				}
 
 				// Pause ongoing cycle
@@ -1474,7 +1471,7 @@
 	}
 
 	/**
-	 * Crossbrowser reliable way to stop default event action.
+	 * Event preventDefault & stopPropagation helper.
 	 *
 	 * @param {Event} event     Event object.
 	 * @param {Bool}  noBubbles Cancel event bubbling.
@@ -1482,21 +1479,22 @@
 	 * @return {Void}
 	 */
 	function stopDefault(event, noBubbles) {
-		event = event || w.event;
-
-		if (event.preventDefault) {
-			event.preventDefault();
-		} else {
-			event.returnValue = false;
-		}
-
+		event.preventDefault();
 		if (noBubbles) {
-			if (event.stopPropagation) {
-				event.stopPropagation();
-			} else {
-				event.cancelBubble = true;
-			}
+			event.stopPropagation();
 		}
+	}
+
+	/**
+	 * Disables an event it was triggered on and unbinds itself.
+	 *
+	 * @param  {Event} event
+	 *
+	 * @return {Void}
+	 */
+	function disableOneEvent(event) {
+		stopDefault(event, 1);
+		$(event.target).off(event.type, disableOneEvent);
 	}
 
 	/**
