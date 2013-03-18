@@ -61,6 +61,17 @@
 		var $pages = 0;
 		var pages = [];
 
+		// Items
+		var $items = 0;
+		var items = [];
+		var rel = {
+			firstItem: 0,
+			lastItem: 0,
+			centerItem: 0,
+			activeItem: -1,
+			activePage: 0
+		};
+
 		// Navigation type booleans
 		var basicNav = o.itemNav === 'basic';
 		var forceCenteredNav = o.itemNav === 'forceCentered';
@@ -68,17 +79,6 @@
 		var itemNav = !parallax && (basicNav || centeredNav || forceCenteredNav);
 
 		// Miscellaneous
-		var $items = 0;
-		var items = [];
-		var rel = {
-			firstItem: 0,
-			lastItem: 1,
-			centerItem: 1,
-			activeItem: -1,
-			activePage: 0,
-			items: 0,
-			pages: 0
-		};
 		var $scrollSource = o.scrollSource ? $(o.scrollSource) : $frame;
 		var $dragSource = o.dragSource ? $(o.dragSource) : $frame;
 		var $forwardButton = $(o.forward);
@@ -130,21 +130,23 @@
 			pos.old = $.extend({}, pos);
 
 			// Reset global variables
-			frameSize  = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
-			sbSize     = $sb[o.horizontal ? 'width' : 'height']();
+			frameSize = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
+			sbSize = $sb[o.horizontal ? 'width' : 'height']();
 			slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
 			pages.length = 0;
 
 			// Set position limits & relatives
 			pos.start = 0;
-			pos.end   = Math.max(slideeSize - frameSize, 0);
-			last      = {};
+			pos.end = Math.max(slideeSize - frameSize, 0);
+			last = {};
 
 			// Sizes & offsets for item based navigations
 			if (itemNav) {
+				// Save the number of current items
+				var lastItemsCount = items.length;
+
 				// Reset itemNav related variables
-				$items    = $slidee.children(':visible');
-				rel.items = $items.length;
+				$items = $slidee.children(o.itemSelector);
 				items.length = 0;
 
 				// Needed variables
@@ -204,21 +206,20 @@
 					items.push(itemData);
 				});
 
-				// Resize slidee
+				// Resize SLIDEE to fit all items
 				$slidee[0].style[o.horizontal ? 'width' : 'height'] = slideeSize + 'px';
 
-				// Adjust internal slidee size for last margin
+				// Adjust internal SLIDEE size for last margin
 				slideeSize -= ignoredMargin;
 
 				// Set limits
 				pos.start = centerOffset;
-				pos.end   = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
+				pos.end = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
 
-				// Fix overflowing activeItem
-				if (rel.activeItem >= items.length) {
-					activate(items.length - 1);
-				} else if (items.length === 1) {
-					activate(0);
+				// Activate last item if previous active has been removed, or first item
+				// when there were no items before, and new got appended.
+				if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
+					activate(items.length > 0 ? items.length - 1 : 0);
 				}
 			}
 
@@ -281,10 +282,9 @@
 			slideTo(within(pos.dest, pos.start, pos.end));
 
 			// Extend relative variables object with some useful info
-			rel.pages      = pages.length;
 			rel.slideeSize = slideeSize;
-			rel.frameSize  = frameSize;
-			rel.sbSize     = sbSize;
+			rel.frameSize = frameSize;
+			rel.sbSize = sbSize;
 			rel.handleSize = handleSize;
 
 			// Trigger :load event
@@ -329,11 +329,11 @@
 			}
 
 			// Update the animation object
-			animation.start     = +new Date();
-			animation.time      = 0;
-			animation.from      = pos.cur;
-			animation.to        = newPos;
-			animation.delta     = newPos - pos.cur;
+			animation.start = +new Date();
+			animation.time = 0;
+			animation.from = pos.cur;
+			animation.to = newPos;
+			animation.delta = newPos - pos.cur;
 			animation.immediate = immediate || dragging.init && dragging.slidee || o.speed < 20;
 
 			// Attach animation destination
@@ -671,23 +671,22 @@
 		 * @return {Mixed} Activated item index or false on fail.
 		 */
 		function activate(item) {
-			if (!itemNav || item === undefined) {
+			var index = getIndex(item);
+
+			if (!itemNav || index === -1) {
 				return false;
 			}
 
-			var index = getIndex(item);
-			var oldActive = rel.activeItem;
+			// Update classes, last active index, and trigger active event only when there
+			// has been a change. Otherwise just return the current active index.
+			if (last.active !== index) {
+				// Update classes
+				$items.eq(rel.activeItem).removeClass(o.activeClass);
+				$items.eq(index).addClass(o.activeClass);
+				updateButtonsState();
 
-			// Update activeItem index
-			rel.activeItem = index;
+				last.active = rel.activeItem = index;
 
-			// Update classes
-			$items.eq(oldActive).removeClass(o.activeClass);
-			$items.eq(index).addClass(o.activeClass);
-			updateButtonsState();
-
-			// Trigger active event if a new element is being activated
-			if (index !== oldActive) {
 				trigger('active', index);
 			}
 
@@ -793,9 +792,9 @@
 				}
 
 				// Safe assignment, just to be sure the false won't be returned
-				relatives.firstItem  = isNumber(first) ? first : 0;
+				relatives.firstItem = isNumber(first) ? first : 0;
 				relatives.centerItem = isNumber(center) ? center : relatives.firstItem;
-				relatives.lastItem   = isNumber(last) ? last : relatives.centerItem;
+				relatives.lastItem = isNumber(last) ? last : relatives.centerItem;
 			}
 
 			return relatives;
@@ -857,7 +856,7 @@
 			// Item navigation
 			if (itemNav) {
 				var isFirst = rel.activeItem === 0;
-				var isLast  = rel.activeItem >= items.length - 1;
+				var isLast = rel.activeItem >= items.length - 1;
 				var itemsButtonState = isFirst ? 'f' : isLast ? 'l' : 'm';
 
 				if (last.itemsButtonState !== itemsButtonState) {
@@ -1079,8 +1078,8 @@
 		 */
 		function continuousInit(source) {
 			dragging.released = 0;
-			dragging.source   = source;
-			dragging.slidee   = source === 'slidee';
+			dragging.source = source;
+			dragging.slidee = source === 'slidee';
 		}
 
 		/**
@@ -1109,13 +1108,13 @@
 
 				// Properties used in dragHandler
 				dragging.$source = $(event.target);
-				dragging.init    = 0;
-				dragging.touch   = isTouch;
+				dragging.init = 0;
+				dragging.touch = isTouch;
 				dragging.initLoc = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
 				dragging.initPos = isSlidee ? pos.cur : hPos.cur;
-				dragging.start   = +new Date();
-				dragging.time    = 0;
-				dragging.path    = 0;
+				dragging.start = +new Date();
+				dragging.time = 0;
+				dragging.path = 0;
 				dragging.history = [0, 0, 0, 0];
 				dragging.pathMin = isSlidee ? -dragging.initLoc : -hPos.cur;
 				dragging.pathMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
@@ -1143,7 +1142,7 @@
 		 */
 		function dragHandler(event) {
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
-			dragging.path     = within(
+			dragging.path = within(
 				(dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event)[o.horizontal ? 'pageX' : 'pageY'] - dragging.initLoc,
 				dragging.pathMin, dragging.pathMax
 			);
@@ -1216,15 +1215,19 @@
 						$doc.off('mouseup', stopContinuously);
 					});
 					break;
+
 				case $prevButton[0]:
 					self.prev();
 					break;
+
 				case $nextButton[0]:
 					self.next();
 					break;
+
 				case $prevPageButton[0]:
 					self.prevPage();
 					break;
+
 				case $nextPageButton[0]:
 					self.nextPage();
 					break;
@@ -1403,6 +1406,10 @@
 				// Remove plugin from element data storage
 				$.removeData(frame, namespace);
 			}
+
+			// Reset initialized status and return the instance
+			initialized = 0;
+			return self;
 		};
 
 		/**
@@ -1484,7 +1491,7 @@
 			}
 
 			// Pages navigation
-			if ($pb[0]) {
+			if ($pb[0] && o.activatePageOn) {
 				$pb.on(o.activatePageOn + '.' + namespace, '*', activatePageHandler);
 			}
 
@@ -1679,10 +1686,11 @@
 		horizontal: 0, // Change to horizontal direction.
 
 		// Item based navigation
-		itemNav:    null,  // Item navigation type. Can be: basic, centered, forceCentered.
-		smart:      0,     // Repositions the activated item to help with further navigation.
-		activateOn: null,  // Activate an item when it receives this event. Can be: click, mouseenter, ...
-		activateMiddle: 0, // In forceCentered navigation, always activate an item in the middle of the FRAME.
+		itemNav:      null, // Item navigation type. Can be: basic, centered, forceCentered.
+		itemSelector: null, // Select only items that match this selector.
+		smart:        0,    // Repositions the activated item to help with further navigation.
+		activateOn:   null, // Activate an item when it receives this event. Can be: click, mouseenter, ...
+		activateMiddle: 0,  // In forceCentered navigation, always activate the item in the middle of the FRAME.
 
 		// Scrollbar
 		scrollBar:     null, // Selector or DOM element for scrollbar container.
@@ -1693,9 +1701,9 @@
 		syncFactor:    0.50, // Handle => SLIDEE sync factor. 0-1 floating point, where 1 = immediate, 0 = infinity.
 
 		// Pagesbar
-		pagesBar:       null,    // Selector or DOM element for pages bar container.
-		activatePageOn: 'click', // Event used to activate page.
-		pageBuilder:             // Page item generator.
+		pagesBar:       null, // Selector or DOM element for pages bar container.
+		activatePageOn: null, // Event used to activate page. Can be: click, mouseenter, ...
+		pageBuilder:          // Page item generator.
 			function (index) {
 				return '<li>' + (index + 1) + '</li>';
 			},
