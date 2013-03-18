@@ -100,8 +100,13 @@
 		var historyID = 0;
 		var cycleID = 0;
 
+		// Normalizing frame
+		if (!parallax) {
+			frame = $frame[0];
+		}
+
 		// Expose properties
-		self.frame = $frame[0];
+		self.frame = frame;
 		self.slidee = $slidee[0];
 		self.pos = pos;
 		self.rel = rel;
