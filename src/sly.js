@@ -704,10 +704,10 @@
 				// Update classes
 				$items.eq(rel.activeItem).removeClass(o.activeClass);
 				$items.eq(index).addClass(o.activeClass);
-				updateButtonsState();
 
 				last.active = rel.activeItem = index;
 
+				updateButtonsState();
 				trigger('active', index);
 			}
 
