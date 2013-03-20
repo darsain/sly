@@ -297,12 +297,13 @@
 		 *
 		 * @param {Int}  newPos    New position.
 		 * @param {Bool} immediate Reposition immediately without an animation.
+		 * @param {Bool} dontAlign Do not align items, use the raw position passed in first argument.
 		 *
 		 * @return {Void}
 		 */
-		function slideTo(newPos, immediate) {
+		function slideTo(newPos, immediate, dontAlign) {
 			// Align items
-			if (itemNav && dragging.released) {
+			if (itemNav && dragging.released && !dontAlign) {
 				var tempRel = getRelatives(newPos);
 				var isNotBordering = newPos > pos.start && newPos < pos.end;
 
@@ -613,7 +614,7 @@
 
 				var itemPos = self.getPos(item);
 				if (itemPos) {
-					slideTo(itemPos[location], immediate);
+					slideTo(itemPos[location], immediate, !centeredNav);
 				}
 			}
 		}
