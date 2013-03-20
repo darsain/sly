@@ -335,9 +335,13 @@
 			animation.from = pos.cur;
 			animation.to = newPos;
 			animation.delta = newPos - pos.cur;
-			animation.immediate = immediate || dragging.init && dragging.slidee || o.speed < 20;
+			animation.tweesing = dragging.tweese || dragging.init && !dragging.slidee;
+			animation.immediate = immediate || dragging.init && dragging.slidee && !dragging.tweese;
 
-			// Render the animation
+			// Reset dragging tweesing request
+			dragging.tweese = 0;
+
+			// Start animation rendering
 			if (newPos !== pos.dest) {
 				pos.dest = newPos;
 				trigger('change');
@@ -375,8 +379,8 @@
 				pos.cur = animation.to;
 			}
 			// Use tweesing for animations without known end point
-			else if (dragging.init && !dragging.slidee) {
-				pos.cur += (animation.to - pos.cur) * o.syncFactor;
+			else if (animation.tweesing) {
+				pos.cur += (animation.to - pos.cur) * (dragging.released ? 0.2 : o.syncFactor);
 			}
 			// Use tweening for basic animations with known end point
 			else {
@@ -384,11 +388,10 @@
 				pos.cur = animation.from + animation.delta * jQuery.easing[o.easing](animation.time/o.speed, animation.time, 0, 1, o.speed);
 			}
 
-			// If there is nothing more to render (animation reached the end, or dragging has been released),
-			// break the rendering loop, otherwise request another animation frame
-			if (animation.to === Math.round(pos.cur) && (dragging.init || animation.time >= o.speed || animation.immediate)) {
+			// If there is nothing more to render break the rendering loop, otherwise request new animation frame.
+			if (animation.to === Math.round(pos.cur)) {
 				pos.cur = animation.to;
-				renderID = 0;
+				dragging.tweese = renderID = 0;
 			} else {
 				renderID = rAF(render);
 			}
@@ -1293,7 +1296,8 @@
 
 					// Adjust path with a swing on mouse release
 					if (dragging.slidee) {
-						dragging.path += (dragging.path - dragging.history[0]) / 40 * within(o.speed, 0, 300);
+						dragging.path += (dragging.path - dragging.history[0]) / 40 * 300;
+						dragging.tweese = 1;
 					}
 				}
 
