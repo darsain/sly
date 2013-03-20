@@ -99,6 +99,7 @@
 		var renderID = 0;
 		var historyID = 0;
 		var cycleID = 0;
+		var continuousID = 0;
 
 		// Normalizing frame
 		if (!parallax) {
@@ -477,38 +478,28 @@
 		/**
 		 * Continuous move in a specified direction.
 		 *
-		 * @param  {String} direction forward or backward
+		 * @param  {Bool} forward True for forward movement, otherwise it'll go backwards.
+		 * @param  {Int}  speed   Movement speed in pixels per frame. Overrides options.moveBy value.
 		 *
 		 * @return {Void}
 		 */
-		function continuously(direction) {
+		self.moveBy = function (speed) {
+			var startTime = +new Date();
+			var startPos = pos.cur;
+
 			continuousInit('button');
 			dragging.init = 1;
 
+			cAF(continuousID);
 			(function continuousLoop() {
-				if (dragging.init) {
-					rAF(continuousLoop);
+				if (!speed || pos.cur === (speed > 0 ? pos.end : pos.start)) {
+					self.stop();
 				}
-				slideTo(within(pos.dest + Math.round((direction === 'f' ? o.moveBy : -o.moveBy) / 60, pos.start, pos.end)));
+				if (dragging.init) {
+					continuousID = rAF(continuousLoop);
+				}
+				slideTo(startPos + (+new Date() - startTime) / 1000 * speed);
 			}());
-		}
-
-		/**
-		 * Continuously move forward.
-		 *
-		 * @return {Void}
-		 */
-		self.forward = function () {
-			continuously('f');
-		};
-
-		/**
-		 * Continuously move backward.
-		 *
-		 * @return {Void}
-		 */
-		self.backward = function () {
-			continuously('b');
 		};
 
 		/**
@@ -1327,6 +1318,16 @@
 		}
 
 		/**
+		 * Continuous movement cleanup on mouseup.
+		 *
+		 * @return {Void}
+		 */
+		function movementReleaseHandler() {
+			self.stop();
+			$doc.off('mouseup', movementReleaseHandler);
+		}
+
+		/**
 		 * Buttons navigation handler.
 		 *
 		 * @param  {Event} event
@@ -1339,11 +1340,8 @@
 			switch (this) {
 				case $forwardButton[0]:
 				case $backwardButton[0]:
-					continuously($forwardButton.is(this) ? 'f' : 'b');
-					$doc.on('mouseup', function stopContinuously() {
-						self.stop();
-						$doc.off('mouseup', stopContinuously);
-					});
+					self.moveBy($forwardButton.is(this) ? o.moveBy : -o.moveBy);
+					$doc.on('mouseup', movementReleaseHandler);
 					break;
 
 				case $prevButton[0]:
@@ -1854,7 +1852,7 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-		moveBy:        300,     // Number of pixels to move per second in continuous animations (forward/backward).
+		moveBy:        300,     // Movement speed in pixels per second used by forward & backward buttons.
 		dragging:      0,       // Enable navigation by dragging the SLIDEE.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
