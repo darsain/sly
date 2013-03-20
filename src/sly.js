@@ -122,7 +122,7 @@
 		 *
 		 * @return {Void}
 		 */
-		var load = self.reload = function () {
+		function load() {
 			// Local variables
 			var ignoredMargin = 0;
 
@@ -289,7 +289,8 @@
 
 			// Trigger :load event
 			trigger('load');
-		};
+		}
+		self.reload = load;
 
 		/**
 		 * Animate to a position.
@@ -655,12 +656,30 @@
 		/**
 		 * Get the index of an item in SLIDEE.
 		 *
-		 * @param {Mixed} item Item DOM element, or index starting at 0.
+		 * @param {Mixed} item     Item DOM element.
 		 *
-		 * @return {Int}
+		 * @return {Int}  Item index, or -1 if not found.
 		 */
 		function getIndex(item) {
-			return isNumber(item) ? within(item, 0, items.length - 1) : item === undefined ? -1 : $items.index(item);
+			return type(item) !== 'undefined' ?
+					isNumber(item) ?
+						item >= 0 && item < items.length ? item : -1 :
+						$items.index(item) :
+					-1;
+		}
+		// Expose getIndex without lowering the compressibility of it,
+		// as it is used quite often throughout Sly.
+		self.getIndex = getIndex;
+
+		/**
+		 * Get index of an item in SLIDEE based on a variety of input types.
+		 *
+		 * @param  {Mixed} item DOM element, positive or negative integer.
+		 *
+		 * @return {Int}   Item index, or -1 if not found.
+		 */
+		function getRelativeIndex(item) {
+			return getIndex(isNumber(item) && item < 0 ? item + items.length : item);
 		}
 
 		/**
@@ -673,7 +692,7 @@
 		function activate(item) {
 			var index = getIndex(item);
 
-			if (!itemNav || index === -1) {
+			if (!itemNav || index < 0) {
 				return false;
 			}
 
@@ -821,7 +840,7 @@
 		function updateButtonsState() {
 			var isStart = pos.dest <= pos.start;
 			var isEnd = pos.dest >= pos.end;
-			var slideePosState = isStart ? 's' : isEnd ? 'e' : 'm';
+			var slideePosState = isStart ? 1 : isEnd ? 2 : 3;
 
 			// Update paging buttons only if there has been a change in SLIDEE position
 			if (last.slideePosState !== slideePosState) {
@@ -857,7 +876,7 @@
 			if (itemNav) {
 				var isFirst = rel.activeItem === 0;
 				var isLast = rel.activeItem >= items.length - 1;
-				var itemsButtonState = isFirst ? 'f' : isLast ? 'l' : 'm';
+				var itemsButtonState = isFirst ? 1 : isLast ? 2 : 3;
 
 				if (last.itemsButtonState !== itemsButtonState) {
 					last.itemsButtonState = itemsButtonState;
@@ -953,6 +972,121 @@
 			} else if (o.hasOwnProperty(name)) {
 				o[name] = value;
 			}
+		};
+
+		/**
+		 * Add an item to the SLIDEE end, or a specified position index.
+		 *
+		 * @param {Mixed} element Node element, or HTML string.
+		 * @param {Int}   index   Index of a new item position. By default item is appended at the end.
+		 *
+		 * @return {Void}
+		 */
+		self.add = function (element, index) {
+			// Insert the element
+			if (type(index) === 'undefined' || !items[0]) {
+				$(element).appendTo($slidee);
+			} else if (items.length) {
+				$(element).insertBefore(items[index].el);
+			}
+
+			// Adjust the activeItem index
+			if (index <= rel.activeItem) {
+				last.active = ++rel.activeItem;
+			}
+
+			// Reload
+			load();
+		};
+
+		/**
+		 * Remove an item from SLIDEE.
+		 *
+		 * @param {Mixed} element Item index, or DOM element.
+		 * @param {Int}   index   Index of a new item position. By default item is appended at the end.
+		 *
+		 * @return {Void}
+		 */
+		self.remove = function (element) {
+			var index = getRelativeIndex(element);
+
+			if (index > -1) {
+				// Remove the element
+				$items.eq(index).remove();
+
+				// If the current item is being removed, activate new one after reload
+				var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
+
+				// Adjust the activeItem index
+				if (index < rel.activeItem || rel.activeItem >= items.length - 1) {
+					last.active = --rel.activeItem;
+				}
+
+				// Reload
+				load();
+
+				// Activate new item at the removed position if the current active got removed
+				if (reactivate) {
+					self.activate(rel.activeItem);
+				}
+			}
+		};
+
+		/**
+		 * Helps re-arranging items.
+		 *
+		 * @param  {Mixed} item     Item DOM element, or index starting at 0. Use negative numbers to select items from the end.
+		 * @param  {Mixed} position Item insertion anchor. Accepts same input types as item argument.
+		 * @param  {Bool}  after    Insert after instead of before the anchor.
+		 *
+		 * @return {Void}
+		 */
+		function move(item, position, after) {
+			item = getRelativeIndex(item);
+			position = getRelativeIndex(position);
+
+			// Move only if there is an actual change requested
+			if (item > -1 && position > -1 && item !== position && (!after || position !== item - 1) && (after || position !== item + 1)) {
+				$items.eq(item)[after ? 'insertAfter' : 'insertBefore'](items[position].el);
+
+				var shiftStart = item < position ? item : (after ? position : position - 1);
+				var shiftEnd = item > position ? item : (after ? position + 1 : position);
+				var shiftsUp = item > position;
+
+				// Update activeItem index
+				if (item === rel.activeItem) {
+					last.active = rel.activeItem = after ? (shiftsUp ? position + 1 : position) : (shiftsUp ? position : position - 1);
+				} else if (rel.activeItem > shiftStart && rel.activeItem < shiftEnd) {
+					last.active = rel.activeItem += shiftsUp ? 1 : -1;
+				}
+
+				// Reload
+				load();
+			}
+		}
+
+		/**
+		 * Move item after the target anchor.
+		 *
+		 * @param  {Mixed} item     Item to be moved. Can be DOM element or item index.
+		 * @param  {Mixed} position Target position anchor. Can be DOM element or item index.
+		 *
+		 * @return {Void}
+		 */
+		self.moveAfter = function (item, position) {
+			move(item, position, 1);
+		};
+
+		/**
+		 * Move item before the target anchor.
+		 *
+		 * @param  {Mixed} item     Item to be moved. Can be DOM element or item index.
+		 * @param  {Mixed} position Target position anchor. Can be DOM element or item index.
+		 *
+		 * @return {Void}
+		 */
+		self.moveBefore = function (item, position) {
+			move(item, position);
 		};
 
 		/**
@@ -1261,7 +1395,7 @@
 			}
 
 			if (itemNav) {
-				var nextItem = getIndex((centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy));
+				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy);
 				self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
 			} else {
 				self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
