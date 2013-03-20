@@ -231,7 +231,7 @@
 			updateRelatives();
 
 			// Scrollbar
-			if ($handle) {
+			if ($handle && sbSize > 0) {
 				// Stretch scrollbar handle to represent the visible area
 				handleSize = o.dynamicHandle ? Math.round(sbSize * frameSize / slideeSize) : $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
@@ -248,7 +248,7 @@
 			}
 
 			// Pages
-			if (!parallax) {
+			if (!parallax && frameSize > 0) {
 				var tempPagePos = pos.start;
 				var pagesHtml = '';
 
