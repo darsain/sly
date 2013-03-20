@@ -338,8 +338,14 @@
 			animation.delta = newPos - pos.cur;
 			animation.immediate = immediate || dragging.init && dragging.slidee || o.speed < 20;
 
-			// Attach animation destination
-			pos.dest = newPos;
+			// Render the animation
+			if (newPos !== pos.dest) {
+				pos.dest = newPos;
+				trigger('change');
+				if (!renderID) {
+					render();
+				}
+			}
 
 			// Reset next cycle timeout
 			resetCycle();
@@ -348,14 +354,6 @@
 			updateRelatives();
 			updateButtonsState();
 			syncPagesbar();
-
-			// Render the animation
-			if (newPos !== pos.cur) {
-				trigger('change');
-				if (!renderID) {
-					render();
-				}
-			}
 		}
 
 		/**
