@@ -443,6 +443,7 @@
 			if ($pages[0] && last.page !== rel.activePage) {
 				last.page = rel.activePage;
 				$pages.removeClass(o.activeClass).eq(rel.activePage).addClass(o.activeClass);
+				trigger('activePage', last.page);
 			}
 		}
 
@@ -750,10 +751,8 @@
 		 * @return {Void}
 		 */
 		self.activatePage = function (index, immediate) {
-			if (pages.length) {
-				index = within(index, 0, pages.length - 1);
+			if (index > 0 && index < pages.length) {
 				slideTo(pages[index], immediate);
-				trigger('activePage', index);
 			}
 		};
 
