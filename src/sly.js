@@ -250,7 +250,6 @@
 			if (!parallax) {
 				var tempPagePos = pos.start;
 				var pagesHtml = '';
-				var pageIndex = 0;
 
 				// Populate pages array
 				if (itemNav) {
@@ -271,10 +270,9 @@
 				// Pages bar
 				if ($pb[0]) {
 					for (var i = 0; i < pages.length; i++) {
-						pagesHtml += o.pageBuilder(pageIndex++);
+						pagesHtml += o.pageBuilder(i);
 					}
-
-					$pages = $(pagesHtml).appendTo($pb.empty());
+					$pages = $pb.html(pagesHtml).children();
 				}
 			}
 
