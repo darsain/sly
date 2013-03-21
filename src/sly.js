@@ -380,7 +380,7 @@
 			}
 			// Use tweesing for animations without known end point
 			else if (animation.tweesing) {
-				pos.cur += (animation.to - pos.cur) * (dragging.released ? o.swingSyncFactor : o.syncFactor);
+				pos.cur += (animation.to - pos.cur) * (dragging.released ? o.swingSpeed : o.syncSpeed);
 			}
 			// Use tweening for basic animations with known end point
 			else {
@@ -1302,7 +1302,7 @@
 					dragging.init = 0;
 
 					// Adjust path with a swing on mouse release
-					if (o.dragReleaseSwing && dragging.slidee) {
+					if (o.releaseSwing && dragging.slidee) {
 						dragging.swing = (dragging.path - dragging.history[0]) / 40 * 300;
 						dragging.path += dragging.swing;
 						dragging.tweese = Math.abs(dragging.swing) > 10;
@@ -1833,7 +1833,7 @@
 		dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
 		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
 		clickBar:      0,    // Enable navigation by clicking on scrollbar.
-		syncFactor:    0.5,  // Handle => SLIDEE sync speed, where: 1 = instant, 0 = infinite.
+		syncSpeed:     0.5,  // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
 
 		// Pagesbar
 		pagesBar:       null, // Selector or DOM element for pages bar container.
@@ -1852,10 +1852,10 @@
 		nextPage: null, // Selector or DOM element for "next page" button.
 
 		// Dragging
-		mouseDragging:    0,   // Enable navigation by dragging the SLIDEE with mouse cursor.
-		touchDragging:    0,   // Enable navigation by dragging the SLIDEE with touch events.
-		dragReleaseSwing: 0,   // Ease out on dragging swing release.
-		swingSyncFactor:  0.2, // Swing animation speed, where: 1 = instant, 0 = infinite.
+		mouseDragging: 0,   // Enable navigation by dragging the SLIDEE with mouse cursor.
+		touchDragging: 0,   // Enable navigation by dragging the SLIDEE with touch events.
+		releaseSwing:  0,   // Ease out on dragging swing release.
+		swingSpeed:    0.2, // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 
 		// Automated cycling
 		cycleBy:       null, // Enable automatic cycling. Can be: items, pages.
@@ -1867,7 +1867,7 @@
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
 		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
-		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
+		speed:         0,       // Tweening animations duration in milliseconds. 0 to disable animations.
 		easing:        'swing', // Animations easing.
 		scrollSource:  null,    // Selector or DOM element for catching the mouse wheel event. Default is FRAME.
 		dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
