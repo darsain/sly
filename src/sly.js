@@ -1652,8 +1652,8 @@
 			$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
 
 			// Initiate automatic cycling
-			if (o.cycleBy && !o.startPaused && !parallax) {
-				self.resume();
+			if (o.cycleBy && !parallax) {
+				self[o.startPaused ? 'pause' : 'resume']();
 			}
 
 			// Mark instance as initialized
