@@ -380,7 +380,7 @@
 			}
 			// Use tweesing for animations without known end point
 			else if (animation.tweesing) {
-				pos.cur += (animation.to - pos.cur) * (dragging.released ? 0.2 : o.syncFactor);
+				pos.cur += (animation.to - pos.cur) * (dragging.released ? o.swingSyncFactor : o.syncFactor);
 			}
 			// Use tweening for basic animations with known end point
 			else {
@@ -1223,37 +1223,44 @@
 			var source = event.data.source;
 			var isSlidee = source === 'slidee';
 
-			// Ignore other than left mouse button
-			if (isTouch || event.which <= 1) {
-				stopDefault(event, 1);
+			// Handle dragging conditions
+			if (source === 'handle' && !(o.dragHandle && $handle)) {
+				return;
+			}
 
-				// Reset dragging object
-				continuousInit(source);
+			// SLIDEE dragging conditions
+			if (isSlidee && !(o.mouseDragging && !isTouch && event.which < 2 || o.touchDragging && isTouch)){
+				return;
+			}
 
-				// Properties used in dragHandler
-				dragging.$source = $(event.target);
-				dragging.init = 0;
-				dragging.touch = isTouch;
-				dragging.initLoc = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
-				dragging.initPos = isSlidee ? pos.cur : hPos.cur;
-				dragging.start = +new Date();
-				dragging.time = 0;
-				dragging.path = 0;
-				dragging.history = [0, 0, 0, 0];
-				dragging.pathMin = isSlidee ? -dragging.initLoc : -hPos.cur;
-				dragging.pathMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
+			stopDefault(event, 1);
 
-				// Add dragging class
-				(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+			// Reset dragging object
+			continuousInit(source);
 
-				// Bind dragging events
-				$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+			// Properties used in dragHandler
+			dragging.$source = $(event.target);
+			dragging.init = 0;
+			dragging.touch = isTouch;
+			dragging.initLoc = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
+			dragging.initPos = isSlidee ? pos.cur : hPos.cur;
+			dragging.start = +new Date();
+			dragging.time = 0;
+			dragging.path = 0;
+			dragging.history = [0, 0, 0, 0];
+			dragging.pathMin = isSlidee ? -dragging.initLoc : -hPos.cur;
+			dragging.pathMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
-				// Keep track of a dragging path history. This is later used in the
-				// dragging release swing calculation when dragging SLIDEE.
-				if (isSlidee) {
-					historyID = setInterval(draggingHistoryTick, 10);
-				}
+			// Add dragging class
+			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+
+			// Bind dragging events
+			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+
+			// Keep track of a dragging path history. This is later used in the
+			// dragging release swing calculation when dragging SLIDEE.
+			if (isSlidee) {
+				historyID = setInterval(draggingHistoryTick, 10);
 			}
 		}
 
@@ -1295,9 +1302,10 @@
 					dragging.init = 0;
 
 					// Adjust path with a swing on mouse release
-					if (dragging.slidee) {
-						dragging.path += (dragging.path - dragging.history[0]) / 40 * 300;
-						dragging.tweese = 1;
+					if (o.dragReleaseSwing && dragging.slidee) {
+						dragging.swing = (dragging.path - dragging.history[0]) / 40 * 300;
+						dragging.path += dragging.swing;
+						dragging.tweese = Math.abs(dragging.swing) > 10;
 					}
 				}
 
@@ -1375,7 +1383,7 @@
 		 */
 		function scrollHandler(event) {
 			// Ignore if there is no scrolling to be done
-			if (pos.start === pos.end) {
+			if (!o.scrollBy || pos.start === pos.end) {
 				return;
 			}
 
@@ -1409,7 +1417,7 @@
 		 */
 		function scrollbarHandler(event) {
 			// Only clicks on scroll bar. Ignore the handle.
-			if (event.target === $sb[0]) {
+			if (o.clickBar && event.target === $sb[0]) {
 				stopDefault(event);
 				// Calculate new handle position and sync SLIDEE to it
 				slideTo(handleToSlidee((o.horizontal ? event.pageX - $sb.offset().left : event.pageY - $sb.offset().top) - handleSize / 2));
@@ -1424,6 +1432,10 @@
 		 * @return {Void}
 		 */
 		function keyboardHandler(event) {
+			if (!o.keyboardNavBy) {
+				return;
+			}
+
 			switch (event.which) {
 				// Left or Up
 				case o.horizontal ? 37 : 38:
@@ -1477,7 +1489,9 @@
 		 * @return {Void}
 		 */
 		function pauseOnHoverHandler(event) {
-			self[event.type === 'mouseenter' ? 'pause' : 'resume'](2);
+			if (o.pauseOnHover) {
+				self[event.type === 'mouseenter' ? 'pause' : 'resume'](2);
+			}
 		}
 
 		/**
@@ -1608,17 +1622,15 @@
 			}
 
 			// Scrolling navigation
-			if (o.scrollBy) {
-				$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
-			}
+			$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
 
 			// Clicking on scrollbar navigation
-			if (o.clickBar && $sb[0]) {
+			if ($sb[0]) {
 				$sb.on(clickEvent, scrollbarHandler);
 			}
 
 			// Click on items navigation
-			if (itemNav) {
+			if (itemNav && o.activateOn) {
 				$frame.on(o.activateOn + '.' + namespace, '*', activateHandler);
 			}
 
@@ -1628,29 +1640,20 @@
 			}
 
 			// Dragging navigation
-			if (o.dragging) {
-				$dragSource.on(dragInitEvents, { source: 'slidee' }, dragInit);
-			}
+			$dragSource.on(dragInitEvents, { source: 'slidee' }, dragInit);
 
 			// Scrollbar dragging navigation
-			if (o.dragHandle && $handle) {
-				$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
-			}
+			$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
 
 			// Keyboard navigation
-			if (o.keyboardNavBy) {
-				$doc.bind('keydown.' + namespace, keyboardHandler);
-			}
+			$doc.bind('keydown.' + namespace, keyboardHandler);
 
-			// Automatic cycling
-			if (o.cycleBy && !parallax) {
-				// Pause on hover
-				if (o.pauseOnHover) {
-					$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
-				}
+			// Pause on hover
+			$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
 
-				// Initiate or pause cycling
-				self[o.startPaused ? 'pause' : 'resume']();
+			// Initiate automatic cycling
+			if (o.cycleBy && !o.startPaused && !parallax) {
+				self.resume();
 			}
 
 			// Mark instance as initialized
@@ -1830,7 +1833,7 @@
 		dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
 		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
 		clickBar:      0,    // Enable navigation by clicking on scrollbar.
-		syncFactor:    0.50, // Handle => SLIDEE sync factor. 0-1 floating point, where 1 = immediate, 0 = infinity.
+		syncFactor:    0.5,  // Handle => SLIDEE sync speed, where: 1 = instant, 0 = infinite.
 
 		// Pagesbar
 		pagesBar:       null, // Selector or DOM element for pages bar container.
@@ -1848,6 +1851,12 @@
 		prevPage: null, // Selector or DOM element for "previous page" button.
 		nextPage: null, // Selector or DOM element for "next page" button.
 
+		// Dragging
+		mouseDragging:    0,   // Enable navigation by dragging the SLIDEE with mouse cursor.
+		touchDragging:    0,   // Enable navigation by dragging the SLIDEE with touch events.
+		dragReleaseSwing: 0,   // Ease out on dragging swing release.
+		swingSyncFactor:  0.2, // Swing animation speed, where: 1 = instant, 0 = infinite.
+
 		// Automated cycling
 		cycleBy:       null, // Enable automatic cycling. Can be: items, pages.
 		cycleInterval: 5000, // Delay between cycles in milliseconds.
@@ -1856,8 +1865,7 @@
 
 		// Mixed options
 		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
-		moveBy:        300,     // Movement speed in pixels per second used by forward & backward buttons.
-		dragging:      0,       // Enable navigation by dragging the SLIDEE.
+		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Animations easing.
