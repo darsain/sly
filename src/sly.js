@@ -965,7 +965,7 @@
 		};
 
 		/**
-		 * Add an item to the SLIDEE end, or a specified position index.
+		 * Add one or multiple items to the SLIDEE end, or a specified position index.
 		 *
 		 * @param {Mixed} element Node element, or HTML string.
 		 * @param {Int}   index   Index of a new item position. By default item is appended at the end.
@@ -973,16 +973,18 @@
 		 * @return {Void}
 		 */
 		self.add = function (element, index) {
-			// Insert the element
+			var $element = $(element);
+
+			// Insert the element(s)
 			if (type(index) === 'undefined' || !items[0]) {
-				$(element).appendTo($slidee);
+				$element.appendTo($slidee);
 			} else if (items.length) {
-				$(element).insertBefore(items[index].el);
+				$element.insertBefore(items[index].el);
 			}
 
 			// Adjust the activeItem index
 			if (index <= rel.activeItem) {
-				last.active = ++rel.activeItem;
+				last.active = rel.activeItem += $element.length;
 			}
 
 			// Reload
