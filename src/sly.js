@@ -742,8 +742,8 @@
 		 * @return {Void}
 		 */
 		self.activatePage = function (index, immediate) {
-			if (index >= 0 && index < pages.length) {
-				slideTo(pages[index], immediate);
+			if (isNumber(index)) {
+				slideTo(pages[within(index, 0, pages.length - 1)], immediate);
 			}
 		};
 
