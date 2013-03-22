@@ -1651,7 +1651,9 @@
 			$doc.bind('keydown.' + namespace, keyboardHandler);
 
 			// Pause on hover
-			$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
+			if (!parallax) {
+				$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
+			}
 
 			// Initiate automatic cycling
 			if (o.cycleBy && !parallax) {
@@ -1829,6 +1831,17 @@
 		activateOn:   null, // Activate an item when it receives this event. Can be: click, mouseenter, ...
 		activateMiddle: 0,  // In forceCentered navigation, always activate the item in the middle of the FRAME.
 
+		// Scrolling
+		scrollSource: null, // Selector or DOM element for catching the mouse wheel scrolling. Default is FRAME.
+		scrollBy:     0,    // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
+
+		// Dragging
+		dragSource:    null, // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
+		mouseDragging: 0,    // Enable navigation by dragging the SLIDEE with mouse cursor.
+		touchDragging: 0,    // Enable navigation by dragging the SLIDEE with touch events.
+		releaseSwing:  0,    // Ease out on dragging swing release.
+		swingSpeed:    0.2,  // Swing synchronization speed, where: 1 = instant, 0 = infinite.
+
 		// Scrollbar
 		scrollBar:     null, // Selector or DOM element for scrollbar container.
 		dragHandle:    0,    // Whether the scrollbar handle should be draggable.
@@ -1853,12 +1866,6 @@
 		prevPage: null, // Selector or DOM element for "previous page" button.
 		nextPage: null, // Selector or DOM element for "next page" button.
 
-		// Dragging
-		mouseDragging: 0,   // Enable navigation by dragging the SLIDEE with mouse cursor.
-		touchDragging: 0,   // Enable navigation by dragging the SLIDEE with touch events.
-		releaseSwing:  0,   // Ease out on dragging swing release.
-		swingSpeed:    0.2, // Swing synchronization speed, where: 1 = instant, 0 = infinite.
-
 		// Automated cycling
 		cycleBy:       null, // Enable automatic cycling. Can be: items, pages.
 		cycleInterval: 5000, // Delay between cycles in milliseconds.
@@ -1866,13 +1873,10 @@
 		startPaused:   0,    // Whether to start in paused sate.
 
 		// Mixed options
-		scrollBy:      0,       // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
 		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Tweening animations duration in milliseconds. 0 to disable animations.
 		easing:        'swing', // Animations easing.
-		scrollSource:  null,    // Selector or DOM element for catching the mouse wheel event. Default is FRAME.
-		dragSource:    null,    // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
 		startAt:       0,       // Starting offset in pixels or items.
 		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
 
