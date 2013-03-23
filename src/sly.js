@@ -1825,10 +1825,10 @@
 		horizontal: 0, // Change to horizontal direction.
 
 		// Item based navigation
-		itemNav:      null, // Item navigation type. Can be: basic, centered, forceCentered.
+		itemNav:      null, // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
 		itemSelector: null, // Select only items that match this selector.
 		smart:        0,    // Repositions the activated item to help with further navigation.
-		activateOn:   null, // Activate an item when it receives this event. Can be: click, mouseenter, ...
+		activateOn:   null, // Activate an item when it receives this event. Can be: 'click', 'mouseenter', ...
 		activateMiddle: 0,  // In forceCentered navigation, always activate the item in the middle of the FRAME.
 
 		// Scrolling
@@ -1836,7 +1836,7 @@
 		scrollBy:     0,    // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
 
 		// Dragging
-		dragSource:    null, // Selector or DOM element for catching the mouse dragging events. Default is FRAME.
+		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
 		mouseDragging: 0,    // Enable navigation by dragging the SLIDEE with mouse cursor.
 		touchDragging: 0,    // Enable navigation by dragging the SLIDEE with touch events.
 		releaseSwing:  0,    // Ease out on dragging swing release.
@@ -1867,16 +1867,16 @@
 		nextPage: null, // Selector or DOM element for "next page" button.
 
 		// Automated cycling
-		cycleBy:       null, // Enable automatic cycling. Can be: items, pages.
+		cycleBy:       null, // Enable automatic cycling by 'items' or 'pages'.
 		cycleInterval: 5000, // Delay between cycles in milliseconds.
-		pauseOnHover:  0,    // Pause cycling when mouse hovers over a frame
+		pauseOnHover:  0,    // Pause cycling when mouse hovers over the FRAME.
 		startPaused:   0,    // Whether to start in paused sate.
 
 		// Mixed options
 		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
 		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
-		speed:         0,       // Tweening animations duration in milliseconds. 0 to disable animations.
-		easing:        'swing', // Animations easing.
+		speed:         0,       // Duration based animations speed in milliseconds. 0 to disable animations.
+		easing:        'swing', // Easing for duration based (tweening) animations.
 		startAt:       0,       // Starting offset in pixels or items.
 		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
 
