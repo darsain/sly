@@ -1654,7 +1654,9 @@
 			$dragSource.on(dragInitEvents, { source: 'slidee' }, dragInit);
 
 			// Scrollbar dragging navigation
-			$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
+			if ($handle) {
+				$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
+			}
 
 			// Keyboard navigation
 			$doc.bind('keydown.' + namespace, keyboardHandler);
