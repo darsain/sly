@@ -975,16 +975,20 @@
 		self.add = function (element, index) {
 			var $element = $(element);
 
-			// Insert the element(s)
-			if (type(index) === 'undefined' || !items[0]) {
-				$element.appendTo($slidee);
-			} else if (items.length) {
-				$element.insertBefore(items[index].el);
-			}
+			if (itemNav) {
+				// Insert the element(s)
+				if (type(index) === 'undefined' || !items[0]) {
+					$element.appendTo($slidee);
+				} else if (items.length) {
+					$element.insertBefore(items[index].el);
+				}
 
-			// Adjust the activeItem index
-			if (index <= rel.activeItem) {
-				last.active = rel.activeItem += $element.length;
+				// Adjust the activeItem index
+				if (index <= rel.activeItem) {
+					last.active = rel.activeItem += $element.length;
+				}
+			} else {
+				$slidee.append($element);
 			}
 
 			// Reload
@@ -1000,27 +1004,32 @@
 		 * @return {Void}
 		 */
 		self.remove = function (element) {
-			var index = getRelativeIndex(element);
+			if (itemNav) {
+				var index = getRelativeIndex(element);
 
-			if (index > -1) {
-				// Remove the element
-				$items.eq(index).remove();
+				if (index > -1) {
+					// Remove the element
+					$items.eq(index).remove();
 
-				// If the current item is being removed, activate new one after reload
-				var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
+					// If the current item is being removed, activate new one after reload
+					var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
 
-				// Adjust the activeItem index
-				if (index < rel.activeItem || rel.activeItem >= items.length - 1) {
-					last.active = --rel.activeItem;
+					// Adjust the activeItem index
+					if (index < rel.activeItem || rel.activeItem >= items.length - 1) {
+						last.active = --rel.activeItem;
+					}
+
+					// Reload
+					load();
+
+					// Activate new item at the removed position if the current active got removed
+					if (reactivate) {
+						self.activate(rel.activeItem);
+					}
 				}
-
-				// Reload
+			} else {
+				$(element).remove();
 				load();
-
-				// Activate new item at the removed position if the current active got removed
-				if (reactivate) {
-					self.activate(rel.activeItem);
-				}
 			}
 		};
 
