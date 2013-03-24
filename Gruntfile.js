@@ -84,16 +84,12 @@ module.exports = function(grunt) {
 		grunt.task.run('clean');
 		grunt.task.run('concat');
 		grunt.task.run('gcc');
-		grunt.task.run('compress');
 	});
 
 	// Release task.
 	grunt.registerTask('release', function (type) {
 		type = type ? type : 'patch';
-		grunt.task.run('jshint');
-		grunt.task.run('clean');
-		grunt.task.run('concat');
-		grunt.task.run('gcc');
+		grunt.task.run('build');
 		grunt.task.run('bumpup:' + type);
 		grunt.task.run('tagrelease');
 	});
