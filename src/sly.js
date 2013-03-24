@@ -1852,11 +1852,12 @@
 		touchDragging: 0,    // Enable navigation by dragging the SLIDEE with touch events.
 		releaseSwing:  0,    // Ease out on dragging swing release.
 		swingSpeed:    0.2,  // Swing synchronization speed, where: 1 = instant, 0 = infinite.
+		elasticBounds: 0,    // Stretch SLIDEE position limits when dragging past FRAME boundaries.
 
 		// Scrollbar
 		scrollBar:     null, // Selector or DOM element for scrollbar container.
 		dragHandle:    0,    // Whether the scrollbar handle should be draggable.
-		dynamicHandle: 0,    // Scrollbar handle represents the relation between hidden and visible content.
+		dynamicHandle: 0,    // Scrollbar handle represents the ratio between hidden and visible content.
 		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
 		clickBar:      0,    // Enable navigation by clicking on scrollbar.
 		syncSpeed:     0.5,  // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
@@ -1885,7 +1886,6 @@
 
 		// Mixed options
 		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
-		elasticBounds: 0,       // Stretch SLIDEE position limits when dragging past borders.
 		speed:         0,       // Duration based animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Easing for duration based (tweening) animations.
 		startAt:       0,       // Starting offset in pixels or items.
