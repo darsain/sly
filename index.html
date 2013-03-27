@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Sly</title>
+	<meta name="description" content="JavaScript library for one-directional scrolling with item based navigation support.">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/font-awesome.css">
+	<link rel="stylesheet" href="css/ospb.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/vendor/modernizr.js"></script>
+</head>
+<body data-repo="Darsain/sly" data-metafile="component.json">
+	<!--[if lt IE 9]>
+		<p class="chromeframe"><i class="icon-warning-sign icon-large"></i> You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience. <i class="icon-warning-sign icon-large"></i></p>
+	<![endif]-->
+
+	<header class="projecttitle">
+		<div class="titlewrap">
+			<h1 class="projectname">Sly</h1>
+			<a href="https://twitter.com/Darsain" class="follow"><i class="icon-twitter"></i> Follow for updates</a>
+		</div>
+		<p class="projectdescription">JavaScript library for one-directional scrolling with item based navigation support</p>
+	</header>
+
+	<div class="download" id="download" data-point="download" data-title="Download">
+		<h2>Download <small>latest stable</small></h2>
+		<h3 id="version"><span class="loading">loading <i class="icon-refresh icon-large icon-spin"></i></span></h3>
+
+		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.js" data-tooltip="6KB gzipped"><span class="title">Production</span> <span class="size">14 KB</span></a>
+		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.min.js"><span class="title">Development</span> <span class="size">50 KB</span></a>
+		<a href="https://github.com/Darsain/sly" class="repo" id="repo">
+			<i class="icon-github"></i>
+			<span class="title">Repository</span>
+			<span class="loading"><i class="icon-refresh icon-large icon-spin"></i> loading</span>
+		</a>
+	</div>
+
+	<div id="content" class="content pagespan">
+
+		<nav id="mainnav" class="mainnav"></nav>
+
+		<section data-point="introduction" data-title="Introduction">
+			<h2>Introduction</h2>
+
+			<p>Sly is a JavaScript library for advanced one-directional scrolling with item based navigation support.</p>
+
+			<p>It can be used as a simple scrollbar replacement, in an advanced item based navigations, or as a great navigation and animation interface for parallax websites. This is achieved by a powerful &amp; developer friendly API that provides a bunch of very useful methods giving you control over everything.</p>
+
+			<h3>Dependencies</h3>
+
+			<ul>
+				<li>jQuery 1.7+</li>
+			</ul>
+
+			<p>And that's it. You don't need 200KB of jQuery-UI to Sly :) In the future, I'd like to drop the jQuery dependency, and transform Sly into a reusable <a href="http://component.io">Component</a>.</p>
+
+			<h3>Compatibility</h3>
+
+			<p>Sly works in every desktop browser, and due to some divine intervention, even in IE6+, but that is a complete accident. IEs lower than 8 are not officially supported :).</p>
+
+			<h3>Mobile</h3>
+
+			<p>Sly does touch events, and I'm generally trying to make it work everywhere, but the fact is that mobile is not tested. If you want to help with that, you are welcome :).</p>
+
+		</section>
+
+		<section data-point="performance" data-title="Performance">
+			<h2>Performance</h2>
+
+			<p>A lot of emphasis is placed on performance in an attempt to achieve the most responsive experience with smoothest animations possible.</p>
+
+			<p>Sly has a custom high-performance animation rendering based around the <a href="http://www.w3.org/TR/animation-timing/">Animation Timing Interface</a>, which provides an optimized 60 FPS rendering. This is designed to still accept easing functions from <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery Easing Plugin</a>, so you won't event notice that Sly's animations have nothing to do with jQuery :).</p>
+
+			<p>The animation of elements is done by GPU accelerated translate transforms, which rapidly increase the rendering speed in browsers that support it, with absolute positioning fallback for those that don't.</p>
+
+			<p>Helping with minimizing the frequency of frame drops due to inevitable JavaScript garbage collection are code optimizations that lower the garbage generation to a reasonable minimum.</p>
+
+			<p>To provide a super responsive &amp; smooth synchronization when dragging the scrollbar handle, Sly uses a destination based animation function controlled by a synchronization factor instead of a duration based (tweening) animations that are unsuitable for this type of use case, and lead to a choppy, low performance, and unpolished experience. Another perk of writing your own animation rendering :).</p>
+
+			<p>The difference between earlier versions that were using <code>jQuery.fn.animate</code> with unoptimized code and Sly's current state is quite staggering.</p>
+
+			<p><img src="content/before_after.png" width="845" height="300" alt="Before and After Chrome Dev Tools timeline"></p>
+		</section>
+
+		<section data-point="examples" data-title="Examples">
+			<h2>Examples</h2>
+
+			<ul class="grid">
+				<li><a href="examples/horizontal.html"><i class="icon-file-alt icon-large"></i> Horizontal</a></li>
+				<li><a href="examples/vertical.html"><i class="icon-file-alt icon-large"></i> Vertical</a></li>
+				<li><a href="examples/fullpage.html"><i class="icon-file-alt icon-large"></i> Full page</a></li>
+				<li><a href="examples/infinite.html"><i class="icon-file-alt icon-large"></i> Infinite scrolling</a></li>
+				<li><a href="examples/parallax.html"><i class="icon-file-alt icon-large"></i> Parallax mode</a></li>
+			</ul>
+
+			<p>All examples (except the Parallax one) are using a calling via jQuery proxy, because some people that are looking only at examples think that jQuery is a separate language and can't handle raw JavaScript. This hopefully helps with lowering the "help me make it work" issues reports.</p>
+
+			<p>More advanced users can surely read the documentation and discover all the power &amp; cool stuff that <code>new Sly()</code> provides :)</p>
+		</section>
+
+		<section data-point="documentation" data-title="Documentation">
+			<h2>Documentation</h2>
+
+			<p>Documentation is centralized in the <a href="https://github.com/Darsain/sly/wiki">Sly's Repository Wiki</a>, which makes it way easier to maintain and keep always up to date.</p>
+
+			<ul class="grid">
+				<li><a href="https://github.com/Darsain/sly/wiki/Markup"><i class="icon-book icon-large"></i> Markup <small>HTML &amp; CSS</small></a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Calling"><i class="icon-book icon-large"></i> Calling</a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Options"><i class="icon-book icon-large"></i> Options</a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Properties"><i class="icon-book icon-large"></i> Properties</a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Methods"><i class="icon-book icon-large"></i> Methods</a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Events"><i class="icon-book icon-large"></i> Events</a></li>
+				<li><a href="https://github.com/Darsain/sly/wiki/Parallax"><i class="icon-book icon-large"></i> Parallax</a></li>
+			</ul>
+		</section>
+
+		<section data-point="forum" data-title="Forum">
+			<h2><a href="https://groups.google.com/d/forum/sly-js">Forum <i class="icon-external-link"></i></a></h2>
+
+			<p>If you have a general question about Sly, or having problems with implementation, please do not pollute the Github's Issue tracker, but use the <a href="https://groups.google.com/d/forum/sly-js">Sly forum</a> dedicated just for that.</p>
+
+			<p>I work on this for free in my spare time, so I cannot guarantee that you'll receive a support immediately, but I'll try to do my best to answer your questions.</p>
+
+			<p>I also reserve a right to ignore questions that could be solved by spending at least a minute reading the documentation. I've spent more than a day writing it, so every question with an answer that is already thoroughly documented is an insult to me, my ancestors, and makes my hamster curse like a sailor.</p>
+
+			<p>If you find the documentation lacking in some ways, that is a great <a href="https://github.com/Darsain/sly/issues">New Issue candidate!</a></p>
+		</section>
+	</div>
+
+	<footer class="pagespan" data-point="license" data-title="License">
+		<a id="license" class="license">
+			<i class="icon-refresh icon-spin"></i> Loading license <i class="icon-refresh icon-spin"></i>
+		</a>
+
+		<div id="repos" class="repos" data-display="motio,espy,imagesLoaded,volley">
+			<i class="icon-refresh icon-large icon-spin"></i>
+			<h6>Loading other projects</h6>
+		</div>
+	</footer>
+
+	<!-- Templates -->
+	<script type="text/tim" class="version">
+		{{version}}  <small>{{date}}</small>
+	</script>
+
+	<script type="text/tim" class="watchers">
+		<span class="size">{{watchers}} <small>watchers</small></span>
+	</script>
+
+	<script type="text/tim" class="license">
+		<span class="fl">{{license}}</span>
+		<span class="fr">{{license}}</span>
+		Lincensed under the <strong>{{license}}</strong> license
+	</script>
+
+	<script type="text/tim" class="repos">
+		<ul class="clearfix">
+			{{items}}
+				<li>
+					<a href="{{url}}">
+						<h4>{{name}}</h4>
+						<span class="watchers"><i class="icon-star"></i> {{watchers}}</span>
+						<p>{{description}}</p>
+					</a>
+				</li>
+			{{/items}}
+		</ul>
+	</script>
+
+	<!-- Scripts -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="js/vendor/plugins.js"></script>
+	<script src="js/ospb.js"></script>
+
+	<!-- Google Analytics -->
+	<script>
+		var _gaq=[['_setAccount','UA-838758-7'],['_trackPageview']];
+		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
+</body>
+</html>

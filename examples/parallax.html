@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Parallax example - Sly</title>
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="../css/normalize.css">
+	<link rel="stylesheet" href="../css/ospb.css">
+	<link rel="stylesheet" href="css/parallax.css">
+	<script src="../js/vendor/modernizr.js"></script>
+</head>
+<body>
+	<div id="scrollbar" class="scrollbar">
+		<div class="handle">
+			<div class="mousearea"></div>
+		</div>
+	</div>
+
+	<header class="pagespan">
+		<h1>Sly</h1>
+		<h2>Parallax Mode</h2>
+	</header>
+
+	<div id="pos" class="pos">
+		<span id="cur" class="cur"></span> <span class="slash">/</span> <sup id="max" class="max"></sup>
+	</div>
+
+	<div class="pagespan entry">
+
+		<p class="center">
+			Parallax mode provides a great navigation and animation timing interface into which you can chain your animation frame renderer.
+		</p>
+
+		<pre><code data-language="javascript">// Initiate parallax mode by passing a number into the frame argument
+var parallax = new Sly(8000, options);
+// Attach a function that renders a frame to `move` event
+parallax.on('load move', render);
+// Initialize Sly instance
+parallax.init();</code></pre>
+
+		<p class="center">
+			The rendering function than receives the Sly instance as its <code>this</code> value, and will be triggered
+			only when there has been a change in position. With this, you can utilize a lot of Sly's awesomeness. The
+			<code>move</code> event is directly chained to <code>requestAnimationFrame</code>, so you have a smooth
+			&amp; optimized 60 FPS rendering with build in animation easings support, and all the other Sly's features
+			out of the box.
+		</p>
+	</div>
+
+	<ul id="particles" class="particles"></ul>
+
+	<!-- Scripts -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="js/vendor/plugins.js"></script>
+	<script src="../js/vendor/plugins.js"></script>
+	<script src="../js/sly.min.js"></script>
+	<script src="js/parallax.js"></script>
+
+	<!-- Google Analytics -->
+	<script>
+		var _gaq=[['_setAccount','UA-838758-7'],['_trackPageview']];
+		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Vertical examples - Sly</title>
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="../css/normalize.css">
+	<link rel="stylesheet" href="../css/font-awesome.css">
+	<link rel="stylesheet" href="../css/ospb.css">
+	<link rel="stylesheet" href="css/vertical.css">
+	<script src="../js/vendor/modernizr.js"></script>
+</head>
+<body>
+	<header class="pagespan">
+		<h1>Sly</h1>
+		<h2>Vertical Examples</h2>
+		<p>Every feature in <a href="horizontal.html">Horizontal examples</a> is also available in vertical mode</p>
+	</header>
+
+	<div class="pagespan container">
+		<div class="wrap">
+			<h2>Non-item based navigation</h2>
+
+			<div class="scrollbar">
+				<div class="handle">
+					<div class="mousearea"></div>
+				</div>
+			</div>
+
+			<div class="frame nonitembased" id="nonitembased">
+				<div class="slidee">
+<h1>Lorem ipsum dolor</h1>
+
+<p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas.
+Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper.
+<em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.
+Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt
+condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+
+<h2>Header Level 2</h2>
+
+<ol>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+<li>Aliquam tincidunt mauris eu risus.</li>
+</ol>
+
+<blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue.
+Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus,
+at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
+
+<h3>Header Level 3</h3>
+
+<ul>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+<li>Aliquam tincidunt mauris eu risus.</li>
+</ul>
+
+<pre>
+#header h1 a {
+	display: block;
+	width: 300px;
+	height: 80px;
+}
+</pre>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<h4>Header Level 4</h4>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.</p>
+				</div>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls center">
+				<p>
+					<button class="btn prevPage"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i> page</button>
+					<button class="btn backward"><i class="icon-chevron-left"></i> move</button>
+					<button class="btn forward">move <i class="icon-chevron-right"></i></button>
+					<button class="btn nextPage">page <i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></button>
+				</p>
+
+				<p>
+					<span class="btn-group">
+						<button class="btn toStart">toStart</button>
+						<button class="btn toCenter">toCenter</button>
+						<button class="btn toEnd">toEnd</button>
+					</span>
+
+					<span class="btn-group">
+						<button class="btn toStart" data-item="h3"><strong>H3</strong> toStart</button>
+						<button class="btn toCenter" data-item="h3"><strong>H3</strong> toCenter</button>
+						<button class="btn toEnd" data-item="h3"><strong>H3</strong> toEnd</button>
+					</span>
+				</p>
+			</div>
+		</div>
+
+		<div class="wrap">
+			<h2>Item based navigation <small>- smart</small></h2>
+
+			<div class="scrollbar">
+				<div class="handle">
+					<div class="mousearea"></div>
+				</div>
+			</div>
+
+			<div class="frame smart" id="smart">
+				<ul class="items">
+					<li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li>
+					<li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li>
+					<li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li>
+					<li>28</li><li>29</li>
+				</ul>
+			</div>
+
+			<ul class="pages"></ul>
+
+			<div class="controls center">
+				<p>
+					<button class="btn prevPage"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i> prevPage</button>
+					<button class="btn prev"><i class="icon-chevron-left"></i> prev</button>
+
+					<span class="btn-group">
+						<button class="btn add"><i class="icon-plus-sign"></i></button>
+						<button class="btn remove"><i class="icon-minus-sign"></i></button>
+					</span>
+
+					<button class="btn next">next <i class="icon-chevron-right"></i></button>
+					<button class="btn nextPage">nextPage <i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></button>
+				</p>
+
+				<p>
+					<span class="btn-group">
+						<button class="btn toStart">toStart</button>
+						<button class="btn toCenter">toCenter</button>
+						<button class="btn toEnd">toEnd</button>
+					</span>
+
+					<span class="btn-group">
+						<button class="btn toStart" data-item="10"><strong>10</strong> toStart</button>
+						<button class="btn toCenter" data-item="10"><strong>10</strong> toCenter</button>
+						<button class="btn toEnd" data-item="10"><strong>10</strong> toEnd</button>
+					</span>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="js/vendor/plugins.js"></script>
+	<script src="../js/sly.min.js"></script>
+	<script src="js/vertical.js"></script>
+
+	<!-- Google Analytics -->
+	<script>
+		var _gaq=[['_setAccount','UA-838758-7'],['_trackPageview']];
+		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
+</body>
+</html>
