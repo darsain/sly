@@ -2,6 +2,10 @@
 module.exports = function(grunt) {
 	'use strict';
 
+	// Override environment based line endings enforced by Grunt
+	grunt.util.linefeed = '\n';
+
+	// Grunt configuration
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('component.json'),
 		meta: {
