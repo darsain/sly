@@ -1833,18 +1833,18 @@
 
 	// Default options
 	Sly.defaults = {
-		horizontal: 0, // Change to horizontal direction.
+		horizontal: 0, // Switch to horizontal mode.
 
 		// Item based navigation
 		itemNav:      null, // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
 		itemSelector: null, // Select only items that match this selector.
 		smart:        0,    // Repositions the activated item to help with further navigation.
-		activateOn:   null, // Activate an item when it receives this event. Can be: 'click', 'mouseenter', ...
-		activateMiddle: 0,  // In forceCentered navigation, always activate the item in the middle of the FRAME.
+		activateOn:   null, // Activate an item on this event. Can be: 'click', 'mouseenter', ...
+		activateMiddle: 0,  // Always activate the item in the middle of the FRAME. forceCentered only.
 
 		// Scrolling
-		scrollSource: null, // Selector or DOM element for catching the mouse wheel scrolling. Default is FRAME.
-		scrollBy:     0,    // Number of pixels/items for one mouse scroll event. 0 to disable mouse scrolling.
+		scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
+		scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
 
 		// Dragging
 		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
@@ -1885,11 +1885,11 @@
 		startPaused:   0,    // Whether to start in paused sate.
 
 		// Mixed options
-		moveBy:        300,     // Default speed in pixels per second used by forward & backward buttons.
-		speed:         0,       // Duration based animations speed in milliseconds. 0 to disable animations.
+		moveBy:        300,     // Speed in pixels per second used by forward and backward buttons.
+		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Easing for duration based (tweening) animations.
 		startAt:       0,       // Starting offset in pixels or items.
-		keyboardNavBy: 0,       // Enable keyboard navigation by 'items' or 'pages'.
+		keyboardNavBy: null,    // Enable keyboard navigation by 'items' or 'pages'.
 
 		// Classes
 		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
