@@ -1,7 +1,6 @@
 ;(function ($, w, undefined) {
 	'use strict';
 
-	// Plugin names
 	var pluginName = 'sly';
 	var className  = 'Sly';
 	var namespace  = pluginName;
@@ -19,12 +18,12 @@
 	 * @class
 	 *
 	 * @param {Element} frame       DOM element of sly container.
-	 * @param {Object}  o           Object with plugin options.
+	 * @param {Object}  options     Object with options.
 	 * @param {Object}  callbackMap Callbacks map.
 	 */
-	function Sly(frame, o, callbackMap) {
+	function Sly(frame, options, callbackMap) {
 		// Extend options
-		o = $.extend({}, Sly.defaults, o);
+		var o = $.extend({}, Sly.defaults, options);
 
 		// Private variables
 		var self = this;
@@ -1522,7 +1521,7 @@
 		}
 
 		/**
-		 * Destroys plugin instance and everything it created.
+		 * Destroys instance and everything it created.
 		 *
 		 * @return {Void}
 		 */
@@ -1541,7 +1540,7 @@
 				.add($nextPageButton)
 				.unbind('.' + namespace);
 
-			// Remove plugin classes
+			// Remove classes
 			$prevButton
 				.add($nextButton)
 				.add($prevPageButton)
@@ -1560,7 +1559,7 @@
 				$frame.unbind('.' + namespace);
 				// Reset SLIDEE and handle positions
 				$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
-				// Remove plugin from element data storage
+				// Remove the instance from element data storage
 				$.removeData(frame, namespace);
 			}
 
@@ -1570,7 +1569,7 @@
 		};
 
 		/**
-		 * Initialize plugin.
+		 * Initialize.
 		 *
 		 * @return {Object}
 		 */
@@ -1674,7 +1673,7 @@
 			// Mark instance as initialized
 			initialized = 1;
 
-			// Return plugin instance
+			// Return instance
 			return self;
 		};
 	}
@@ -1814,16 +1813,16 @@
 			options = {};
 		}
 
-		// Apply plugin to all elements
+		// Apply to all elements
 		return this.each(function (i, element) {
-			// Plugin call with prevention against multiple instantiations
+			// Call with prevention against multiple instantiations
 			var plugin = $.data(element, namespace);
 
 			if (!plugin && !method) {
-				// Create a new plugin object if it doesn't exist yet
+				// Create a new object if it doesn't exist yet
 				plugin = $.data(element, namespace, new Sly(element, options, callbackMap).init());
 			} else if (plugin && method) {
-				// Call plugin method
+				// Call method
 				if (plugin[method]) {
 					plugin[method].apply(plugin, methodArgs);
 				}
