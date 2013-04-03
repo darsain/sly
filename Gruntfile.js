@@ -39,8 +39,8 @@ module.exports = function(grunt) {
 				options: {
 					banner: '<%= meta.banner %>'
 				},
-				src: 'src/sly.js',
-				dest: 'dist/sly.js'
+				src: 'src/<%= pkg.name %>.js',
+				dest: 'dist/<%= pkg.name %>.js'
 			}
 		},
 
@@ -50,8 +50,8 @@ module.exports = function(grunt) {
 				options: {
 					banner: '<%= meta.bannerLight %>'
 				},
-				src: 'src/sly.js',
-				dest: 'dist/sly.min.js'
+				src: 'src/<%= pkg.name %>.js',
+				dest: 'dist/<%= pkg.name %>.min.js'
 			}
 		},
 
@@ -61,13 +61,13 @@ module.exports = function(grunt) {
 				options: {
 					mode: 'gzip'
 				},
-				src: 'dist/sly.min.js',
-				dest: 'dist/sly.min.js.gz'
+				src: 'dist/<%= pkg.name %>.min.js',
+				dest: 'dist/<%= pkg.name %>.min.js.gz'
 			}
 		},
 
 		// Bump up fields in JSON files.
-		bumpup: ['component.json', 'sly.jquery.json'],
+		bumpup: ['component.json', '<%= pkg.name %>.jquery.json'],
 
 		// Commit changes and tag the latest commit with a version from JSON file.
 		tagrelease: ['component.json']
