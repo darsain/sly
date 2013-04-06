@@ -82,9 +82,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-bumpup');
 	grunt.loadNpmTasks('grunt-gcc');
 
+	// Task for updating the pkg config property. Needs to be run after
+	// bumpup so the next tasks in queue can work with updated values.
+	grunt.registerTask('updatePkg', function () {
+		grunt.config.set('pkg', grunt.file.readJSON('component.json'));
+	});
+
 	// Build task.
 	grunt.registerTask('build', function () {
-		grunt.task.run('jshint');
 		grunt.task.run('clean');
 		grunt.task.run('concat');
 		grunt.task.run('gcc');
@@ -93,8 +98,10 @@ module.exports = function(grunt) {
 	// Release task.
 	grunt.registerTask('release', function (type) {
 		type = type ? type : 'patch';
-		grunt.task.run('build');
+		grunt.task.run('jshint');
 		grunt.task.run('bumpup:' + type);
+		grunt.task.run('updatePkg');
+		grunt.task.run('build');
 		grunt.task.run('tagrelease');
 	});
 
