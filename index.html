@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
@@ -24,23 +25,60 @@
 	<header class="projecttitle">
 		<div class="titlewrap">
 			<h1 class="projectname">Sly</h1>
-			<a href="https://twitter.com/Darsain" class="follow"><i class="icon-twitter"></i> Follow for updates</a>
+			<a href="https://twitter.com/Darsain" class="follow"><i class="icon-twitter icon-large"></i> Follow for updates</a>
 		</div>
 		<p class="projectdescription">JavaScript library for one-directional scrolling with item based navigation support</p>
+
+		<div id="example" class="example pagespan">
+			<div class="scrollbar">
+				<div class="handle">
+					<div class="mousearea"></div>
+				</div>
+			</div>
+
+			<button class="backward"><i class="icon-angle-left"></i></button>
+			<button class="forward"><i class="icon-angle-right"></i></button>
+
+			<div class="frame">
+				<ul>
+					<li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li>
+					<li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li>
+					<li>19</li><li>20</li>
+				</ul>
+			</div>
+
+			<div class="controls">
+				<button data-action="toStart"><i class="icon-double-angle-left"></i> Start</button>
+				<span class="divider"></span>
+				<button class="prev"><i class="icon-angle-left"></i> Prev</button>
+				<span class="divider"></span>
+				<button data-action="add"><i class="icon-plus-sign"></i></button>
+				<button data-action="remove"><i class="icon-minus-sign"></i></button>
+				<span class="divider"></span>
+				<button class="next">Next <i class="icon-angle-right"></i></button>
+				<span class="divider"></span>
+				<button data-action="toEnd">End <i class="icon-double-angle-right"></i></button>
+			</div>
+		</div>
 	</header>
 
-	<div class="download" id="download" data-point="download" data-title="Download">
+	<div class="download pagespan" id="download" data-point="download" data-title="Download" data-active-when="down">
 		<h2>Download <small>latest stable</small></h2>
 		<h3 id="version"><span class="loading">loading <i class="icon-refresh icon-large icon-spin"></i></span></h3>
 
-		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.min.js" data-tooltip="6KB gzipped"><span class="title">Production</span> <span class="size">14 KB</span></a>
-		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.js"><span class="title">Development</span> <span class="size">50 KB</span></a>
+		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.min.js" data-tooltip="6KB gzipped" data-style="light">
+			<span class="title">Production</span> <span class="size">14 KB</span>
+		</a>
+		<a href="https://github.com/Darsain/sly/raw/master/dist/sly.js">
+			<span class="title">Development</span> <span class="size">50 KB</span>
+		</a>
 		<a href="https://github.com/Darsain/sly" class="repo" id="repo">
 			<i class="icon-github"></i>
 			<span class="title">Repository</span>
 			<span class="loading"><i class="icon-refresh icon-large icon-spin"></i> loading</span>
 		</a>
 	</div>
+	<div class="download-border pagespan"></div>
 
 	<div id="content" class="content pagespan">
 
@@ -51,7 +89,7 @@
 
 			<p>Sly is a JavaScript library for advanced one-directional scrolling with item based navigation support.</p>
 
-			<p>It can be used as a simple scrollbar replacement, in an advanced item based navigations, or as a great navigation and animation interface for parallax websites. This is achieved by a powerful &amp; developer friendly API that provides a bunch of very useful methods giving you control over everything.</p>
+			<p>It can be used as a simple scrollbar replacement, as an advanced item based navigation tool, or as a great navigation and animation interface for parallax websites. This is achieved by a powerful &amp; developer friendly API that provides a bunch of very useful methods giving you control over everything.</p>
 
 			<h3>Dependencies</h3>
 
@@ -69,14 +107,18 @@
 
 			<p>Sly does touch events, and I'm generally trying to make it work everywhere, but the fact is that mobile is not tested. If you want to help with that, you are welcome :).</p>
 
+			<h3><a href="https://github.com/Darsain/sly/wiki/Changelog">Changelog</a></h3>
+
+			<p>Sly upholds the <a href="http://semver.org">Semantic Versioning Specification</a>.</p>
+
 		</section>
 
 		<section data-point="performance" data-title="Performance">
 			<h2>Performance</h2>
 
-			<p>A lot of emphasis is placed on performance in an attempt to achieve the most responsive experience with smoothest animations possible.</p>
+			<p>In an attempt to achieve the most responsive experience with smoothest animations possible a lot of emphasis is placed on performance.</p>
 
-			<p>Sly has a custom high-performance animation rendering based around the <a href="http://www.w3.org/TR/animation-timing/">Animation Timing Interface</a>, which provides an optimized 60 FPS rendering. This is designed to still accept easing functions from <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery Easing Plugin</a>, so you won't event notice that Sly's animations have nothing to do with jQuery :).</p>
+			<p>Sly has a custom high-performance animation rendering based around the <a href="http://www.w3.org/TR/animation-timing/">Animation Timing Interface</a> written directly for its needs. This provides an optimized 60 FPS rendering, and is designed to still accept easing functions from <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery Easing Plugin</a>, so you won't event notice that Sly's animations have nothing to do with jQuery :).</p>
 
 			<p>The animation of elements is done by GPU accelerated translate transforms, which rapidly increase the rendering speed in browsers that support it, with absolute positioning fallback for those that don't.</p>
 
@@ -84,7 +126,7 @@
 
 			<p>To provide a super responsive &amp; smooth synchronization when dragging the scrollbar handle, Sly uses a destination based animation function controlled by a synchronization factor instead of a duration based (tweening) animations that are unsuitable for this type of use case, and lead to a choppy, low performance, and unpolished experience. Another perk of writing your own animation rendering :).</p>
 
-			<p>The difference between earlier versions that were using <code>jQuery.fn.animate</code> with unoptimized code and Sly's current state is quite staggering.</p>
+			<p>The difference between earlier versions (that were using <code>jQuery.fn.animate</code> with unoptimized code) and Sly's current state is quite big:</p>
 
 			<p><img src="content/before_after.png" width="845" height="300" alt="Before and After Chrome Dev Tools timeline"></p>
 		</section>
@@ -100,7 +142,7 @@
 				<li><a href="examples/parallax.html"><i class="icon-file-alt icon-large"></i> Parallax mode</a></li>
 			</ul>
 
-			<p>All examples (except the Parallax one) are using a calling via jQuery proxy, because some people that are looking only at examples think that jQuery is a separate language and can't handle raw JavaScript. This hopefully helps with lowering the "help me make it work" issues reports.</p>
+			<p>All examples (except the Parallax one) are using a calling via jQuery proxy, because some people that are looking only at examples think that jQuery is a separate language and can't handle raw JavaScript. This'll hopefully help with lowering the "help me make it work" issue reports.</p>
 
 			<p>More advanced users can surely read the documentation and discover all the power &amp; cool stuff that <code>new Sly()</code> provides :)</p>
 		</section>
@@ -130,7 +172,7 @@
 
 			<p>I also reserve a right to ignore questions that could be solved by spending at least a minute reading the documentation. I've spent more than a day writing it, so every question with an answer that is already thoroughly documented is an insult to me, my ancestors, and makes my hamster curse like a sailor.</p>
 
-			<p>If you find the documentation lacking in some ways, that is a great <a href="https://github.com/Darsain/sly/issues">New Issue candidate!</a></p>
+			<p>If you find the documentation lacking in some ways, that is a great <a href="https://github.com/Darsain/sly/issues">New Issue candidate!</a> Or, you know, the wiki is publicly editable... :)</p>
 		</section>
 	</div>
 
@@ -139,7 +181,7 @@
 			<i class="icon-refresh icon-spin"></i> Loading license <i class="icon-refresh icon-spin"></i>
 		</a>
 
-		<div id="repos" class="repos" data-display="motio,espy,imagesLoaded,volley">
+		<div id="repos" class="repos" data-display="motio,espy,imagesLoaded,fpsmeter">
 			<i class="icon-refresh icon-large icon-spin"></i>
 			<h6>Loading other projects</h6>
 		</div>
@@ -178,6 +220,8 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script src="js/vendor/plugins.js"></script>
 	<script src="js/ospb.js"></script>
+	<script src="js/sly.min.js"></script>
+	<script src="js/main.js"></script>
 
 	<!-- Google Analytics -->
 	<script>

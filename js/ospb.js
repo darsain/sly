@@ -8,10 +8,11 @@ jQuery(function ($) {
 	var $nav = $('#mainnav');
 	var $navUl = $('<ul/>').appendTo($nav);
 	var $points = $('[data-point]');
+	var waypoints = {};
 	var loadHash = document.location.hash.substr(2);
-	var windowSpy = new jQuery.Espy(window, {
-		offset: 200,
-		size: 200
+	var navSpy = new jQuery.Espy(window, {
+		offset: 300,
+		size: 0
 	});
 
 	// Sticky navigation
@@ -19,27 +20,39 @@ jQuery(function ($) {
 		$nav[state === 'up' ? 'addClass' : 'removeClass']('fixed');
 	}, { contain: 1 });
 
+	/**
+	 * Scroll to waypoint.
+	 */
+	function scrollTo(pointName) {
+		$(window).scrollTo(pointName === 'download' ? 0 : waypoints[pointName].element, { duration: 300 });
+	}
+
+	// Scroll to waipoint
+	$(document).on('click', '[href^="#!"]', function () {
+		var name = $(this).attr('href').match(/#!(.*)$/)[1];
+		scrollTo(name);
+	});
+
 	// Waypoints
 	$points.each(function (i, point) {
-		var $point = $(point),
-			pointName = $point.data('point'),
-			pointTitle = $point.data('title') || pointName,
-			$navlink = $('<li><a href="#!' + pointName + '">' + pointTitle + '</a></li>');
+		var $point = $(point);
+		var pointName = $point.data('point');
+		var pointTitle = $point.data('title') || pointName;
+		var activeWhen = $point.data('active-when');
+		var $navlink = $('<li><a href="#!' + pointName + '">' + pointTitle + '</a></li>');
 
-		windowSpy.add($point, function (entered) {
-			$navlink[entered ? 'addClass' : 'removeClass']('active');
-		});
+		waypoints[pointName] = {
+			element: point,
+			activeWhen: activeWhen,
+			title: pointTitle
+		};
 
-		function scrollTo() {
-			$(window).scrollTo( i ? $point : 0, { duration: 300 });
-		}
-
-		$navlink.on('click', function () {
-			scrollTo();
+		navSpy.add($point, function (entered, pos) {
+			$navlink[(entered || pos === activeWhen) ? 'addClass' : 'removeClass']('active');
 		});
 
 		if (pointName === loadHash) {
-			scrollTo();
+			scrollTo(pointName);
 		}
 
 		$navlink.appendTo($navUl);
@@ -61,8 +74,9 @@ jQuery(function ($) {
 			var $el = $(this);
 			var title = $el.data('tooltip');
 			var place = $el.data('place') || 'top';
+			var style = $el.data('style') || 'dark';
 
-			$tooltip.attr('class', 'tooltip ' + place).text(title).appendTo(document.body);
+			$tooltip.attr('class', 'tooltip ' + place + ' ' + style).text(title).appendTo(document.body);
 			var tWidth = $tooltip.outerWidth();
 			var tHeight = $tooltip.outerHeight();
 			var pos = $el.offset();

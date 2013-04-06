@@ -1,0 +1,92 @@
+/* Header style */
+header.projecttitle { margin: 0 auto; padding: 115px 0 80px; color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,.3);
+	background-color: #3e404a;
+	background-image: -webkit-linear-gradient(rgba(255,255,255,.05) 2px, transparent 2px),
+		linear-gradient(90deg, rgba(255,255,255,.04) 2px, transparent 2px),
+		linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(0deg, rgba(0,0,0,.3) 0, transparent 100px);
+	background-image: -moz-linear-gradient(rgba(255,255,255,.05) 2px, transparent 2px),
+		linear-gradient(90deg, rgba(255,255,255,.04) 2px, transparent 2px),
+		linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(0deg, rgba(0,0,0,.3) 0, transparent 100px);
+	background-image: linear-gradient(rgba(255,255,255,.05) 2px, transparent 2px),
+		linear-gradient(90deg, rgba(255,255,255,.04) 2px, transparent 2px),
+		linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+		linear-gradient(0deg, rgba(0,0,0,.3) 0, transparent 100px);
+	background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px, 100% 100%;
+	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, center bottom;
+}
+header .projectname { text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
+.download { margin-top: -45px; }
+
+/* Header example */
+.example { margin: 80px auto 40px; }
+
+.example button, .example button { background: transparent; border: 0; color: #fff; opacity: .5; }
+.example button:hover, .example button:hover { opacity: 1; }
+.example button:disabled, .example button:disabled { opacity: .2; }
+
+.example .forward, .example .backward { float: left; width: 100px; height: 200px; font-size: 60px; }
+.example .forward { float: right; }
+
+.example .frame { margin: 0 auto; width: 940px; height: 200px; line-height: 200px; overflow: hidden; text-shadow: none; }
+.example .frame ul { list-style: none; margin: 0; padding: 0; height: 100%; font-size: 50px; }
+.example .frame ul li { float: left; width: 190px; height: 100%; margin: 0 1px 0 0; padding: 0; background: #eee; color: #3a3c47; text-align: center; cursor: pointer; }
+.example .frame ul li.active { color: #fff; background: #82bf4c; }
+
+.example .scrollbar { margin: 0 auto 30px; width: 940px; height: 2px; line-height: 0; }
+.example .scrollbar .handle { width: 100px; height: 100%; background: #fff; cursor: pointer; }
+.example .scrollbar .handle .mousearea { position: absolute; top: -9px; left: 0; width: 100%; height: 20px; }
+
+.example .pages { list-style: none; margin: 20px 0; padding: 0; text-align: center; }
+.example .pages li { display: inline-block; width: 14px; height: 14px; margin: 0 4px; text-indent: -999px; border-radius: 10px; cursor: pointer; overflow: hidden;
+	background: #fff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+}
+.example .pages li:hover { background: #aaa; }
+.example .pages li.active { background: #666; }
+
+.example .controls { margin: 50px 0 0; text-align: center; }
+.example .controls .divider { display: inline-block; margin: 0 10px; }
+.example .controls button { line-height: 32px; vertical-align: middle; font-family: Novecento, sans-serif; }
+.example .controls button i { position: relative; top: -2px; margin: 5px; padding: 0; font-size: 32px; vertical-align: middle; }
+
+/* 3D shenanigans */
+.csstransforms3d .frame {
+	height: 200px;
+	line-height: 200px;
+	-webkit-perspective: 800px;
+	-ms-perspective: 800px;
+	perspective: 800px;
+	-webkit-perspective-origin: 50% 50%;
+	-ms-perspective-origin: 50% 50%;
+	perspective-origin: 50% 50%;
+}
+.csstransforms3d .frame ul {
+	-webkit-transform-style: preserve-3d;
+	-ms-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+.csstransforms3d .frame ul li {
+	position: relative;
+	margin: 0 -25px;
+	border: 1px solid #3e404a;
+	-webkit-transform: rotateY(60deg) scale(0.9);
+	-ms-transform: rotateY(60deg) scale(0.9);
+	transform: rotateY(60deg) scale(0.9);
+	-webkit-transition: -webkit-transform 300ms ease-out;
+	transition: transform 300ms ease-out;
+}
+.csstransforms3d .frame ul li.active {
+	z-index: 10;
+	-webkit-transform: scale(1);
+	-ms-transform: scale(1);
+	transform: scale(1);
+}
+.csstransforms3d .frame ul li.active ~ li {
+	-webkit-transform: rotateY(-60deg) scale(0.9);
+	-ms-transform: rotateY(-60deg) scale(0.9);
+	transform: rotateY(-60deg) scale(0.9);
+}
