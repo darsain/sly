@@ -1,7 +1,7 @@
 ## Submitting an issue
 
 When reporting a bug, please describe it thoroughly, with attached code showcasing how are you using this library. The
-best way how to amke it easy for developers, and ensure that your issue will be looked at, is to replicate it on
+best way how to make it easy for developers, and ensure that your issue will be looked at, is to replicate it on
 [jsfiddle](http://jsfiddle.net/) or a similar service.
 
 **Please do not populate Issues tracker with non-issues!** If you have a general question about Sly, you can use the
