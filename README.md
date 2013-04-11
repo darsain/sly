@@ -38,7 +38,20 @@ Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 **Please do not populate Issues tracker with non-issues!** If you have a question about Sly, you can use the
 **[Sly forum](https://groups.google.com/d/forum/sly-js)**.
 
-## API documentation
+## Installation
+
+Bower:
+
+```shell
+bower install sly
+```
+
+Or manually download and handle the latest stable release:
+
+- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js)
+- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js)
+
+## Documentation
 
 - **[Markup](https://github.com/Darsain/sly/wiki/Markup)** - how should the HTML look like
 - **[Calling](https://github.com/Darsain/sly/wiki/Calling)** - how to call Sly
