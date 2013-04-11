@@ -76,6 +76,10 @@ textarea:-ms-input-placeholder,
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder { color: #999999; }
 
+kbd { display: inline-block; margin: 0 0.1em; padding: 0.1em 0.6em; font-size: 14px; line-height: 1.4; font-family: sans-serif; white-space: nowrap;
+	background-color: #fff; border: 1px solid #CCC; border-radius: 2px; -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2); box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2);
+}
+
 script { display: none !important; width: 0 !important; height: 0 !important; overflow: hidden !important; }
 
 /* ==========================================================================
@@ -96,6 +100,10 @@ script { display: none !important; width: 0 !important; height: 0 !important; ov
 .text-yellow { color: #efcd76; }
 .text-dark { color: #3a3c47; }
 
+/* Text alignment */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
 /* Typography */
 p { margin: 0 0 25px; }
 small { font-size: .8em; }
@@ -106,8 +114,6 @@ ul ul, ul ol, ol ol, ol ul { margin-bottom: 0; }
 ul.inline, ol.inline { margin-left: 0; list-style: none; }
 ul.inline > li, ol.inline > li { display: inline-block; padding: 0 10px 0 0; }
 ul.unstyled, ol.unstyled { margin-left: 0; list-style: none; }
-ul.center, ol.center { text-align: center; }
-ul.right, ol.right { text-align: right; }
 
 dl { margin-bottom: 25px; }
 dt { font-weight: bold; }
