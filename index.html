@@ -124,9 +124,9 @@
 
 			<p>Helping with minimizing the frequency of frame drops due to inevitable JavaScript garbage collection are code optimizations that lower the garbage generation to a reasonable minimum.</p>
 
-			<p>To provide a super responsive &amp; smooth synchronization when dragging the scrollbar handle, Sly uses a destination based animation function controlled by a synchronization factor instead of a duration based (tweening) animations that are unsuitable for this type of use case, and lead to a choppy, low performance, and unpolished experience. Another perk of writing your own animation rendering :).</p>
+			<p>To provide a super responsive &amp; smooth synchronization when dragging the scrollbar handle, Sly uses a destination based animation function controlled by a synchronization factor instead of a duration based (tweening) animations that are unsuitable for this type of use case, and lead to a choppy, and unpolished experience. Another perk of writing your own animation rendering :).</p>
 
-			<p>The difference between earlier versions (that were using <code>jQuery.fn.animate</code> with unoptimized code) and Sly's current state is quite big:</p>
+			<p>This is the difference between earlier versions (using <code>jQuery.fn.animate</code> with unoptimized code) and Sly's current state:</p>
 
 			<p><img src="content/before_after.png" width="845" height="300" alt="Before and After Chrome Dev Tools timeline"></p>
 		</section>
