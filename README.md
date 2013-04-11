@@ -1,6 +1,6 @@
 # [Sly](http://darsa.in/sly)
 
-JavaScript library for one-directional scrolling with item based navigation support. 14KB minified, 6KB gzipped.
+JavaScript library for one-directional scrolling with item based navigation support.
 
 Sly supports navigation with:
 
@@ -46,10 +46,10 @@ Bower:
 bower install sly
 ```
 
-Or manually download and handle the latest stable release:
+Or manually download the latest stable release:
 
-- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js)
-- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js)
+- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js) - 14KB, 6KB gzipped
+- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js) - 50KB
 
 ## Documentation
 
