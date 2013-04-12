@@ -40,7 +40,7 @@ Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 
 ## Installation
 
-Bower:
+You can install with [Bower](http://twitter.github.io/bower):
 
 ```shell
 bower install sly
