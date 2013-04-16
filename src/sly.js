@@ -46,7 +46,7 @@
 
 		// Scrollbar
 		var $sb = $(o.scrollBar).eq(0);
-		var $handle = $sb.length ? $sb.children().eq(0) : 0;
+		var $handle = $sb.children().eq(0);
 		var sbSize = 0;
 		var handleSize = 0;
 		var hPos = {
@@ -230,7 +230,7 @@
 			updateRelatives();
 
 			// Scrollbar
-			if ($handle && sbSize > 0) {
+			if ($handle.length && sbSize > 0) {
 				// Stretch scrollbar handle to represent the visible area
 				handleSize = o.dynamicHandle ? Math.round(sbSize * frameSize / slideeSize) : $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
 
@@ -420,7 +420,7 @@
 		 * @return {Void}
 		 */
 		function syncScrollbar() {
-			if ($handle) {
+			if ($handle.length) {
 				hPos.cur = pos.start === pos.end ? 0 : (((dragging.init && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(Math.round(hPos.cur), hPos.start, hPos.end);
 				if (last.hPos !== hPos.cur) {
@@ -1234,7 +1234,7 @@
 			var isSlidee = source === 'slidee';
 
 			// Handle dragging conditions
-			if (source === 'handle' && !(o.dragHandle && $handle)) {
+			if (source === 'handle' && !(o.dragHandle && $handle.length)) {
 				return;
 			}
 
@@ -1582,22 +1582,23 @@
 			self.on(callbackMap);
 
 			// Set required styles to elements
+			var $movables = $handle;
 			if (!parallax) {
+				$movables = $movables.add($slidee);
 				$frame.css('overflow', 'hidden');
-				var $movables = $slidee.add($handle);
-				if (!transform) {
-					if ($frame.css('position') === 'static') {
-						$frame.css('position', 'relative');
-					}
-					$movables.css({ position: 'absolute' });
-				} else {
-					var props = {};
-					props[transform] = 'translateZ(0)';
-					$movables.css(props);
+				if (!transform && $frame.css('position') === 'static') {
+					$frame.css('position', 'relative');
 				}
 			}
-			if (!transform && $sb.css('position') === 'static') {
-				$sb.css('position', 'relative');
+			if (transform && gpuAcceleration) {
+				var props = {};
+				props[transform] = gpuAcceleration;
+				$movables.css(props);
+			} else {
+				if ($sb.css('position') === 'static') {
+					$sb.css('position', 'relative');
+				}
+				$movables.css({ position: 'absolute' });
 			}
 
 			// Load
