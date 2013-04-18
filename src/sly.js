@@ -1191,7 +1191,7 @@
 		}
 
 		/**
-		 * Keeps track of a dragging path history.
+		 * Keeps track of a dragging delta history.
 		 *
 		 * @return {Void}
 		 */
@@ -1202,7 +1202,7 @@
 			dragging.history[0] = dragging.history[1];
 			dragging.history[1] = dragging.history[2];
 			dragging.history[2] = dragging.history[3];
-			dragging.history[3] = dragging.path;
+			dragging.history[3] = dragging.delta;
 		}
 
 		/**
@@ -1252,14 +1252,16 @@
 			dragging.$source = $(event.target);
 			dragging.init = 0;
 			dragging.touch = isTouch;
-			dragging.initLoc = (isTouch ? event.originalEvent.touches[0] : event)[o.horizontal ? 'pageX' : 'pageY'];
+			dragging.initPointer = isTouch ? event.originalEvent.touches[0] : event;
 			dragging.initPos = isSlidee ? pos.cur : hPos.cur;
 			dragging.start = +new Date();
 			dragging.time = 0;
 			dragging.path = 0;
+			dragging.pathToInit = isTouch ? 50 : 10;
 			dragging.history = [0, 0, 0, 0];
-			dragging.pathMin = isSlidee ? -dragging.initLoc : -hPos.cur;
-			dragging.pathMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
+			dragging.initLoc = dragging.initPointer[o.horizontal ? 'pageX' : 'pageY'];
+			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
+			dragging.deltaMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
 			// Add dragging class
 			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
@@ -1283,13 +1285,21 @@
 		 */
 		function dragHandler(event) {
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
-			dragging.path = within(
-				(dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event)[o.horizontal ? 'pageX' : 'pageY'] - dragging.initLoc,
-				dragging.pathMin, dragging.pathMax
-			);
+			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
+			dragging.pathX = dragging.pointer.pageX - dragging.initPointer.pageX;
+			dragging.pathY = dragging.pointer.pageY - dragging.initPointer.pageY;
+			dragging.pathTotal = Math.sqrt(Math.pow(dragging.pathX, 2) + Math.pow(dragging.pathY, 2));
+			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
 
 			// Initialization
-			if (!dragging.init && (Math.abs(dragging.path) > (dragging.touch ? 50 : 10) || !dragging.slidee)) {
+			if (!dragging.init && (!dragging.slidee || dragging.pathTotal > dragging.pathToInit)) {
+				// If path has reached the pathToInit value, but in a wrong direction, cancel dragging
+				if (o.horizontal ? Math.abs(dragging.pathX) < Math.abs(dragging.pathY) : Math.abs(dragging.pathX) > Math.abs(dragging.pathY)) {
+					dragEnd();
+					return;
+				}
+
+				// Mark dragging as initiated
 				dragging.init = 1;
 
 				// Disable click on a source element, as it is unwelcome when dragging SLIDEE
@@ -1313,29 +1323,38 @@
 
 					// Adjust path with a swing on mouse release
 					if (o.releaseSwing && dragging.slidee) {
-						dragging.swing = (dragging.path - dragging.history[0]) / 40 * 300;
-						dragging.path += dragging.swing;
+						dragging.swing = (dragging.delta - dragging.history[0]) / 40 * 300;
+						dragging.delta += dragging.swing;
 						dragging.tweese = Math.abs(dragging.swing) > 10;
 					}
 				}
 
-				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.path) : handleToSlidee(dragging.initPos + dragging.path));
+				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
 			}
 
-			// Cleanup and trigger :moveEnd event on release
+			// Stop and cleanup after dragging
 			if (dragging.released) {
-				clearInterval(historyID);
-				$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
-				(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
+				dragEnd();
+			}
+		}
 
-				// Resume ongoing cycle
-				self.resume(1);
+		/**
+		 * Stops dragging and cleans up after it.
+		 *
+		 * @return {Void}
+		 */
+		function dragEnd() {
+			clearInterval(historyID);
+			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
+			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
-				// Normally, this is triggered in render(), but if there
-				// is nothing to render, we have to do it manually here.
-				if (pos.cur === pos.dest) {
-					trigger('moveEnd');
-				}
+			// Resume ongoing cycle
+			self.resume(1);
+
+			// Normally, this is triggered in render(), but if there
+			// is nothing to render, we have to do it manually here.
+			if (dragging.init && pos.cur === pos.dest) {
+				trigger('moveEnd');
 			}
 		}
 
