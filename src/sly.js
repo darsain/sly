@@ -593,7 +593,7 @@
 			}
 
 			if (item === undefined) {
-				slideTo(pos[location]);
+				slideTo(pos[location], immediate);
 			} else {
 				// You can't align items to sides of the frame
 				// when centered navigation type is enabled
