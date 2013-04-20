@@ -1904,3 +1904,5 @@
 		disabledClass: 'disabled'  // Class for disabled navigation elements.
 	};
 }(jQuery, window));
+
+//写得真好
