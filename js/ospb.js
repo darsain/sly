@@ -6,7 +6,7 @@ jQuery(function ($) {
 	//   Navigation
 	// ==========================================================================
 	var $nav = $('#mainnav');
-	var $navUl = $('<ul/>').appendTo($nav);
+	var $navUl = $('<ul/>').prependTo($nav);
 	var $points = $('[data-point]');
 	var waypoints = {};
 	var loadHash = document.location.hash.substr(2);
