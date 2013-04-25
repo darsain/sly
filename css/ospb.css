@@ -521,6 +521,7 @@ header .projectdescription { opacity: .7; }
 /* Navigation */
 .mainnav { position: absolute; top: 0; padding-top: 50px; width: 252px; }
 .mainnav.fixed { position: fixed; padding-top: 30px; }
+.mainnav.fixed.bottom { position: absolute; top: auto; bottom: 0; }
 .mainnav ul { list-style: none; margin: 0; padding: 0; }
 .mainnav ul li { margin: 0 0 1px 0; padding: 0; }
 .mainnav ul li a { position: relative; display: block; margin: 0; padding-left: 30px; height: 60px; line-height: 60px;
@@ -539,7 +540,7 @@ header .projectdescription { opacity: .7; }
 .mainnav ul li.active a:before { border-right-color: #d95b5b; }
 
 /* Barbon ads */
-#carbonads-container { margin-top: 30px; height: 220px; }
+#carbonads-container { margin: 30px 0 0; height: 220px; }
 .carbonad { margin: 0 auto; }
 
 /* Content. */
@@ -552,7 +553,7 @@ header .projectdescription { opacity: .7; }
 .content h2 { font-size: 30px; }
 
 /* Footer */
-footer { margin: 70px auto; }
+footer { margin: 0 auto; padding-top: 70px; }
 .license { position: relative; display: block; padding: 0 25px; height: 60px; line-height: 60px; background: #3a3c47; color: #fff;
 	font-family: Novecento, sans-serif; font-size: 18px; text-align: center;
 }

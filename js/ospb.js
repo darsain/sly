@@ -7,18 +7,32 @@ jQuery(function ($) {
 	// ==========================================================================
 	var $nav = $('#mainnav');
 	var $navUl = $('<ul/>').prependTo($nav);
-	var $points = $('[data-point]');
+	var $footer = $('footer');
 	var waypoints = {};
 	var loadHash = document.location.hash.substr(2);
-	var navSpy = new jQuery.Espy(window, {
+	var windowSpy = new jQuery.Espy(window, {
 		offset: 300,
 		size: 0
 	});
 
+	/**
+	 * Controls the stickiness of navigation.
+	 */
+	function stickNavigation() {
+		var isSticky = $nav.data('sticky') && $(window).height() >= $nav.height();
+		// Makes navigation fixed
+		$nav[isSticky ? 'addClass' : 'removeClass']('fixed');
+		// Makes navigation positioned at the bottom of content, so it won't collide with footer
+		$nav[(isSticky && $footer.data('collides')) ? 'addClass' : 'removeClass']('bottom');
+	}
+
 	// Sticky navigation
 	$nav.espy(function (entered, state) {
-		$nav[state === 'up' ? 'addClass' : 'removeClass']('fixed');
+		$nav.data('sticky', state === 'up');
+		stickNavigation();
 	}, { contain: 1 });
+
+	$(window).on('resize', stickNavigation);
 
 	/**
 	 * Scroll to waypoint.
@@ -34,7 +48,7 @@ jQuery(function ($) {
 	});
 
 	// Waypoints
-	$points.each(function (i, point) {
+	$('[data-point]').each(function (i, point) {
 		var $point = $(point);
 		var pointName = $point.data('point');
 		var pointTitle = $point.data('title') || pointName;
@@ -47,7 +61,7 @@ jQuery(function ($) {
 			title: pointTitle
 		};
 
-		navSpy.add($point, function (entered, pos) {
+		windowSpy.add($point, function (entered, pos) {
 			$navlink[(entered || pos === activeWhen) ? 'addClass' : 'removeClass']('active');
 		});
 
@@ -56,6 +70,15 @@ jQuery(function ($) {
 		}
 
 		$navlink.appendTo($navUl);
+	});
+
+	// Footer <-> Navigation collision
+	windowSpy.add($footer, function (entered) {
+		$footer.data('collides', entered);
+		stickNavigation();
+	}, {
+		offset: 0,
+		size: $nav.outerHeight()
 	});
 
 	// ==========================================================================
