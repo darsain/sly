@@ -587,7 +587,7 @@
 		 */
 		function to(location, item, immediate) {
 			// Optional arguments logic
-			if (type(item) === 'boolean') {
+			if ($.type(item) === 'boolean') {
 				immediate = item;
 				item = undefined;
 			}
@@ -652,7 +652,7 @@
 		 * @return {Int}  Item index, or -1 if not found.
 		 */
 		function getIndex(item) {
-			return type(item) !== 'undefined' ?
+			return $.type(item) !== 'undefined' ?
 					isNumber(item) ?
 						item >= 0 && item < items.length ? item : -1 :
 						$items.index(item) :
@@ -976,7 +976,7 @@
 
 			if (itemNav) {
 				// Insert the element(s)
-				if (type(index) === 'undefined' || !items[0]) {
+				if ($.type(index) === 'undefined' || !items[0]) {
 					$element.appendTo($slidee);
 				} else if (items.length) {
 					$element.insertBefore(items[index].el);
@@ -1099,14 +1099,14 @@
 		 */
 		self.on = function (name, fn) {
 			// Callbacks map
-			if (type(name) === 'object') {
+			if ($.type(name) === 'object') {
 				for (var key in name) {
 					if (name.hasOwnProperty(key)) {
 						self.on(key, name[key]);
 					}
 				}
 			// Callback
-			} else if (type(fn) === 'function') {
+			} else if ($.type(fn) === 'function') {
 				var names = name.split(' ');
 				for (var n = 0, nl = names.length; n < nl; n++) {
 					callbacks[names[n]] = callbacks[names[n]] || [];
@@ -1115,7 +1115,7 @@
 					}
 				}
 			// Callbacks array
-			} else if (type(fn) === 'array') {
+			} else if ($.type(fn) === 'array') {
 				for (var f = 0, fl = fn.length; f < fl; f++) {
 					self.on(name, fn[f]);
 				}
@@ -1139,7 +1139,7 @@
 				var names = name.split(' ');
 				for (var n = 0, nl = names.length; n < nl; n++) {
 					callbacks[names[n]] = callbacks[names[n]] || [];
-					if (type(fn) === 'undefined') {
+					if ($.type(fn) === 'undefined') {
 						callbacks[names[n]].length = 0;
 					} else {
 						var index = callbackIndex(names[n], fn);
@@ -1699,17 +1699,6 @@
 	}
 
 	/**
-	 * Return type of the value.
-	 *
-	 * @param  {Mixed} value
-	 *
-	 * @return {String}
-	 */
-	function type(value) {
-		return {}.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
-	}
-
-	/**
 	 * Event preventDefault & stopPropagation helper.
 	 *
 	 * @param {Event} event     Event object.
@@ -1826,7 +1815,7 @@
 
 		// Attributes logic
 		if (!$.isPlainObject(options)) {
-			if (type(options) === 'string' || options === false) {
+			if ($.type(options) === 'string' || options === false) {
 				method = options === false ? 'destroy' : options;
 				methodArgs = Array.prototype.slice.call(arguments, 1);
 			}
