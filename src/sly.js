@@ -1706,15 +1706,15 @@
 	 * @return {String}
 	 */
 	function type(value) {
-	  if (value == null) {
-		return String(value);
-	  }
+		if (value == null) {
+			return String(value);
+		}
 
-	  if (typeof value === 'object' || typeof value === 'function') {
-		return ({}).toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
-	  }
+		if (typeof value === 'object' || typeof value === 'function') {
+			return ({}).toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
+		}
 
-	  return typeof value;
+		return typeof value;
 	}
 
 	/**
