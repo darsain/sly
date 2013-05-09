@@ -99,6 +99,7 @@
 		var historyID = 0;
 		var cycleID = 0;
 		var continuousID = 0;
+		var i, l;
 
 		// Normalizing frame
 		if (!parallax) {
@@ -1538,7 +1539,7 @@
 		 */
 		function trigger(name, arg1) {
 			if (callbacks[name]) {
-				for (var i = 0, l = callbacks[name].length; i < l; i++) {
+				for (i = 0, l = callbacks[name].length; i < l; i++) {
 					callbacks[name][i].call(self, name, arg1);
 				}
 			}
