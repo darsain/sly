@@ -1712,7 +1712,15 @@
 	 * @return {String}
 	 */
 	function type(value) {
-		return {}.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
+		if (value == null) {
+			return String(value);
+		}
+
+		if (typeof value === 'object' || typeof value === 'function') {
+			return Object.prototype.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase() || 'object';
+		}
+
+		return typeof value;
 	}
 
 	/**
