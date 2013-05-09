@@ -1234,16 +1234,18 @@
 			var isSlidee = source === 'slidee';
 
 			// Handle dragging conditions
-			if (source === 'handle' && !(o.dragHandle && $handle.length)) {
+			if (source === 'handle' && !o.dragHandle) {
 				return;
 			}
 
 			// SLIDEE dragging conditions
-			if (isSlidee && !(o.mouseDragging && !isTouch && event.which < 2 || o.touchDragging && isTouch)){
+			if (isSlidee && !(isTouch ? o.touchDragging : o.mouseDragging && event.which < 2)) {
 				return;
 			}
 
-			stopDefault(event, 1);
+			if (!isTouch) {
+				stopDefault(event, 1);
+			}
 
 			// Reset dragging object
 			continuousInit(source);
@@ -1252,14 +1254,17 @@
 			dragging.$source = $(event.target);
 			dragging.init = 0;
 			dragging.touch = isTouch;
-			dragging.initPointer = isTouch ? event.originalEvent.touches[0] : event;
+			dragging.pointer = isTouch ? event.originalEvent.touches[0] : event;
+			dragging.initX = dragging.pointer.pageX;
+			dragging.initY = dragging.pointer.pageY;
+
 			dragging.initPos = isSlidee ? pos.cur : hPos.cur;
 			dragging.start = +new Date();
 			dragging.time = 0;
 			dragging.path = 0;
 			dragging.pathToInit = isTouch ? 50 : 10;
 			dragging.history = [0, 0, 0, 0];
-			dragging.initLoc = dragging.initPointer[o.horizontal ? 'pageX' : 'pageY'];
+			dragging.initLoc = dragging[o.horizontal ? 'initX' : 'initY'];
 			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
 			dragging.deltaMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
@@ -1286,8 +1291,8 @@
 		function dragHandler(event) {
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
 			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
-			dragging.pathX = dragging.pointer.pageX - dragging.initPointer.pageX;
-			dragging.pathY = dragging.pointer.pageY - dragging.initPointer.pageY;
+			dragging.pathX = dragging.pointer.pageX - dragging.initX;
+			dragging.pathY = dragging.pointer.pageY - dragging.initY;
 			dragging.pathTotal = Math.sqrt(Math.pow(dragging.pathX, 2) + Math.pow(dragging.pathY, 2));
 			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
 
