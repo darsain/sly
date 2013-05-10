@@ -262,7 +262,7 @@
 						}
 					});
 				} else {
-					while (tempPagePos - frameSize <= pos.end) {
+					while (tempPagePos - frameSize < pos.end) {
 						pages.push(tempPagePos);
 						tempPagePos += frameSize;
 					}
