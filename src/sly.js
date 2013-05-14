@@ -99,6 +99,7 @@
 		var historyID = 0;
 		var cycleID = 0;
 		var continuousID = 0;
+		var lowestDelta;
 		var i, l;
 
 		// Normalizing frame
@@ -1425,22 +1426,51 @@
 			stopDefault(event, 1);
 
 			var orgEvent = event.originalEvent;
-			var isForward = 0;
+			var speed = normalizeScrollSpeed(orgEvent) / 40;
+			var isForward = speed < 0;
+			var scroll = Math.abs(speed) * 120;
 
-			// Old school scrollwheel delta
-			if (orgEvent.wheelDelta) {
-				isForward = orgEvent.wheelDelta / 120 < 0;
-			}
-			if (orgEvent.detail) {
-				isForward = -orgEvent.detail / 3 < 0;
+			if(o.scrollBy) {
+				scroll = Math.abs(speed) * o.scrollBy;
 			}
 
 			if (itemNav) {
-				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy);
+				var itemSpeed = o.scrollBy;
+				if(speed < 1 && speed > -1) {
+					itemSpeed = Math.abs(scroll * 5);
+				}
+				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? itemSpeed : -itemSpeed);
 				self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
 			} else {
-				self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
+				self.slideBy(isForward ? scroll : -scroll);
 			}
+		}
+
+		/**
+		 * Attempt to normalize mouse scrolling across various browsers (partly taken from jquery.mouswheel).
+		 *
+		 * @param  {Event} orgEvent
+		 *
+		 * @return {Number}
+		 */
+		function normalizeScrollSpeed(orgEvent) {
+			var delta = 0,
+					absDelta = 0,
+					fn;
+
+			// Old school scrollwheel delta
+			if(orgEvent.wheelDelta) { delta = orgEvent.wheelDelta; }
+			if(orgEvent.detail)     { delta = -(orgEvent.detail / 3); }
+
+			// Look for lowest delta to normalize the delta values
+			absDelta = Math.abs(delta);
+			if (!lowestDelta || absDelta < lowestDelta ) { lowestDelta = absDelta; }
+
+			// Get a whole value for the deltas
+			fn = delta > 0 ? 'floor' : 'ceil';
+			delta = Math[fn](delta / lowestDelta);
+
+			return delta;
 		}
 
 		/**
@@ -1658,7 +1688,7 @@
 			}
 
 			// Scrolling navigation
-			$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
+			$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace + ' MozMousePixelScroll', scrollHandler);
 
 			// Clicking on scrollbar navigation
 			if ($sb[0]) {
