@@ -120,10 +120,10 @@
 		 * (Re)Loading function.
 		 *
 		 * Populate arrays, set sizes, bind events, ...
-		 *
+		 * @param {Boolean}  refresh     Use refresh method
 		 * @return {Void}
 		 */
-		function load() {
+		function load(refresh) {
 			// Local variables
 			var ignoredMargin = 0;
 
@@ -278,7 +278,11 @@
 			}
 
 			// Fix possible overflowing
-			slideTo(within(pos.dest, pos.start, pos.end));
+            if (refresh) {
+                self.activatePage(rel.activePage, true);
+            } else {
+                slideTo(within(pos.dest, pos.start, pos.end));
+            }
 
 			// Extend relative variables object with some useful info
 			rel.slideeSize = slideeSize;
@@ -290,6 +294,7 @@
 			trigger('load');
 		}
 		self.reload = load;
+        self.refresh = function() { load(true); };
 
 		/**
 		 * Animate to a position.
