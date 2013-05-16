@@ -1417,6 +1417,7 @@
 		 *
 		 * @return {Void}
 		 */
+
 		function scrollHandler(event) {
 			// Ignore if there is no scrolling to be done
 			if (!o.scrollBy || pos.start === pos.end) {
@@ -1426,51 +1427,42 @@
 			stopDefault(event, 1);
 
 			var orgEvent = event.originalEvent;
-			var speed = normalizeScrollSpeed(orgEvent) / 40;
+			var speed = normalizeScrollSpeed(orgEvent);
+
 			var isForward = speed < 0;
-			var scroll = Math.abs(speed) * 120;
 
-			if(o.scrollBy) {
-				scroll = Math.abs(speed) * o.scrollBy;
-			}
-
-			if (itemNav) {
-				var itemSpeed = o.scrollBy;
-				if(speed < 1 && speed > -1) {
-					itemSpeed = Math.abs(scroll * 5);
-				}
-				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? itemSpeed : -itemSpeed);
+			if(itemNav) {
+				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy);
 				self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
 			} else {
+				var scroll = Math.abs(speed) * 500; // 500 feels the most logical
+				if(o.scrollBy) {
+					scroll = Math.abs(speed) * o.scrollBy;
+				}
+
 				self.slideBy(isForward ? scroll : -scroll);
 			}
 		}
 
 		/**
-		 * Attempt to normalize mouse scrolling across various browsers (partly taken from jquery.mouswheel).
+		 * Attempt to normalize mouse scrolling across various browsers (taken from: http://stackoverflow.com/a/13650579).
 		 *
 		 * @param  {Event} orgEvent
 		 *
 		 * @return {Number}
 		 */
-		function normalizeScrollSpeed(orgEvent) {
-			var delta = 0,
-					absDelta = 0,
-					fn;
+		function normalizeScrollSpeed(o) {
+			var d = o.detail, w = o.wheelDelta,
+					n = 225, n1 = n-1;
 
-			// Old school scrollwheel delta
-			if(orgEvent.wheelDelta) { delta = orgEvent.wheelDelta; }
-			if(orgEvent.detail)     { delta = -(orgEvent.detail / 3); }
+			// Normalize delta
+			d = d ? w && (f = w/d) ? d/f : -d/55 : w/120;
+			// Quadratic scale if |d| > 1
+			d = d < 1 ? d < -1 ? (-Math.pow(d, 2) - n1) / n : d : (Math.pow(d, 2) + n1) / n;
+			// Delta *should* not be greater than 2...
+			d = Math.min(Math.max(d / 2, -1), 1);
 
-			// Look for lowest delta to normalize the delta values
-			absDelta = Math.abs(delta);
-			if (!lowestDelta || absDelta < lowestDelta ) { lowestDelta = absDelta; }
-
-			// Get a whole value for the deltas
-			fn = delta > 0 ? 'floor' : 'ceil';
-			delta = Math[fn](delta / lowestDelta);
-
-			return delta;
+			return (navigator.userAgent.indexOf("Safari") > -1) ? d / 2 : d;
 		}
 
 		/**
