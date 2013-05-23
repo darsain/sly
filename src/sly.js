@@ -1322,9 +1322,11 @@
 
 			// Proceed when initialized
 			if (dragging.init) {
-				stopDefault(event);
-
 				if (dragging.released) {
+					if (!dragging.touch) {
+						stopDefault(event);
+					}
+
 					dragging.init = 0;
 
 					// Adjust path with a swing on mouse release
@@ -1333,6 +1335,8 @@
 						dragging.delta += dragging.swing;
 						dragging.tweese = Math.abs(dragging.swing) > 10;
 					}
+				} else {
+					stopDefault(event);
 				}
 
 				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
