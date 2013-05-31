@@ -133,7 +133,13 @@
 			// Reset global variables
 			frameSize = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
 			sbSize = $sb[o.horizontal ? 'width' : 'height']();
-			slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
+
+			if (o.nativeScroll) {
+				slideeSize = $slidee[0][o.horizontal ? 'scrollWidth' : 'scrollHeight'];
+			} else {
+				slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
+			}
+
 			pages.length = 0;
 
 			// Set position limits & relatives
@@ -280,6 +286,14 @@
 			// Fix possible overflowing
 			slideTo(within(pos.dest, pos.start, pos.end));
 
+			// Set width and height for support native scrolling
+			if (o.nativeScroll) {
+				$slidee.css({
+					height: '100%',
+					width: '100%'
+				});
+			}
+
 			// Extend relative variables object with some useful info
 			rel.slideeSize = slideeSize;
 			rel.frameSize = frameSize;
@@ -399,12 +413,14 @@
 			trigger('move');
 
 			// Update SLIDEE position
-			if (!parallax) {
+			if (!o.nativeScroll) {
 				if (transform) {
 					$slidee[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
 				} else {
 					$slidee[0].style[o.horizontal ? 'left' : 'top'] = -Math.round(pos.cur) + 'px';
 				}
+			} else {
+				$slidee[0][o.horizontal ? 'scrollLeft' : 'scrollTop'] = Math.round(pos.cur);
 			}
 
 			// When animation reached the end, and dragging is not active, trigger moveEnd
@@ -1880,8 +1896,9 @@
 		activateMiddle: 0,  // Always activate the item in the middle of the FRAME. forceCentered only.
 
 		// Scrolling
-		scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
-		scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+		scrollSource: null,  // Element for catching the mouse wheel scrolling. Default is FRAME.
+		scrollBy:     0,     // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+		nativeScroll: false, // Useful for broswers with slow CSS traslates (like Opera). 
 
 		// Dragging
 		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
