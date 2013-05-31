@@ -1750,8 +1750,9 @@
 	 * @return {Void}
 	 */
 	function disableOneEvent(event) {
+		/*jshint validthis:true */
 		stopDefault(event, 1);
-		$(event.target).off(event.type, disableOneEvent);
+		$(this).off(event.type, disableOneEvent);
 	}
 
 	/**
