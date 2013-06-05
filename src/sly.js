@@ -234,11 +234,17 @@
 			// Scrollbar
 			if ($handle.length && sbSize > 0) {
 				// Stretch scrollbar handle to represent the visible area
-				handleSize = o.dynamicHandle ? Math.round(sbSize * frameSize / slideeSize) : $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
-
 				if (o.dynamicHandle) {
-					handleSize = within(handleSize, o.minHandleSize, sbSize);
+					// ForceCentered navigation edge case
+					if (forceCenteredNav) {
+						handleSize = items.length ? sbSize * frameSize / (frameSize + items[items.length-1].center - items[0].center) : sbSize;
+					} else {
+						handleSize = sbSize * frameSize / slideeSize;
+					}
+					handleSize = within(Math.round(handleSize), o.minHandleSize, sbSize);
 					$handle[0].style[o.horizontal ? 'width' : 'height'] = handleSize + 'px';
+				} else {
+					handleSize = $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
 				}
 
 				hPos.end = sbSize - handleSize;
@@ -1267,7 +1273,7 @@
 			var isSlidee = source === 'slidee';
 
 			// Handle dragging conditions
-			if (source === 'handle' && !o.dragHandle) {
+			if (source === 'handle' && (!o.dragHandle || hPos.start === hPos.end)) {
 				return;
 			}
 
