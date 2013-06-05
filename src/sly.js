@@ -89,6 +89,7 @@
 		var callbacks = {};
 		var last = {};
 		var animation = {};
+		var move = {};
 		var dragging = { released: 1 };
 		var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
 		var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
@@ -380,7 +381,13 @@
 			}
 			// Use tweesing for animations without known end point
 			else if (animation.tweesing) {
-				pos.cur += (animation.to - pos.cur) * (dragging.released ? o.swingSpeed : o.syncSpeed);
+				animation.tweeseDelta = animation.to - pos.cur;
+				// Fuck Zeno's paradox
+				if (Math.abs(animation.tweeseDelta) < 0.1) {
+					pos.cur = animation.to;
+				} else {
+					pos.cur += animation.tweeseDelta * (dragging.released ? o.swingSpeed : o.syncSpeed);
+				}
 			}
 			// Use tweening for basic animations with known end point
 			else {
@@ -389,7 +396,7 @@
 			}
 
 			// If there is nothing more to render break the rendering loop, otherwise request new animation frame.
-			if (animation.to === Math.round(pos.cur)) {
+			if (animation.to === pos.cur) {
 				pos.cur = animation.to;
 				dragging.tweese = renderID = 0;
 			} else {
@@ -487,23 +494,48 @@
 		 * @return {Void}
 		 */
 		self.moveBy = function (speed) {
-			var startTime = +new Date();
-			var startPos = pos.cur;
-
+			move.speed = speed;
+			// If already initiated, or there is nowhere to move, abort
+			if (dragging.init || !move.speed || pos.cur === (move.speed > 0 ? pos.end : pos.start)) {
+				return;
+			}
+			// Initiate move object
+			move.lastTime = +new Date();
+			move.startPos = pos.cur;
+			// Set dragging as initiated
 			continuousInit('button');
 			dragging.init = 1;
-
+			// Start movement
+			trigger('moveStart');
 			cAF(continuousID);
-			(function continuousLoop() {
-				if (!speed || pos.cur === (speed > 0 ? pos.end : pos.start)) {
-					self.stop();
-				}
-				if (dragging.init) {
-					continuousID = rAF(continuousLoop);
-				}
-				slideTo(startPos + (+new Date() - startTime) / 1000 * speed);
-			}());
+			moveLoop();
 		};
+
+		/**
+		 * Continuous movement loop.
+		 *
+		 * @return {Void}
+		 */
+		function moveLoop() {
+			// If there is nowhere to move anymore, stop
+			if (!move.speed || pos.cur === (move.speed > 0 ? pos.end : pos.start)) {
+				self.stop();
+			}
+			// Request new move loop if it hasn't been stopped
+			continuousID = dragging.init ? rAF(moveLoop) : 0;
+			// Update move object
+			move.now = +new Date();
+			move.pos = pos.cur + (move.now - move.lastTime) / 1000 * move.speed;
+			// Slide
+			slideTo(dragging.init ? move.pos : Math.round(move.pos));
+			// Normally, this is triggered in render(), but if there
+			// is nothing to render, we have to do it manually here.
+			if (!dragging.init && pos.cur === pos.dest) {
+				trigger('moveEnd');
+			}
+			// Update times for future iteration
+			move.lastTime = move.now;
+		}
 
 		/**
 		 * Stops continuous movement.
@@ -1042,7 +1074,7 @@
 		 *
 		 * @return {Void}
 		 */
-		function move(item, position, after) {
+		function moveItem(item, position, after) {
 			item = getRelativeIndex(item);
 			position = getRelativeIndex(position);
 
@@ -1075,7 +1107,7 @@
 		 * @return {Void}
 		 */
 		self.moveAfter = function (item, position) {
-			move(item, position, 1);
+			moveItem(item, position, 1);
 		};
 
 		/**
@@ -1087,7 +1119,7 @@
 		 * @return {Void}
 		 */
 		self.moveBefore = function (item, position) {
-			move(item, position);
+			moveItem(item, position);
 		};
 
 		/**
