@@ -1719,13 +1719,12 @@
 			// Keyboard navigation
 			$doc.bind('keydown.' + namespace, keyboardHandler);
 
-			// Pause on hover
 			if (!parallax) {
+				// Pause on hover
 				$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
+				// Reset native FRAME element scroll
+				$frame.on('scroll.' + namespace, resetScroll);
 			}
-
-			// Reset native FRAME element scroll
-			$frame.on('scroll.' + namespace, resetScroll);
 
 			// Load
 			load();
