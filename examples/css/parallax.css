@@ -25,6 +25,10 @@ html, body { height: 100%; overflow: hidden; }
 	height: 100%;
 }
 
+/* Content */
+.content { position: relative; margin: 0 auto; padding: 1px 0 30px 0; z-index: 70; }
+p.center { text-align: center; }
+
 /* Position */
 .pos {
 	width: 400px;
@@ -36,11 +40,6 @@ html, body { height: 100%; overflow: hidden; }
 .pos .cur { font-size: 80px; }
 .pos .slash { margin: 0 5px 0 10px; font-size: 80px; }
 .pos .max { font-size: 50px; color: #aaa; }
-
-/* Content */
-header, .pos, .entry { position: relative; z-index: 70; }
-.entry { margin: 0 auto; }
-p.center { text-align: center; }
 
 /* Particles */
 .particles { position: absolute; margin: 0; padding: 0; top: 0; left: 0; width: 0; height: 0; list-style: none; }

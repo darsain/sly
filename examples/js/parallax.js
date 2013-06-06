@@ -3,7 +3,7 @@ jQuery(function ($) {
 	'use strict';
 
 	var size = 8000;
-	var parallax = new Sly(size, {
+	var parallax = window.parallax = new Sly(size, {
 		scrollBy: 300,
 		scrollSource: document,
 		scrollBar: $('#scrollbar'),
@@ -18,6 +18,7 @@ jQuery(function ($) {
 		startAt: 250,
 		elasticBounds: 1
 	});
+	var $content = $('#content');
 	var $max = $('#pos .max');
 	var $cur = $('#pos .cur');
 	var $particles = $('#particles');
@@ -33,12 +34,22 @@ jQuery(function ($) {
 		var transform = Modernizr.prefixed('transform');
 		var gpuAcceleration = Modernizr.csstransforms3d ? 'translateZ(0) ' : '';
 		var count = 500;
-		var screenWidth = $(window).width();
-		var screenHeight = $(window).height();
-		var maxY = size + screenHeight;
+		var frame = {};
+		var content = {
+			start: 0
+		};
+		var maxY = size + frame.height;
 		var minParticleSize = 2;
 		var maxParticleSize = 12;
 		var particles = [];
+
+		function updateDimensions() {
+			frame.width = $(window).width();
+			frame.height = $(window).height();
+			content.height = $content.outerHeight();
+			content.end = frame.height >= content.height ? 0 : frame.height - content.height;
+			maxY = size + frame.height;
+		}
 
 		// Generate particles
 		function generateParticles() {
@@ -73,20 +84,31 @@ jQuery(function ($) {
 
 		// Render the animation frame
 		function render() {
-			var x, y, isHidden;
+			// Content
+			content.top = content.end === 0 ? 0 : parallax.pos.cur / parallax.pos.end * content.end;
+			if (transform) {
+				$content[0].style[transform] = gpuAcceleration + 'translateY(' + content.top + 'px)';
+			} else {
+				$content[0].style.top = Math.round(content.top) + 'px';
+			}
+
+			// Particles
+			var x, y, wasHidden, isHidden;
 			for (var i = 0, l = particles.length; i < l; i++) {
-				x = particles[i].x * (screenWidth - particles[i].size);
+				x = particles[i].x * (frame.width - particles[i].size);
 				y = particles[i].y * (maxY - particles[i].size) - parallax.pos.cur * particles[i].zoom;
-				isHidden = y + particles[i].size <= 0 || y > screenHeight;
+				wasHidden = particles[i].curY + particles[i].size <= 0 || particles[i].curY > frame.height;
+				isHidden = y + particles[i].size <= 0 || y > frame.height;
 
 				// Ignore particles out of screen, but only those that were also
 				// hidden in the last frame, otherwise they'd stuck to the endges.
-				if (isHidden && particles[i].hidden === isHidden) {
+				if (isHidden && wasHidden) {
 					continue;
 				}
 
-				// Save the hidden state for next frame
-				particles[i].hidden = isHidden;
+				// Save current position
+				particles[i].curX = x;
+				particles[i].curY = y;
 
 				// Update the position
 				if (transform) {
@@ -100,13 +122,12 @@ jQuery(function ($) {
 
 		// Reload on window resize
 		$(window).on('resize', $.debounce(200, function () {
-			screenWidth = $(window).width();
-			screenHeight = $(window).height();
-			maxY = size + screenHeight;
+			updateDimensions();
 			render();
 		}));
 
-		// Generate particles on load
+		// Prepare frame
+		updateDimensions();
 		generateParticles();
 
 		// Return frame rendering function
@@ -132,4 +153,36 @@ jQuery(function ($) {
 	$(window).on('resize', $.debounce(200, function () {
 		parallax.reload();
 	}));
+
+	// Keyboard navigation
+	$(document).on('keydown', function (event) {
+		switch (event.which) {
+			case 36:
+				parallax.toStart();
+				break;
+			case 35:
+				parallax.toEnd();
+				break;
+			case 33:
+				parallax.slideBy(-1000);
+				break;
+			case 34:
+				parallax.slideBy(1000);
+				break;
+			case 38:
+				parallax.moveBy(-1000);
+				break;
+			case 40:
+				parallax.moveBy(1000);
+				break;
+		}
+	});
+	$(document).on('keyup', function (event) {
+		switch (event.which) {
+			case 38:
+			case 40:
+				parallax.stop();
+				break;
+		}
+	});
 });
