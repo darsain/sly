@@ -12,6 +12,14 @@
 	// Support indicators
 	var transform, gpuAcceleration;
 
+	// Other global values
+	var $doc = $(document);
+	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
+	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
+	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
+	var clickEvent = 'click.' + namespace;
+	var mouseDownEvent = 'mousedown.' + namespace;
+
 	/**
 	 * Sly.
 	 *
@@ -29,7 +37,6 @@
 		var self = this;
 		var initialized = 0;
 		var parallax = isNumber(frame);
-		var $doc = $(document);
 
 		// Frame
 		var $frame = $(frame);
@@ -91,11 +98,6 @@
 		var animation = {};
 		var move = {};
 		var dragging = { released: 1 };
-		var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
-		var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
-		var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
-		var clickEvent = 'click.' + namespace;
-		var mouseDownEvent = 'mousedown.' + namespace;
 		var renderID = 0;
 		var historyID = 0;
 		var cycleID = 0;
@@ -293,7 +295,7 @@
 			rel.sbSize = sbSize;
 			rel.handleSize = handleSize;
 
-			// Trigger :load event
+			// Trigger load event
 			trigger('load');
 		}
 		self.reload = load;
@@ -1668,17 +1670,6 @@
 				$movables.css({ position: 'absolute' });
 			}
 
-			// Load
-			load();
-
-			// Activate requested position
-			if (itemNav) {
-				activate(o.startAt);
-				self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
-			} else {
-				slideTo(o.startAt, 1);
-			}
-
 			// Navigation buttons
 			if (o.forward) {
 				$forwardButton.on(mouseDownEvent, buttonsHandler);
@@ -1731,6 +1722,20 @@
 			// Pause on hover
 			if (!parallax) {
 				$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
+			}
+
+			// Reset native FRAME element scroll
+			$frame.on('scroll.' + namespace, resetScroll);
+
+			// Load
+			load();
+
+			// Activate requested position
+			if (itemNav) {
+				activate(o.startAt);
+				self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
+			} else {
+				slideTo(o.startAt, 1);
 			}
 
 			// Initiate automatic cycling
@@ -1791,6 +1796,17 @@
 		/*jshint validthis:true */
 		stopDefault(event, 1);
 		$(this).off(event.type, disableOneEvent);
+	}
+
+	/**
+	 * Resets native element scroll values to 0.
+	 *
+	 * @return {Void}
+	 */
+	function resetScroll() {
+		/*jshint validthis:true */
+		this.scrollLeft = 0;
+		this.scrollTop = 0;
 	}
 
 	/**
