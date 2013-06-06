@@ -1648,7 +1648,7 @@
 			// Register callbacks map
 			self.on(callbackMap);
 
-			// Set required styles to elements
+			// Set required styles
 			var $movables = $handle;
 			if (!parallax) {
 				$movables = $movables.add($slidee);
@@ -1657,10 +1657,10 @@
 					$frame.css('position', 'relative');
 				}
 			}
-			if (transform && gpuAcceleration) {
-				var props = {};
-				props[transform] = gpuAcceleration;
-				$movables.css(props);
+			if (transform) {
+				if (gpuAcceleration) {
+					$movables.css(transform, gpuAcceleration);
+				}
 			} else {
 				if ($sb.css('position') === 'static') {
 					$sb.css('position', 'relative');
