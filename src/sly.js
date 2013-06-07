@@ -19,6 +19,7 @@
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
+	var wheelDeltaDividers = [3, 40, 120];
 
 	/**
 	 * Sly.
@@ -1454,6 +1455,32 @@
 		}
 
 		/**
+		 * Mouse wheel delta normalization.
+		 *
+		 * @param  {Event} event
+		 *
+		 * @return {Int}
+		 */
+		function normalizeWheelDelta(event) {
+			var delta;
+			if (event.wheelDelta) {
+				delta = -event.wheelDelta;
+			} else if (event.detail) {
+				delta = event.detail;
+			}
+
+			var divider = 1;
+			for (i = wheelDeltaDividers.length; i--;) {
+				if (delta % wheelDeltaDividers[i] === 0) {
+					divider = wheelDeltaDividers[i];
+					break;
+				}
+			}
+
+			return delta / divider;
+		}
+
+		/**
 		 * Mouse scrolling handler.
 		 *
 		 * @param  {Event} event
@@ -1468,22 +1495,13 @@
 
 			stopDefault(event, 1);
 
-			var orgEvent = event.originalEvent;
-			var isForward = 0;
-
-			// Old school scrollwheel delta
-			if (orgEvent.wheelDelta) {
-				isForward = orgEvent.wheelDelta / 120 < 0;
-			}
-			if (orgEvent.detail) {
-				isForward = -orgEvent.detail / 3 < 0;
-			}
-
+			var delta = normalizeWheelDelta(event.originalEvent);
 			if (itemNav) {
-				var nextItem = (centeredNav ? rel.centerItem : rel.firstItem) + (isForward ? o.scrollBy : -o.scrollBy);
-				self[centeredNav ? 'toCenter' : 'toStart'](nextItem);
+				self[centeredNav ? 'toCenter' : 'toStart'](
+					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
+				);
 			} else {
-				self.slideBy(isForward ? o.scrollBy : -o.scrollBy);
+				self.slideBy(o.scrollBy * delta);
 			}
 		}
 
