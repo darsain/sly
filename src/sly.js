@@ -1303,7 +1303,7 @@
 			dragging.start = +new Date();
 			dragging.time = 0;
 			dragging.path = 0;
-			dragging.pathToInit = isTouch ? 50 : 10;
+			dragging.pathToInit = isSlidee ? isTouch ? 50 : 10 : 0;
 			dragging.history = [0, 0, 0, 0];
 			dragging.initLoc = dragging[o.horizontal ? 'initX' : 'initY'];
 			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
@@ -1338,24 +1338,20 @@
 			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
 
 			// Initialization
-			if (!dragging.init && (!dragging.slidee || dragging.pathTotal > dragging.pathToInit)) {
-				// If path has reached the pathToInit value, but in a wrong direction, cancel dragging
-				if (o.horizontal ? Math.abs(dragging.pathX) < Math.abs(dragging.pathY) : Math.abs(dragging.pathX) > Math.abs(dragging.pathY)) {
-					dragEnd();
-					return;
-				}
-
-				// Mark dragging as initiated
-				dragging.init = 1;
-
-				// Disable click on a source element, as it is unwelcome when dragging SLIDEE
+			if (!dragging.init && dragging.pathTotal > dragging.pathToInit) {
 				if (dragging.slidee) {
+					// If path has reached the pathToInit value, but in a wrong direction, cancel dragging
+					if (o.horizontal ? Math.abs(dragging.pathX) < Math.abs(dragging.pathY) : Math.abs(dragging.pathX) > Math.abs(dragging.pathY)) {
+						dragEnd();
+						return;
+					}
+					// Disable click on a source element, as it is unwelcome when dragging SLIDEE
 					dragging.$source.on(clickEvent, disableOneEvent);
 				}
-
+				// Mark dragging as initiated
+				dragging.init = 1;
 				// Pause ongoing cycle
 				self.pause(1);
-
 				// Trigger moveStart event
 				trigger('moveStart');
 			}
