@@ -19,7 +19,6 @@
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
-	var wheelDeltaDividers = [3, 40, 120];
 
 	/**
 	 * Sly.
@@ -1462,22 +1461,7 @@
 		 * @return {Int}
 		 */
 		function normalizeWheelDelta(event) {
-			var delta;
-			if (event.wheelDelta) {
-				delta = -event.wheelDelta;
-			} else if (event.detail) {
-				delta = event.detail;
-			}
-
-			var divider = 1;
-			for (i = wheelDeltaDividers.length; i--;) {
-				if (delta % wheelDeltaDividers[i] === 0) {
-					divider = wheelDeltaDividers[i];
-					break;
-				}
-			}
-
-			return delta / divider;
+			return within(-event.wheelDelta || event.detail, -1, 1);
 		}
 
 		/**
