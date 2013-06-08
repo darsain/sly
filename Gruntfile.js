@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 		bumpup: ['component.json', '<%= pkg.name %>.jquery.json'],
 
 		// Commit changes and tag the latest commit with a version from JSON file.
-		tagrelease: ['component.json']
+		tagrelease: 'component.json'
 	});
 
 	// These plugins provide necessary tasks.
