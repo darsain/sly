@@ -1,8 +1,8 @@
 {
 	"name": "sly",
 	"description": "One-directional scrolling with item based navigation support.",
-	"version": "1.0.0",
-	"date": "2013-03-24 10:09:39 +00:00",
+	"version": "1.0.1",
+	"date": "2013-06-08 18:03:48 +00:00",
 	"homepage": "https://github.com/Darsain/sly",
 	"main": "./dist/sly.js",
 	"dependencies": {
