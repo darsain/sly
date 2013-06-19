@@ -1402,6 +1402,12 @@
 			if (dragging.init && pos.cur === pos.dest) {
 				trigger('moveEnd');
 			}
+            
+            // Scrollbar dragged to start or end, content already redrawn
+            // we have to trigger moveEnd manually
+            if (!dragging.init && dragging.source == 'handle' && pos.cur === pos.dest) {
+				trigger('moveEnd');
+            }
 		}
 
 		/**
