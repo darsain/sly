@@ -1363,7 +1363,7 @@
 						stopDefault(event);
 					}
 
-					dragging.init = 0;
+					dragEnd();
 
 					// Adjust path with a swing on mouse release
 					if (o.releaseSwing && dragging.slidee) {
@@ -1376,10 +1376,7 @@
 				}
 
 				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
-			}
-
-			// Stop and cleanup after dragging
-			if (dragging.released) {
+			} else if (dragging.released) {
 				dragEnd();
 			}
 		}
@@ -1390,6 +1387,7 @@
 		 * @return {Void}
 		 */
 		function dragEnd() {
+			dragging.init = 0;
 			clearInterval(historyID);
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
@@ -1399,7 +1397,7 @@
 
 			// Normally, this is triggered in render(), but if there
 			// is nothing to render, we have to do it manually here.
-			if (dragging.init && pos.cur === pos.dest) {
+			if (pos.cur === pos.dest) {
 				trigger('moveEnd');
 			}
 		}
