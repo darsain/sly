@@ -40,7 +40,7 @@
 
 		// Frame
 		var $frame = $(frame);
-		var $slidee = $frame.children().eq(0);
+		var $slidee = $frame.children(o.slideeClass).eq(0);
 		var frameSize = 0;
 		var slideeSize = 0;
 		var pos = {
@@ -1981,6 +1981,7 @@
 		// Classes
 		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
 		activeClass:   'active',   // Class for active items and pages.
-		disabledClass: 'disabled'  // Class for disabled navigation elements.
+		disabledClass: 'disabled',  // Class for disabled navigation elements.
+    slideeClass:   'slidee'
 	};
 }(jQuery, window));
