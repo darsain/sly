@@ -1455,7 +1455,8 @@
 		 * @return {Int}
 		 */
 		function normalizeWheelDelta(event) {
-			return within(-event.wheelDelta || event.detail, -1, 1);
+			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
+			return within(-event.wheelDelta || event.detail || event.deltaY, -1, 1);
 		}
 
 		/**
