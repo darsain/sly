@@ -345,7 +345,7 @@
 			animation.to = newPos;
 			animation.delta = newPos - pos.cur;
 			animation.tweesing = dragging.tweese || dragging.init && !dragging.slidee;
-			animation.immediate = immediate || dragging.init && dragging.slidee && !dragging.tweese;
+			animation.immediate = !animation.tweesing && (immediate || dragging.init && dragging.slidee || !o.speed);
 
 			// Reset dragging tweesing request
 			dragging.tweese = 0;
