@@ -1,5 +1,5 @@
 /*!
- * sly 1.0.1 - 8th Jun 2013
+ * sly 1.0.2 - 4th Aug 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -352,7 +352,7 @@
 			animation.to = newPos;
 			animation.delta = newPos - pos.cur;
 			animation.tweesing = dragging.tweese || dragging.init && !dragging.slidee;
-			animation.immediate = immediate || dragging.init && dragging.slidee && !dragging.tweese;
+			animation.immediate = !animation.tweesing && (immediate || dragging.init && dragging.slidee || !o.speed);
 
 			// Reset dragging tweesing request
 			dragging.tweese = 0;
@@ -1370,7 +1370,7 @@
 						stopDefault(event);
 					}
 
-					dragging.init = 0;
+					dragEnd();
 
 					// Adjust path with a swing on mouse release
 					if (o.releaseSwing && dragging.slidee) {
@@ -1383,10 +1383,7 @@
 				}
 
 				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
-			}
-
-			// Stop and cleanup after dragging
-			if (dragging.released) {
+			} else if (dragging.released) {
 				dragEnd();
 			}
 		}
@@ -1397,6 +1394,7 @@
 		 * @return {Void}
 		 */
 		function dragEnd() {
+			dragging.init = 0;
 			clearInterval(historyID);
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
@@ -1406,7 +1404,7 @@
 
 			// Normally, this is triggered in render(), but if there
 			// is nothing to render, we have to do it manually here.
-			if (dragging.init && pos.cur === pos.dest) {
+			if (pos.cur === pos.dest) {
 				trigger('moveEnd');
 			}
 		}
@@ -1464,7 +1462,8 @@
 		 * @return {Int}
 		 */
 		function normalizeWheelDelta(event) {
-			return within(-event.wheelDelta || event.detail, -1, 1);
+			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
+			return within(-event.wheelDelta || event.detail || event.deltaY, -1, 1);
 		}
 
 		/**
