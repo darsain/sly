@@ -67,7 +67,7 @@ All of the desired features have been implemented.
 
 Maaaaybe never, but I'd liked to:
 
-- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) compoment.
+- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) component.
 - RTL layout support.
 
 ## Contributing
