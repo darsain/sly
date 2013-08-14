@@ -40,7 +40,7 @@ Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 
 ## Installation
 
-You can install with [Bower](http://twitter.github.io/bower):
+You can install with [Bower](http://bower.io/):
 
 ```shell
 bower install sly
@@ -67,7 +67,7 @@ All of the desired features have been implemented.
 
 Maaaaybe never, but I'd liked to:
 
-- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) compoment.
+- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) component.
 - RTL layout support.
 
 ## Contributing
