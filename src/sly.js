@@ -1076,8 +1076,9 @@
 					// Reload
 					load();
 
-					// Activate new item at the removed position if the current active got removed
+					// Activate new item at the removed position
 					if (reactivate) {
+						last.active = null;
 						self.activate(rel.activeItem);
 					}
 				}
