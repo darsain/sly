@@ -129,6 +129,8 @@
 		function load() {
 			// Local variables
 			var ignoredMargin = 0;
+			var lastItemsCount = 0;
+			var lastPagesCount = pages.length;
 
 			// Save old position
 			pos.old = $.extend({}, pos);
@@ -142,12 +144,11 @@
 			// Set position limits & relatives
 			pos.start = 0;
 			pos.end = Math.max(slideeSize - frameSize, 0);
-			last = {};
 
 			// Sizes & offsets for item based navigations
 			if (itemNav) {
 				// Save the number of current items
-				var lastItemsCount = items.length;
+				lastItemsCount = items.length;
 
 				// Reset itemNav related variables
 				$items = $slidee.children(o.itemSelector);
@@ -219,12 +220,6 @@
 				// Set limits
 				pos.start = centerOffset;
 				pos.end = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
-
-				// Activate last item if previous active has been removed, or first item
-				// when there were no items before, and new got appended.
-				if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
-					activate(items.length > 0 ? items.length - 1 : 0);
-				}
 			}
 
 			// Calculate SLIDEE center position
@@ -278,22 +273,41 @@
 				}
 
 				// Pages bar
-				if ($pb[0]) {
+				if ($pb[0] && lastPagesCount !== pages.length) {
 					for (var i = 0; i < pages.length; i++) {
 						pagesHtml += o.pageBuilder.call(self, i);
 					}
 					$pages = $pb.html(pagesHtml).children();
+					$pages.eq(rel.activePage).addClass(o.activeClass);
 				}
 			}
-
-			// Fix possible overflowing
-			slideTo(within(pos.dest, pos.start, pos.end));
 
 			// Extend relative variables object with some useful info
 			rel.slideeSize = slideeSize;
 			rel.frameSize = frameSize;
 			rel.sbSize = sbSize;
 			rel.handleSize = handleSize;
+
+			// Activate requested position
+			if (itemNav) {
+				if (!initialized) {
+					activate(o.startAt);
+					self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
+				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
+					// Activate last item if previous active has been removed, or first item
+					// when there were no items before, and new got appended.
+					activate(items.length > 0 ? items.length - 1 : 0);
+				}
+				// Fix possible overflowing
+				slideTo(within(pos.dest, pos.start, pos.end));
+			} else {
+				if (!initialized) {
+					slideTo(o.startAt, 1);
+				} else {
+					// Fix possible overflowing
+					slideTo(within(pos.dest, pos.start, pos.end));
+				}
+			}
 
 			// Trigger load event
 			trigger('load');
@@ -1055,7 +1069,7 @@
 					var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
 
 					// Adjust the activeItem index
-					if (index < rel.activeItem || rel.activeItem >= items.length - 1) {
+					if (index < rel.activeItem) {
 						last.active = --rel.activeItem;
 					}
 
@@ -1387,7 +1401,6 @@
 		 * @return {Void}
 		 */
 		function dragEnd() {
-			dragging.init = 0;
 			clearInterval(historyID);
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
@@ -1397,9 +1410,11 @@
 
 			// Normally, this is triggered in render(), but if there
 			// is nothing to render, we have to do it manually here.
-			if (pos.cur === pos.dest) {
+			if (pos.cur === pos.dest && dragging.init) {
 				trigger('moveEnd');
 			}
+
+			dragging.init = 0;
 		}
 
 		/**
@@ -1725,14 +1740,6 @@
 
 			// Load
 			load();
-
-			// Activate requested position
-			if (itemNav) {
-				activate(o.startAt);
-				self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
-			} else {
-				slideTo(o.startAt, 1);
-			}
 
 			// Initiate automatic cycling
 			if (o.cycleBy && !parallax) {
