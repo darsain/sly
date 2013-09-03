@@ -1180,6 +1180,22 @@
 		};
 
 		/**
+		 * Registers callbacks to be executed only once.
+		 *
+		 * @param  {Mixed} name  Event name, or callbacks map.
+		 * @param  {Mixed} fn    Callback, or an array of callback functions.
+		 *
+		 * @return {Void}
+		 */
+		self.one = function (name, fn) {
+			function proxy() {
+				fn.apply(self, arguments);
+				self.off(name, proxy);
+			}
+			self.on(name, proxy);
+		};
+
+		/**
 		 * Remove one or all callbacks.
 		 *
 		 * @param  {String} name Event name.
