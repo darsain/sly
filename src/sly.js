@@ -19,6 +19,7 @@
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
+	var tmpArray = [];
 
 	/**
 	 * Sly.
@@ -1596,8 +1597,16 @@
 		 */
 		function trigger(name, arg1) {
 			if (callbacks[name]) {
-				for (i = 0, l = callbacks[name].length; i < l; i++) {
-					callbacks[name][i].call(self, name, arg1);
+				l = callbacks[name].length;
+				// Callbacks will be stored and executed from a temporary array to not
+				// break the execution queue when one of the callbacks unbinds itself.
+				tmpArray.length = 0;
+				for (i = 0; i < l; i++) {
+					tmpArray.push(callbacks[name][i]);
+				}
+				// Execute the callbacks
+				for (i = 0; i < l; i++) {
+					tmpArray[i].call(self, name, arg1);
 				}
 			}
 		}
