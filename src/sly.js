@@ -35,7 +35,6 @@
 
 		// Private variables
 		var self = this;
-		var initialized = 0;
 		var parallax = isNumber(frame);
 
 		// Frame
@@ -110,6 +109,7 @@
 		}
 
 		// Expose properties
+		self.initialized = 0;
 		self.frame = frame;
 		self.slidee = $slidee[0];
 		self.pos = pos;
@@ -290,7 +290,7 @@
 
 			// Activate requested position
 			if (itemNav) {
-				if (!initialized) {
+				if (!self.initialized) {
 					activate(o.startAt);
 					self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
 				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
@@ -301,7 +301,7 @@
 				// Fix possible overflowing
 				slideTo(within(pos.dest, pos.start, pos.end));
 			} else {
-				if (!initialized) {
+				if (!self.initialized) {
 					slideTo(o.startAt, 1);
 				} else {
 					// Fix possible overflowing
@@ -1645,7 +1645,7 @@
 			}
 
 			// Reset initialized status and return the instance
-			initialized = 0;
+			self.initialized = 0;
 			return self;
 		};
 
@@ -1655,7 +1655,7 @@
 		 * @return {Object}
 		 */
 		self.init = function () {
-			if (initialized) {
+			if (self.initialized) {
 				return;
 			}
 
@@ -1747,7 +1747,7 @@
 			}
 
 			// Mark instance as initialized
-			initialized = 1;
+			self.initialized = 1;
 
 			// Return instance
 			return self;
