@@ -611,13 +611,19 @@
 		/**
 		 * Slide SLIDEE by amount of pixels.
 		 *
-		 * @param {Int}  delta     Difference in position. Positive means forward, negative means backward.
+		 * @param {Int}  delta     Pixels/Items. Positive means forward, negative means backward.
 		 * @param {Bool} immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
 		self.slideBy = function (delta, immediate) {
-			slideTo(pos.dest + delta, immediate);
+			if (itemNav) {
+				self[centeredNav ? 'toCenter' : 'toStart'](
+					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
+				);
+			} else {
+				slideTo(pos.dest + delta, immediate);
+			}
 		};
 
 		/**
@@ -1504,17 +1510,8 @@
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
 			}
-
 			stopDefault(event, 1);
-
-			var delta = normalizeWheelDelta(event.originalEvent);
-			if (itemNav) {
-				self[centeredNav ? 'toCenter' : 'toStart'](
-					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
-				);
-			} else {
-				self.slideBy(o.scrollBy * delta);
-			}
+			self.slideBy(o.scrollBy * normalizeWheelDelta(event.originalEvent));
 		}
 
 		/**
