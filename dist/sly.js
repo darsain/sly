@@ -1,5 +1,5 @@
 /*!
- * sly 1.0.2 - 4th Aug 2013
+ * sly 1.1.0 - 10th Sep 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -26,6 +26,7 @@
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
+	var tmpArray = [];
 
 	/**
 	 * Sly.
@@ -42,7 +43,6 @@
 
 		// Private variables
 		var self = this;
-		var initialized = 0;
 		var parallax = isNumber(frame);
 
 		// Frame
@@ -117,6 +117,7 @@
 		}
 
 		// Expose properties
+		self.initialized = 0;
 		self.frame = frame;
 		self.slidee = $slidee[0];
 		self.pos = pos;
@@ -136,6 +137,8 @@
 		function load() {
 			// Local variables
 			var ignoredMargin = 0;
+			var lastItemsCount = 0;
+			var lastPagesCount = pages.length;
 
 			// Save old position
 			pos.old = $.extend({}, pos);
@@ -149,12 +152,11 @@
 			// Set position limits & relatives
 			pos.start = 0;
 			pos.end = Math.max(slideeSize - frameSize, 0);
-			last = {};
 
 			// Sizes & offsets for item based navigations
 			if (itemNav) {
 				// Save the number of current items
-				var lastItemsCount = items.length;
+				lastItemsCount = items.length;
 
 				// Reset itemNav related variables
 				$items = $slidee.children(o.itemSelector);
@@ -226,12 +228,6 @@
 				// Set limits
 				pos.start = centerOffset;
 				pos.end = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
-
-				// Activate last item if previous active has been removed, or first item
-				// when there were no items before, and new got appended.
-				if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
-					activate(items.length > 0 ? items.length - 1 : 0);
-				}
 			}
 
 			// Calculate SLIDEE center position
@@ -285,22 +281,41 @@
 				}
 
 				// Pages bar
-				if ($pb[0]) {
+				if ($pb[0] && lastPagesCount !== pages.length) {
 					for (var i = 0; i < pages.length; i++) {
 						pagesHtml += o.pageBuilder.call(self, i);
 					}
 					$pages = $pb.html(pagesHtml).children();
+					$pages.eq(rel.activePage).addClass(o.activeClass);
 				}
 			}
-
-			// Fix possible overflowing
-			slideTo(within(pos.dest, pos.start, pos.end));
 
 			// Extend relative variables object with some useful info
 			rel.slideeSize = slideeSize;
 			rel.frameSize = frameSize;
 			rel.sbSize = sbSize;
 			rel.handleSize = handleSize;
+
+			// Activate requested position
+			if (itemNav) {
+				if (!self.initialized) {
+					activate(o.startAt);
+					self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
+				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
+					// Activate last item if previous active has been removed, or first item
+					// when there were no items before, and new got appended.
+					activate(items.length > 0 ? items.length - 1 : 0);
+				}
+				// Fix possible overflowing
+				slideTo(within(pos.dest, pos.start, pos.end));
+			} else {
+				if (!self.initialized) {
+					slideTo(o.startAt, 1);
+				} else {
+					// Fix possible overflowing
+					slideTo(within(pos.dest, pos.start, pos.end));
+				}
+			}
 
 			// Trigger load event
 			trigger('load');
@@ -603,13 +618,19 @@
 		/**
 		 * Slide SLIDEE by amount of pixels.
 		 *
-		 * @param {Int}  delta     Difference in position. Positive means forward, negative means backward.
+		 * @param {Int}  delta     Pixels/Items. Positive means forward, negative means backward.
 		 * @param {Bool} immediate Reposition immediately without an animation.
 		 *
 		 * @return {Void}
 		 */
 		self.slideBy = function (delta, immediate) {
-			slideTo(pos.dest + delta, immediate);
+			if (itemNav) {
+				self[centeredNav ? 'toCenter' : 'toStart'](
+					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
+				);
+			} else {
+				slideTo(pos.dest + delta, immediate);
+			}
 		};
 
 		/**
@@ -1062,15 +1083,16 @@
 					var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
 
 					// Adjust the activeItem index
-					if (index < rel.activeItem || rel.activeItem >= items.length - 1) {
+					if (index < rel.activeItem) {
 						last.active = --rel.activeItem;
 					}
 
 					// Reload
 					load();
 
-					// Activate new item at the removed position if the current active got removed
+					// Activate new item at the removed position
 					if (reactivate) {
+						last.active = null;
 						self.activate(rel.activeItem);
 					}
 				}
@@ -1168,6 +1190,22 @@
 					self.on(name, fn[f]);
 				}
 			}
+		};
+
+		/**
+		 * Registers callbacks to be executed only once.
+		 *
+		 * @param  {Mixed} name  Event name, or callbacks map.
+		 * @param  {Mixed} fn    Callback, or an array of callback functions.
+		 *
+		 * @return {Void}
+		 */
+		self.one = function (name, fn) {
+			function proxy() {
+				fn.apply(self, arguments);
+				self.off(name, proxy);
+			}
+			self.on(name, proxy);
 		};
 
 		/**
@@ -1394,7 +1432,6 @@
 		 * @return {Void}
 		 */
 		function dragEnd() {
-			dragging.init = 0;
 			clearInterval(historyID);
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
@@ -1404,9 +1441,11 @@
 
 			// Normally, this is triggered in render(), but if there
 			// is nothing to render, we have to do it manually here.
-			if (pos.cur === pos.dest) {
+			if (pos.cur === pos.dest && dragging.init) {
 				trigger('moveEnd');
 			}
+
+			dragging.init = 0;
 		}
 
 		/**
@@ -1478,17 +1517,8 @@
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
 			}
-
 			stopDefault(event, 1);
-
-			var delta = normalizeWheelDelta(event.originalEvent);
-			if (itemNav) {
-				self[centeredNav ? 'toCenter' : 'toStart'](
-					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
-				);
-			} else {
-				self.slideBy(o.scrollBy * delta);
-			}
+			self.slideBy(o.scrollBy * normalizeWheelDelta(event.originalEvent));
 		}
 
 		/**
@@ -1587,8 +1617,16 @@
 		 */
 		function trigger(name, arg1) {
 			if (callbacks[name]) {
-				for (i = 0, l = callbacks[name].length; i < l; i++) {
-					callbacks[name][i].call(self, name, arg1);
+				l = callbacks[name].length;
+				// Callbacks will be stored and executed from a temporary array to not
+				// break the execution queue when one of the callbacks unbinds itself.
+				tmpArray.length = 0;
+				for (i = 0; i < l; i++) {
+					tmpArray.push(callbacks[name][i]);
+				}
+				// Execute the callbacks
+				for (i = 0; i < l; i++) {
+					tmpArray[i].call(self, name, arg1);
 				}
 			}
 		}
@@ -1637,7 +1675,7 @@
 			}
 
 			// Reset initialized status and return the instance
-			initialized = 0;
+			self.initialized = 0;
 			return self;
 		};
 
@@ -1647,7 +1685,7 @@
 		 * @return {Object}
 		 */
 		self.init = function () {
-			if (initialized) {
+			if (self.initialized) {
 				return;
 			}
 
@@ -1733,21 +1771,13 @@
 			// Load
 			load();
 
-			// Activate requested position
-			if (itemNav) {
-				activate(o.startAt);
-				self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
-			} else {
-				slideTo(o.startAt, 1);
-			}
-
 			// Initiate automatic cycling
 			if (o.cycleBy && !parallax) {
 				self[o.startPaused ? 'pause' : 'resume']();
 			}
 
 			// Mark instance as initialized
-			initialized = 1;
+			self.initialized = 1;
 
 			// Return instance
 			return self;
