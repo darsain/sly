@@ -714,7 +714,7 @@
 		 * @return {Int}  Item index, or -1 if not found.
 		 */
 		function getIndex(item) {
-			return type(item) !== 'undefined' ?
+			return item != null ?
 					isNumber(item) ?
 						item >= 0 && item < items.length ? item : -1 :
 						$items.index(item) :
@@ -1038,7 +1038,7 @@
 
 			if (itemNav) {
 				// Insert the element(s)
-				if (type(index) === 'undefined' || !items[0]) {
+				if (index == null || !items[0]) {
 					$element.appendTo($slidee);
 				} else if (items.length) {
 					$element.insertBefore(items[index].el);
@@ -1218,7 +1218,7 @@
 				var names = name.split(' ');
 				for (var n = 0, nl = names.length; n < nl; n++) {
 					callbacks[names[n]] = callbacks[names[n]] || [];
-					if (type(fn) === 'undefined') {
+					if (fn == null) {
 						callbacks[names[n]].length = 0;
 					} else {
 						var index = callbackIndex(names[n], fn);
@@ -1905,7 +1905,7 @@
 		function testProp(prop) {
 			for (var p = 0, pl = prefixes.length; p < pl; p++) {
 				var prefixedProp = prefixes[p] ? prefixes[p] + prop.charAt(0).toUpperCase() + prop.slice(1) : prop;
-				if (el.style[prefixedProp] !== undefined) {
+				if (el.style[prefixedProp] != null) {
 					return prefixedProp;
 				}
 			}
