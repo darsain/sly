@@ -97,7 +97,10 @@
 		var last = {};
 		var animation = {};
 		var move = {};
-		var dragging = { released: 1 };
+		var dragging = {
+			released: 1,
+			pathToLock: 5
+		};
 		var renderID = 0;
 		var historyID = 0;
 		var cycleID = 0;
@@ -119,6 +122,7 @@
 		self.pages = pages;
 		self.isPaused = 0;
 		self.options = o;
+		self.dragging = dragging;
 
 		/**
 		 * (Re)Loading function.
@@ -1330,28 +1334,34 @@
 			continuousInit(source);
 
 			// Properties used in dragHandler
+			dragging.init = 1;
 			dragging.$source = $(event.target);
-			dragging.init = 0;
 			dragging.touch = isTouch;
 			dragging.pointer = isTouch ? event.originalEvent.touches[0] : event;
 			dragging.initX = dragging.pointer.pageX;
 			dragging.initY = dragging.pointer.pageY;
-
 			dragging.initPos = isSlidee ? pos.cur : hPos.cur;
 			dragging.start = +new Date();
 			dragging.time = 0;
 			dragging.path = 0;
-			dragging.pathToInit = isSlidee ? isTouch ? 50 : 10 : 0;
+			dragging.delta = 0;
+			dragging.locked = 0;
 			dragging.history = [0, 0, 0, 0];
 			dragging.initLoc = dragging[o.horizontal ? 'initX' : 'initY'];
 			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
 			dragging.deltaMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
+			// Bind dragging events
+			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+
+			// Pause ongoing cycle
+			self.pause(1);
+
 			// Add dragging class
 			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
 
-			// Bind dragging events
-			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+			// Trigger moveStart event
+			trigger('moveStart');
 
 			// Keep track of a dragging path history. This is later used in the
 			// dragging release swing calculation when dragging SLIDEE.
@@ -1372,51 +1382,40 @@
 			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
 			dragging.pathX = dragging.pointer.pageX - dragging.initX;
 			dragging.pathY = dragging.pointer.pageY - dragging.initY;
-			dragging.pathTotal = Math.sqrt(Math.pow(dragging.pathX, 2) + Math.pow(dragging.pathY, 2));
+			dragging.path = Math.sqrt(Math.pow(dragging.pathX, 2) + Math.pow(dragging.pathY, 2));
 			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
 
-			// Initialization
-			if (!dragging.init && dragging.pathTotal > dragging.pathToInit) {
-				if (dragging.slidee) {
-					// If path has reached the pathToInit value, but in a wrong direction, cancel dragging
-					if (o.horizontal ? Math.abs(dragging.pathX) < Math.abs(dragging.pathY) : Math.abs(dragging.pathX) > Math.abs(dragging.pathY)) {
-						dragEnd();
-						return;
-					}
+			if (!dragging.locked && dragging.path > dragging.pathToLock) {
+				dragging.locked = 1;
+				if (o.horizontal ? Math.abs(dragging.pathX) < Math.abs(dragging.pathY) : Math.abs(dragging.pathX) > Math.abs(dragging.pathY)) {
+					// If path has reached the pathToLock distance, but in a wrong direction, cancel dragging
+					dragging.released = 1;
+				} else if (dragging.slidee) {
 					// Disable click on a source element, as it is unwelcome when dragging SLIDEE
 					dragging.$source.on(clickEvent, disableOneEvent);
 				}
-				// Mark dragging as initiated
-				dragging.init = 1;
-				// Pause ongoing cycle
-				self.pause(1);
-				// Trigger moveStart event
-				trigger('moveStart');
 			}
 
-			// Proceed when initialized
-			if (dragging.init) {
-				if (dragging.released) {
-					if (!dragging.touch) {
-						stopDefault(event);
-					}
-
-					dragEnd();
-
-					// Adjust path with a swing on mouse release
-					if (o.releaseSwing && dragging.slidee) {
-						dragging.swing = (dragging.delta - dragging.history[0]) / 40 * 300;
-						dragging.delta += dragging.swing;
-						dragging.tweese = Math.abs(dragging.swing) > 10;
-					}
-				} else {
+			// Cancel dragging on release
+			if (dragging.released) {
+				if (!dragging.touch) {
 					stopDefault(event);
 				}
 
-				slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
-			} else if (dragging.released) {
 				dragEnd();
+
+				// Adjust path with a swing on mouse release
+				if (o.releaseSwing && dragging.slidee) {
+					dragging.swing = (dragging.delta - dragging.history[0]) / 40 * 300;
+					dragging.delta += dragging.swing;
+					dragging.tweese = Math.abs(dragging.swing) > 10;
+				}
+			} else {
+				stopDefault(event);
 			}
+
+			slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
+
 		}
 
 		/**
