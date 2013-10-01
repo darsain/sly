@@ -304,7 +304,7 @@
 					activate(items.length > 0 ? items.length - 1 : 0);
 				}
 				// Fix possible overflowing
-				slideTo(within(pos.dest, pos.start, pos.end));
+				slideTo(centeredNav && items.length ? items[rel.activeItem].center : within(pos.dest, pos.start, pos.end));
 			} else {
 				if (!self.initialized) {
 					slideTo(o.startAt, 1);
