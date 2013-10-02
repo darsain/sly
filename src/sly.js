@@ -1077,7 +1077,7 @@
 					$items.eq(index).remove();
 
 					// If the current item is being removed, activate new one after reload
-					var reactivate = index === rel.activeItem && !(forceCenteredNav && o.activateMiddle);
+					var reactivate = index === rel.activeItem;
 
 					// Adjust the activeItem index
 					if (index < rel.activeItem) {
