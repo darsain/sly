@@ -60,7 +60,6 @@ Or manually download the latest stable release:
 - **[Methods](https://github.com/Darsain/sly/wiki/Methods)** - all available methods, and how to use them
 - **[Events](https://github.com/Darsain/sly/wiki/Events)** - all available events, and how to register callbacks
 - **[Parallax](https://github.com/Darsain/sly/wiki/Parallax)** - how to initiate and use Sly's parallax mode
-- **[Known Issues](https://github.com/Darsain/sly/wiki/Known-Issues)** - what to look out for when using Sly
 
 ## Roadmap
 
