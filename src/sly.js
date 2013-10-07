@@ -98,8 +98,7 @@
 		var animation = {};
 		var move = {};
 		var dragging = {
-			released: 1,
-			pathToLock: 5
+			released: 1
 		};
 		var renderID = 0;
 		var historyID = 0;
@@ -1347,6 +1346,7 @@
 			dragging.delta = 0;
 			dragging.locked = 0;
 			dragging.history = [0, 0, 0, 0];
+			dragging.pathToLock = isSlidee ? isTouch ? 30 : 10 : 0;
 			dragging.initLoc = dragging[o.horizontal ? 'initX' : 'initY'];
 			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
 			dragging.deltaMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
