@@ -1854,7 +1854,7 @@
 	 * @return {Int}
 	 */
 	function getPx($item, property) {
-		return parseInt($item.css(property), 10) || 0;
+		return 0 | Math.round(String($item.css(property)).replace(/[^0-9.]/g, ''));
 	}
 
 	/**
