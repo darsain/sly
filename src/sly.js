@@ -20,6 +20,7 @@
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
 	var tmpArray = [];
+	var time;
 
 	/**
 	 * Sly.
@@ -99,6 +100,11 @@
 		var move = {};
 		var dragging = {
 			released: 1
+		};
+		var scrolling = {
+			last: 0,
+			delta: 0,
+			resetTime: 200
 		};
 		var renderID = 0;
 		var historyID = 0;
@@ -620,6 +626,9 @@
 		 * @return {Void}
 		 */
 		self.slideBy = function (delta, immediate) {
+			if (!delta) {
+				return;
+			}
 			if (itemNav) {
 				self[centeredNav ? 'toCenter' : 'toStart'](
 					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
@@ -1494,7 +1503,23 @@
 		 */
 		function normalizeWheelDelta(event) {
 			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
-			return within(-event.wheelDelta || event.detail || event.deltaY, -1, 1);
+			scrolling.curDelta = event.wheelDelta ? -event.wheelDelta / 120 : (event.detail || event.deltaY) / 3;
+			if (!itemNav) {
+				return scrolling.curDelta;
+			}
+			time = +new Date();
+			if (scrolling.last < time - scrolling.resetTime) {
+				scrolling.delta = 0;
+			}
+			scrolling.last = time;
+			scrolling.delta += scrolling.curDelta;
+			if (Math.abs(scrolling.delta) < 1) {
+				scrolling.finalDelta = 0;
+			} else {
+				scrolling.finalDelta = Math.round(scrolling.delta / 1);
+				scrolling.delta %= 1;
+			}
+			return scrolling.finalDelta;
 		}
 
 		/**
