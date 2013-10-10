@@ -8,10 +8,10 @@
 	"dependencies": {
 		"jquery": ">=1.7"
 	},
-	"bugs": "https://github.com/Darsain/sly/issues",
+	"bugs": "http://github.com/Darsain/sly/issues",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/igorzg/sly.git"
+		"url": "http://github.com/igorzg/sly.git"
 	},
 	"licenses": [
 		{
