@@ -1492,7 +1492,7 @@
 		 *
 		 * @return {Int}
 		 */
-	         function normalizeWheelDelta(event) {
+	    function normalizeWheelDelta(event) {
 			var wheelDeltaX = 0, wheelDeltaY = 0;
 			if ('wheelDeltaX' in event) {
 				wheelDeltaX = event.wheelDeltaX / 120; // chrome support this
@@ -1503,7 +1503,7 @@
 				wheelDeltaX = wheelDeltaY = -event.detail / 3;
 			}
 			return wheelDeltaY * -1;
-		 }
+		}
 
 
 		/**
