@@ -1492,10 +1492,19 @@
 		 *
 		 * @return {Int}
 		 */
-		function normalizeWheelDelta(event) {
-			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
-			return within(-event.wheelDelta || event.detail || event.deltaY, -1, 1);
+	    function normalizeWheelDelta(event) {
+			var wheelDeltaX = 0, wheelDeltaY = 0;
+			if ('wheelDeltaX' in event) {
+				wheelDeltaX = event.wheelDeltaX / 120; // chrome support this
+				wheelDeltaY = event.wheelDeltaY / 120;
+			} else if ('wheelDelta' in event) {
+				wheelDeltaX = wheelDeltaY = event.wheelDelta / 120;
+			} else if ('detail' in event) {
+				wheelDeltaX = wheelDeltaY = -event.detail / 3;
+			}
+			return wheelDeltaY * -1;
 		}
+
 
 		/**
 		 * Mouse scrolling handler.

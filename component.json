@@ -1,17 +1,17 @@
 {
 	"name": "sly",
 	"description": "One-directional scrolling with item based navigation support.",
-	"version": "1.1.0",
-	"date": "2013-09-10 18:41:41 +00:00",
+	"version": "1.2.0",
+	"date": "2013-10-10 12:42:00 +02:00",
 	"homepage": "https://github.com/Darsain/sly",
-	"main": "./dist/sly.js",
+	"main": "./dist/sly.js",git 
 	"dependencies": {
 		"jquery": ">=1.7"
 	},
 	"bugs": "https://github.com/Darsain/sly/issues",
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/Darsain/sly.git"
+		"url": "http://github.com/igorzg/sly.git"
 	},
 	"licenses": [
 		{
