@@ -269,8 +269,10 @@
 				// Populate pages array
 				if (itemNav) {
 					$.each(items, function (i, item) {
-						if (forceCenteredNav || item.start + item.size > tempPagePos) {
-							tempPagePos = item[forceCenteredNav ? 'center' : 'start'];
+						if (forceCenteredNav) {
+							pages.push(item.center);
+						} else if(item.end > tempPagePos && tempPagePos < pos.end) {
+							tempPagePos = item.start;
 							pages.push(tempPagePos);
 							tempPagePos += frameSize;
 						}
