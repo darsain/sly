@@ -138,7 +138,6 @@
 		 */
 		function load() {
 			// Local variables
-			var ignoredMargin = 0;
 			var lastItemsCount = 0;
 			var lastPagesCount = pages.length;
 
@@ -167,13 +166,9 @@
 				// Needed variables
 				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop');
 				var paddingEnd = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom');
-				var marginStart = getPx($items, o.horizontal ? 'marginLeft' : 'marginTop');
-				var marginEnd = getPx($items.slice(-1), o.horizontal ? 'marginRight' : 'marginBottom');
-				var centerOffset = 0;
 				var areFloated = $items.css('float') !== 'none';
-
-				// Update ignored margin
-				ignoredMargin = marginStart ? 0 : marginEnd;
+				var ignoredMargin = 0;
+				var lastItem;
 
 				// Reset slideeSize
 				slideeSize = 0;
@@ -182,26 +177,26 @@
 				$items.each(function (i, element) {
 					// Item
 					var $item = $(element);
-					var itemSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight'](true);
+					var itemSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
 					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
 					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
-					var itemData = {
-						el: element,
-						size: itemSize,
-						half: itemSize / 2,
-						start: slideeSize - (!i || o.horizontal ? 0 : itemMarginStart),
-						center: slideeSize - Math.round(frameSize / 2 - itemSize / 2),
-						end: slideeSize - frameSize + itemSize - (marginStart ? 0 : itemMarginEnd)
-					};
+					var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
+					var singleSpaced = !itemMarginStart || !itemMarginEnd;
+					var item = {};
+					item.el = element;
+					item.size = singleSpaced ? itemSize : itemSizeFull;
+					item.half = item.size / 2;
+					item.start = slideeSize + (singleSpaced ? itemMarginStart : 0);
+					item.center = item.start - Math.round(frameSize / 2 - item.size / 2);
+					item.end = item.start - frameSize + item.size;
 
-					// Account for centerOffset & slidee padding
+					// Account for slidee padding
 					if (!i) {
-						centerOffset = -(forceCenteredNav ? Math.round(frameSize / 2 - itemSize / 2) : 0) + paddingStart;
 						slideeSize += paddingStart;
 					}
 
 					// Increment slidee size for size of the active element
-					slideeSize += itemSize;
+					slideeSize += itemSizeFull;
 
 					// Try to account for vertical margin collapsing in vertical mode
 					// It's not bulletproof, but should work in 99% of cases
@@ -214,11 +209,14 @@
 
 					// Things to be done on last item
 					if (i === $items.length - 1) {
+						item.end += paddingEnd;
 						slideeSize += paddingEnd;
+						ignoredMargin = singleSpaced ? itemMarginEnd : 0;
 					}
 
 					// Add item object to items array
-					items.push(itemData);
+					items.push(item);
+					lastItem = item;
 				});
 
 				// Resize SLIDEE to fit all items
@@ -228,8 +226,12 @@
 				slideeSize -= ignoredMargin;
 
 				// Set limits
-				pos.start = centerOffset;
-				pos.end = forceCenteredNav ? (items.length ? items[items.length - 1].center : centerOffset) : Math.max(slideeSize - frameSize, 0);
+				if (items.length) {
+					pos.start =  items[0][forceCenteredNav ? 'center' : 'start'];
+					pos.end = items[items.length - 1][forceCenteredNav ? 'center' : 'end'];
+				} else {
+					pos.start = pos.end = 0;
+				}
 			}
 
 			// Calculate SLIDEE center position
