@@ -166,8 +166,10 @@
 				// Needed variables
 				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop');
 				var paddingEnd = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom');
+				var borderBox = $($items).css('boxSizing') === 'border-box';
 				var areFloated = $items.css('float') !== 'none';
 				var ignoredMargin = 0;
+				var lastItemIndex = $items.length - 1;
 				var lastItem;
 
 				// Reset slideeSize
@@ -208,7 +210,7 @@
 					}
 
 					// Things to be done on last item
-					if (i === $items.length - 1) {
+					if (i === lastItemIndex) {
 						item.end += paddingEnd;
 						slideeSize += paddingEnd;
 						ignoredMargin = singleSpaced ? itemMarginEnd : 0;
@@ -220,7 +222,7 @@
 				});
 
 				// Resize SLIDEE to fit all items
-				$slidee[0].style[o.horizontal ? 'width' : 'height'] = slideeSize + 'px';
+				$slidee[0].style[o.horizontal ? 'width' : 'height'] = (borderBox ? slideeSize: slideeSize - paddingStart - paddingEnd) + 'px';
 
 				// Adjust internal SLIDEE size for last margin
 				slideeSize -= ignoredMargin;
@@ -228,7 +230,7 @@
 				// Set limits
 				if (items.length) {
 					pos.start =  items[0][forceCenteredNav ? 'center' : 'start'];
-					pos.end = items[items.length - 1][forceCenteredNav ? 'center' : 'end'];
+					pos.end = forceCenteredNav ? lastItem.center : frameSize < slideeSize ? lastItem.end : pos.start;
 				} else {
 					pos.start = pos.end = 0;
 				}
