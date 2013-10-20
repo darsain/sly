@@ -310,7 +310,7 @@
 				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
 					// Activate last item if previous active has been removed, or first item
 					// when there were no items before, and new got appended.
-					activate(items.length > 0 ? items.length - 1 : 0);
+					activate(rel.activeItem >= items.length ? items.length - 1 : 0, !lastItemsCount);
 				}
 				// Fix possible overflowing
 				slideTo(centeredNav && items.length ? items[rel.activeItem].center : within(pos.dest, pos.start, pos.end));
@@ -758,7 +758,7 @@
 		 *
 		 * @return {Mixed} Activated item index or false on fail.
 		 */
-		function activate(item) {
+		function activate(item, force) {
 			var index = getIndex(item);
 
 			if (!itemNav || index < 0) {
@@ -767,7 +767,7 @@
 
 			// Update classes, last active index, and trigger active event only when there
 			// has been a change. Otherwise just return the current active index.
-			if (last.active !== index) {
+			if (last.active !== index || force) {
 				// Update classes
 				$items.eq(rel.activeItem).removeClass(o.activeClass);
 				$items.eq(index).addClass(o.activeClass);
