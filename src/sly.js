@@ -273,6 +273,9 @@
 						} else if (item.start + item.size > tempPagePos && tempPagePos < pos.end) {
 							tempPagePos = item.start;
 							pages.push(tempPagePos);
+							if (tempPagePos >= pos.end) {
+								return;
+							}
 							tempPagePos += frameSize;
 							if (tempPagePos > pos.end) {
 								pages.push(pos.end);
