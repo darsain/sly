@@ -1883,7 +1883,7 @@
 	 * @return {Int}
 	 */
 	function getPx($item, property) {
-		return 0 | Math.round(String($item.css(property)).replace(/[^0-9.]/g, ''));
+		return 0 | Math.round(String($item.css(property)).replace(/[^\-0-9.]/g, ''));
 	}
 
 	/**
