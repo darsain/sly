@@ -246,13 +246,8 @@
 			if ($handle.length && sbSize > 0) {
 				// Stretch scrollbar handle to represent the visible area
 				if (o.dynamicHandle) {
-					// ForceCentered navigation edge case
-					if (forceCenteredNav) {
-						handleSize = items.length ? sbSize * frameSize / (frameSize + items[items.length-1].center - items[0].center) : sbSize;
-					} else {
-						handleSize = sbSize * frameSize / slideeSize;
-					}
-					handleSize = within(Math.round(handleSize), o.minHandleSize, sbSize);
+					handleSize = pos.start === pos.end ? sbSize : Math.round(sbSize * frameSize / slideeSize);
+					handleSize = within(handleSize, o.minHandleSize, sbSize);
 					$handle[0].style[o.horizontal ? 'width' : 'height'] = handleSize + 'px';
 				} else {
 					handleSize = $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
