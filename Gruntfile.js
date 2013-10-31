@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 		// JSHint the code.
 		jshint: {
 			options: {
-				jshintrc: '.jshintrc'
+				jshintrc: true
 			},
 			all: ['src/*.js']
 		},
@@ -57,7 +57,7 @@ module.exports = function(grunt) {
 
 		// Compress files.
 		compress: {
-			dist: {
+			gzip: {
 				options: {
 					mode: 'gzip'
 				},
@@ -67,10 +67,17 @@ module.exports = function(grunt) {
 		},
 
 		// Bump up fields in JSON files.
-		bumpup: ['component.json', '<%= pkg.name %>.jquery.json'],
+		bumpup: {
+			options: {
+				updateProps: {
+					pkg: 'component.json',
+				},
+			},
+			files: ['component.json', '<%= pkg.name %>.jquery.json'],
+		},
 
 		// Commit changes and tag the latest commit with a version from JSON file.
-		tagrelease: 'component.json'
+		tagrelease: '<%= pkg.version %>'
 	});
 
 	// These plugins provide necessary tasks.
@@ -81,12 +88,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-tagrelease');
 	grunt.loadNpmTasks('grunt-bumpup');
 	grunt.loadNpmTasks('grunt-gcc');
-
-	// Task for updating the pkg config property. Needs to be run after
-	// bumpup so the next tasks in queue can work with updated values.
-	grunt.registerTask('updatePkg', function () {
-		grunt.config.set('pkg', grunt.file.readJSON('component.json'));
-	});
 
 	// Build task.
 	grunt.registerTask('build', function () {
@@ -100,7 +101,6 @@ module.exports = function(grunt) {
 		type = type ? type : 'patch';
 		grunt.task.run('jshint');
 		grunt.task.run('bumpup:' + type);
-		grunt.task.run('updatePkg');
 		grunt.task.run('build');
 		grunt.task.run('tagrelease');
 	});
