@@ -21,8 +21,6 @@ requestAnimationFrame, and GPU accelerated positioning with fallbacks for browse
 
 - jQuery 1.7+
 
-Thats it. You don't need 200kB of jQuery-UI to Sly :)
-
 #### Compatibility
 
 Works everywhere, even in IE6+ abominations, but that is a complete accident :) IE 6-7 are not officially supported.
@@ -46,16 +44,20 @@ You can install with [Bower](http://bower.io/):
 bower install sly
 ```
 
-Or manually download the latest stable release:
+## Download
 
-- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js) - 14KB, 6KB gzipped
-- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js) - 50KB
+Latest stable release:
+
+- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js) - 16KB, 7KB gzipped
+- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js) - 55KB
 
 Development version is available in `src/sly.js`:
 
 - [Development WIP](https://raw.github.com/Darsain/sly/master/src/sly.js)
 
-If you're having issues with latest stable, check if it isn't already fixed in this one before opening a new issue.
+When isolating an issues on jsfiddle, you can use this URL with always current latest stable version of Sly:
+
+- [http://darsain.github.io/sly/js/sly.min.js](http://darsain.github.io/sly/js/sly.min.js)
 
 ## Documentation
 
