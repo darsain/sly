@@ -51,6 +51,12 @@ Or manually download the latest stable release:
 - [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js) - 14KB, 6KB gzipped
 - [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js) - 50KB
 
+Development version is available in `src/sly.js`:
+
+- [Development WIP](https://raw.github.com/Darsain/sly/master/src/sly.js)
+
+If you're having issues with latest stable, check if it isn't already fixed in this one before opening a new issue.
+
 ## Documentation
 
 - **[Markup](https://github.com/Darsain/sly/wiki/Markup)** - how should the HTML look like
