@@ -54,7 +54,7 @@ header .projectname { text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 .example .controls button i { position: relative; top: -2px; margin: 5px; padding: 0; font-size: 32px; vertical-align: middle; }
 
 /* 3D shenanigans */
-.csstransforms3d.preserve3d .frame {
+.no-ie.csstransforms3d .frame {
 	height: 200px;
 	line-height: 200px;
 	-webkit-perspective: 800px;
@@ -64,12 +64,12 @@ header .projectname { text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 	-ms-perspective-origin: 50% 50%;
 	perspective-origin: 50% 50%;
 }
-.csstransforms3d.preserve3d .frame ul {
+.no-ie.csstransforms3d .frame ul {
 	-webkit-transform-style: preserve-3d;
 	-ms-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 }
-.csstransforms3d.preserve3d .frame ul li {
+.no-ie.csstransforms3d .frame ul li {
 	position: relative;
 	margin: 0 -25px;
 	border: 1px solid #3e404a;
@@ -79,13 +79,13 @@ header .projectname { text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 	-webkit-transition: -webkit-transform 300ms ease-out;
 	transition: transform 300ms ease-out;
 }
-.csstransforms3d.preserve3d .frame ul li.active {
+.no-ie.csstransforms3d .frame ul li.active {
 	z-index: 10;
 	-webkit-transform: scale(1);
 	-ms-transform: scale(1);
 	transform: scale(1);
 }
-.csstransforms3d.preserve3d .frame ul li.active ~ li {
+.no-ie.csstransforms3d .frame ul li.active ~ li {
 	-webkit-transform: rotateY(-60deg) scale(0.9);
 	-ms-transform: rotateY(-60deg) scale(0.9);
 	transform: rotateY(-60deg) scale(0.9);
