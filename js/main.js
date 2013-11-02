@@ -2,6 +2,13 @@
 jQuery(function ($) {
 	'use strict';
 
+	// Detect IE.
+	// Feature detection of "transform-style: preserve-3d" doesn't work, so this
+	// is the only way how to fall back to a 2D front page example in IE that
+	// doesn't have a full support of 3D transforms across the board.
+	document.getElementsByTagName('html')[0].className += ' ' +
+		(~window.navigator.userAgent.indexOf('MSIE') ? 'ie' : 'no-ie');
+
 	// ==========================================================================
 	//   Header example
 	// ==========================================================================
