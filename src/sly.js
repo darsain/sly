@@ -271,7 +271,7 @@
 					$.each(items, function (i, item) {
 						if (forceCenteredNav) {
 							pages.push(item.center);
-						} else if (item.start + item.size > tempPagePos && tempPagePos < pos.end) {
+						} else if (item.start + item.size > tempPagePos && tempPagePos <= pos.end) {
 							tempPagePos = item.start;
 							pages.push(tempPagePos);
 							if (tempPagePos >= pos.end) {
