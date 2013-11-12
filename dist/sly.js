@@ -1,5 +1,5 @@
 /*!
- * sly 1.2.0 - 31st Oct 2013
+ * sly 1.2.1 - 12th Nov 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -278,14 +278,11 @@
 					$.each(items, function (i, item) {
 						if (forceCenteredNav) {
 							pages.push(item.center);
-						} else if (item.start + item.size > tempPagePos && tempPagePos < pos.end) {
+						} else if (item.start + item.size > tempPagePos && tempPagePos <= pos.end) {
 							tempPagePos = item.start;
 							pages.push(tempPagePos);
-							if (tempPagePos >= pos.end) {
-								return;
-							}
 							tempPagePos += frameSize;
-							if (tempPagePos > pos.end) {
+							if (tempPagePos > pos.end && tempPagePos < pos.end + frameSize) {
 								pages.push(pos.end);
 							}
 						}
