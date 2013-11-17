@@ -1424,12 +1424,11 @@
 					dragging.delta += dragging.swing;
 					dragging.tweese = Math.abs(dragging.swing) > 10;
 				}
-			} else {
+			} else if (dragging.locked || !dragging.touch) {
 				stopDefault(event);
 			}
 
 			slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
-
 		}
 
 		/**
