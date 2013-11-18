@@ -1,5 +1,5 @@
 /*!
- * sly 1.2.1 - 12th Nov 2013
+ * sly 1.2.2 - 18th Nov 2013
  * https://github.com/Darsain/sly
  *
  * Licensed under the MIT license.
@@ -1431,12 +1431,11 @@
 					dragging.delta += dragging.swing;
 					dragging.tweese = Math.abs(dragging.swing) > 10;
 				}
-			} else {
+			} else if (dragging.locked || !dragging.touch) {
 				stopDefault(event);
 			}
 
 			slideTo(dragging.slidee ? Math.round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
-
 		}
 
 		/**
