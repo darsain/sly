@@ -27,7 +27,7 @@ Works everywhere, even in IE6+ abominations, but that is a complete accident :) 
 
 *Mobile:* Sly has a touch support, but mobile is not tested. If you want to help with that, you are welcome!
 
-### [Changelog](https://github.com/Darsain/sly/wiki/Changelog)
+### [Changelog](https://github.com/darsain/sly/wiki/Changelog)
 
 Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 
@@ -48,12 +48,12 @@ bower install sly
 
 Latest stable release:
 
-- [Production (minified)](https://raw.github.com/Darsain/sly/master/dist/sly.min.js) - 16KB, 7KB gzipped
-- [Development (full source)](https://raw.github.com/Darsain/sly/master/dist/sly.js) - 55KB
+- [Production (minified)](https://raw.github.com/darsain/sly/master/dist/sly.min.js) - 16KB, 7KB gzipped
+- [Development (full source)](https://raw.github.com/darsain/sly/master/dist/sly.js) - 55KB
 
 Development version is available in `src/sly.js`:
 
-- [Development WIP](https://raw.github.com/Darsain/sly/master/src/sly.js)
+- [Development WIP](https://raw.github.com/darsain/sly/master/src/sly.js)
 
 When isolating an issues on jsfiddle, you can use this URL with always current latest stable version of Sly:
 
@@ -61,13 +61,13 @@ When isolating an issues on jsfiddle, you can use this URL with always current l
 
 ## Documentation
 
-- **[Markup](https://github.com/Darsain/sly/wiki/Markup)** - how should the HTML look like
-- **[Calling](https://github.com/Darsain/sly/wiki/Calling)** - how to call Sly
-- **[Options](https://github.com/Darsain/sly/wiki/Options)** - all available options
-- **[Properties](https://github.com/Darsain/sly/wiki/Properties)** - accessible Sly object properties
-- **[Methods](https://github.com/Darsain/sly/wiki/Methods)** - all available methods, and how to use them
-- **[Events](https://github.com/Darsain/sly/wiki/Events)** - all available events, and how to register callbacks
-- **[Parallax](https://github.com/Darsain/sly/wiki/Parallax)** - how to initiate and use Sly's parallax mode
+- **[Markup](https://github.com/darsain/sly/wiki/Markup)** - how should the HTML look like
+- **[Calling](https://github.com/darsain/sly/wiki/Calling)** - how to call Sly
+- **[Options](https://github.com/darsain/sly/wiki/Options)** - all available options
+- **[Properties](https://github.com/darsain/sly/wiki/Properties)** - accessible Sly object properties
+- **[Methods](https://github.com/darsain/sly/wiki/Methods)** - all available methods, and how to use them
+- **[Events](https://github.com/darsain/sly/wiki/Events)** - all available events, and how to register callbacks
+- **[Parallax](https://github.com/darsain/sly/wiki/Parallax)** - how to initiate and use Sly's parallax mode
 
 ## Roadmap
 
