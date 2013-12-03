@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
 	// Grunt configuration
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('component.json'),
+		pkg: grunt.file.readJSON('bower.json'),
 		meta: {
 			banner: '/*!\n' +
 				' * <%= pkg.name %> <%= pkg.version %> - <%= grunt.template.today("dS mmm yyyy") %>\n' +
