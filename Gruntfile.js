@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
 	// Grunt configuration
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('bower.json'),
+		pkg: grunt.file.readJSON('meta.json'),
 		meta: {
 			banner: '/*!\n' +
 				' * <%= pkg.name %> <%= pkg.version %> - <%= grunt.template.today("dS mmm yyyy") %>\n' +
@@ -70,10 +70,10 @@ module.exports = function(grunt) {
 		bumpup: {
 			options: {
 				updateProps: {
-					pkg: 'component.json',
+					pkg: 'meta.json',
 				},
 			},
-			files: ['component.json', '<%= pkg.name %>.jquery.json'],
+			files: ['meta.json', '<%= pkg.name %>.jquery.json'],
 		},
 
 		// Commit changes and tag the latest commit with a version from JSON file.

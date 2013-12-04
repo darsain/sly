@@ -36,14 +36,6 @@ Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 **Please do not populate Issues tracker with non-issues!** If you have a question about Sly, you can use the
 **[Sly forum](https://groups.google.com/d/forum/sly-js)**.
 
-## Installation
-
-You can install with [Bower](http://bower.io/):
-
-```shell
-bower install sly
-```
-
 ## Download
 
 Latest stable release:
