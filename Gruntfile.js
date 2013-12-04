@@ -1,5 +1,5 @@
 /*jshint node:true */
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 	'use strict';
 
 	// Override environment based line endings enforced by Grunt
@@ -55,17 +55,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		// Compress files.
-		compress: {
-			gzip: {
-				options: {
-					mode: 'gzip'
-				},
-				src: 'dist/<%= pkg.name %>.min.js',
-				dest: 'dist/<%= pkg.name %>.min.js.gz'
-			}
-		},
-
 		// Bump up fields in JSON files.
 		bumpup: {
 			options: {
@@ -81,7 +70,6 @@ module.exports = function(grunt) {
 	});
 
 	// These plugins provide necessary tasks.
-	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-clean');
