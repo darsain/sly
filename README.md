@@ -43,11 +43,7 @@ Latest stable release:
 - [Production (minified)](https://raw.github.com/darsain/sly/master/dist/sly.min.js) - 16KB, 7KB gzipped
 - [Development (full source)](https://raw.github.com/darsain/sly/master/dist/sly.js) - 55KB
 
-Development version is available in `src/sly.js`:
-
-- [Development WIP](https://raw.github.com/darsain/sly/master/src/sly.js)
-
-When isolating an issues on jsfiddle, you can use this URL with always current latest stable version of Sly:
+When isolating issues on jsfiddle, you can use this URL:
 
 - [http://darsain.github.io/sly/js/sly.min.js](http://darsain.github.io/sly/js/sly.min.js)
 
