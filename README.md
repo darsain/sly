@@ -41,7 +41,7 @@ Sly upholds the [Semantic Versioning Specification](http://semver.org/).
 Latest stable release:
 
 - [Production `sly.min.js`](https://raw.github.com/darsain/sly/master/dist/sly.min.js) - 16KB, 7KB gzipped
-- [Development `sly.min.js`](https://raw.github.com/darsain/sly/master/dist/sly.js) - 55KB
+- [Development `sly.js`](https://raw.github.com/darsain/sly/master/dist/sly.js) - 55KB
 
 When isolating issues on jsfiddle, you can use this URL:
 
