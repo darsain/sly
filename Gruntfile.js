@@ -11,13 +11,13 @@ module.exports = function (grunt) {
 		meta: {
 			banner: '/*!\n' +
 				' * <%= pkg.name %> <%= pkg.version %> - <%= grunt.template.today("dS mmm yyyy") %>\n' +
-				' * <%= pkg.homepage %>\n' +
+				' * <%= pkg.repository.homepage %>\n' +
 				' *\n' +
 				' * Licensed under the <%= pkg.licenses[0].type %> license.\n' +
 				' * <%= pkg.licenses[0].url %>\n' +
 				' */\n',
 			bannerLight: '/*! <%= pkg.name %> <%= pkg.version %>' +
-				' - <%= grunt.template.today("dS mmm yyyy") %> | <%= pkg.homepage %> */'
+				' - <%= grunt.template.today("dS mmm yyyy") %> | <%= pkg.repository.homepage %> */'
 		},
 
 		// JSHint the code.
