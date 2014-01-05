@@ -1709,6 +1709,10 @@
 				$.removeData(frame, namespace);
 			}
 
+			// Clean up collections
+			items.length = pages.length = 0;
+			last = {};
+
 			// Reset initialized status and return the instance
 			self.initialized = 0;
 			return self;
