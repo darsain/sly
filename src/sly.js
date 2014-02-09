@@ -1441,6 +1441,11 @@
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
+			// Make sure that disableOneEvent is not active in next tick.
+			setTimeout(function () {
+				dragging.$source.off(clickEvent, disableOneEvent);
+			});
+
 			// Resume ongoing cycle
 			self.resume(1);
 
