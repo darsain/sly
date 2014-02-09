@@ -1,6 +1,6 @@
 /*!
- * sly 1.2.2 - 18th Nov 2013
- * https://github.com/Darsain/sly
+ * sly 1.2.3 - 9th Feb 2014
+ * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
  * http://opensource.org/licenses/MIT
@@ -1448,6 +1448,11 @@
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
+			// Make sure that disableOneEvent is not active in next tick.
+			setTimeout(function () {
+				dragging.$source.off(clickEvent, disableOneEvent);
+			});
+
 			// Resume ongoing cycle
 			self.resume(1);
 
@@ -1715,6 +1720,10 @@
 				// Remove the instance from element data storage
 				$.removeData(frame, namespace);
 			}
+
+			// Clean up collections
+			items.length = pages.length = 0;
+			last = {};
 
 			// Reset initialized status and return the instance
 			self.initialized = 0;
