@@ -112,6 +112,7 @@
 		var cycleID = 0;
 		var continuousID = 0;
 		var i, l;
+		var cssChanges = new CSSStore();
 
 		// Normalizing frame
 		if (!parallax) {
@@ -1702,6 +1703,9 @@
 				$items.eq(rel.activeItem).removeClass(o.activeClass);
 			}
 
+			// Revert CSS changes
+			cssChanges.restore();
+
 			// Remove page items
 			$pb.empty();
 
@@ -1740,9 +1744,9 @@
 			var $movables = $handle;
 			if (!parallax) {
 				$movables = $movables.add($slidee);
-				$frame.css('overflow', 'hidden');
+				cssChanges.set($frame, 'overflow', 'hidden');
 				if (!transform && $frame.css('position') === 'static') {
-					$frame.css('position', 'relative');
+					cssChanges.set($frame, 'position', 'relative');
 				}
 			}
 			if (transform) {
@@ -1751,9 +1755,9 @@
 				}
 			} else {
 				if ($sb.css('position') === 'static') {
-					$sb.css('position', 'relative');
+					cssChanges.set($sb, 'position', 'relative');
 				}
-				$movables.css({ position: 'absolute' });
+				cssChanges.set($movables, 'position', 'absolute');
 			}
 
 			// Navigation buttons
@@ -1920,6 +1924,80 @@
 	 */
 	function within(number, min, max) {
 		return number < min ? min : number > max ? max : number;
+	}
+
+	/**
+	 * CSS dictionary store object for tracking CSS changes.
+	 *
+	 * @class
+	 */
+	function CSSStore() {
+		var objects = [];
+		var values = [];
+		var self = this;
+
+		// private methods
+
+		/**
+		 * Dictionary access: get stored values for object, create them if
+		 * they don't exist.
+		 *
+		 * @param {Object} object Object to get/create stored values for.
+		 *
+		 * @return {Object}
+		 */
+		function getValues(object) {
+			var index;
+
+			index = $.inArray(object, objects);
+			if (index === -1) {
+				objects.push(object);
+				values.push({});
+				index = values.length - 1;
+			}
+
+			return values[index];
+		}
+
+		// exposed methods
+
+		/**
+		 * Set a CSS property while storing it's original value.  Will not
+		 * overwrite original value when re-setting property.
+		 *
+		 * @param {Object} object   jQuery object or objects to wrap with jQuery.
+		 * @param {Object} property CSS property to be set.
+		 * @param {Object} value    Value to set CSS property to.
+		 *
+		 * @return {jQuery}
+		 */
+		self.set = function (object, property, value) {
+			var $object = $(object);
+
+			$object.each(function(i, el) {
+				var values = getValues(el);
+				if (values[property] == null) {
+					values[property] = $(el).css(property);
+				}
+				$(el).css(property, value);
+			});
+
+			return $object;
+		};
+
+		/**
+		 * Restore all CSS properties for all stored objects back to their
+		 * original values.
+		 *
+		 * @return {Void}
+		 */
+		self.restore = function () {
+			for (var i = 0; i < objects.length; i++) {
+				$(objects[i]).css(values[i]);
+			}
+			objects = [];
+			values = [];
+		};
 	}
 
 	// Local WindowAnimationTiming interface polyfill
