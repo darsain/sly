@@ -78,6 +78,29 @@
 
 	<div id="content" class="content pagespan">
 
+		<style>
+		.reward {
+			display: block;
+			min-height: 60px;
+			padding: .5em 0 0 80px;
+			background: url('img/paypal-stamp.png') no-repeat left top;
+			color: #3b7bbf;
+		}
+		.reward h4 { margin: 0; }
+		.reward.mini {
+			width: 120px;
+			background-position: center top;
+			margin: 1.5em auto 0;
+			padding: 70px 0 0 0;
+			text-align: center;
+		}
+		.reward.mini h4 { font-size: .9em; }
+		.reward:hover {
+			color: #1e477a;
+			text-decoration: none;
+		}
+		</style>
+
 		<nav id="mainnav" class="mainnav">
 			<div id="carbonads-container">
 				<div class="carbonad">
@@ -92,6 +115,9 @@
 					</script>
 				</div>
 			</div>
+			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=23CALWRSTQ8X2" class="reward mini">
+				<h4>Reward the developer</h4>
+			</a>
 		</nav>
 
 		<section data-point="introduction" data-title="Introduction">
@@ -120,6 +146,15 @@
 			<h3><a href="https://github.com/darsain/sly/wiki/Changelog">Changelog</a></h3>
 
 			<p>Sly upholds the <a href="http://semver.org">Semantic Versioning Specification</a>.</p>
+
+			<h3>Support</h3>
+
+			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=23CALWRSTQ8X2" class="reward">
+				<h4>Reward the developer</h4>
+				<p>And make him happy for maintaining this library! :)</p>
+			</a>
+
+			<p>I don't want to go the Isotope &amp; family route and monetize my libraries. I want them to be accessible to everyone for any use case and any budget. That being said, free software isn't free, it's just paid by with developer's time, and right now I could use some help :)</p>
 		</section>
 
 		<section data-point="performance" data-title="Performance">
