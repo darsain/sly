@@ -156,7 +156,7 @@
 			pos.end = Math.max(slideeSize - frameSize, 0);
 
 			// Sizes & offsets for item based navigations
-			if (itemNav) {
+			if (itemNav && $slidee.children(o.itemSelector).length > 1) {
 				// Save the number of current items
 				lastItemsCount = items.length;
 
@@ -1321,7 +1321,8 @@
 		 */
 		function dragInit(event) {
 			// Ignore when already in progress, or interactive element
-			if (dragging.init || isInteractive(event.target)) {
+			if (dragging.init || isInteractive(event.target) || $slidee.children(o.itemSelector).length <= 1) {
+
 				return;
 			}
 
