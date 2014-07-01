@@ -14,8 +14,8 @@
 
 	// Other global values
 	var $doc = $(document);
-	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
-	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
+	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace + ' pointerdown.' + namespace;
+	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace + ' pointermove.' + namespace + ' pointerup.' + namespace;
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
@@ -1328,6 +1328,7 @@
 			var isTouch = event.type === 'touchstart';
 			var source = event.data.source;
 			var isSlidee = source === 'slidee';
+			var isIETouch = window.navigator.pointerEnabled || window.navigator.msPointerEnabled;
 
 			// Handle dragging conditions
 			if (source === 'handle' && (!o.dragHandle || hPos.start === hPos.end)) {
@@ -1335,7 +1336,7 @@
 			}
 
 			// SLIDEE dragging conditions
-			if (isSlidee && !(isTouch ? o.touchDragging : o.mouseDragging && event.which < 2)) {
+			if (isSlidee && !isIETouch && !(isTouch ? o.touchDragging : o.mouseDragging && event.which < 2)) {
 				return;
 			}
 
