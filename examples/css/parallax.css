@@ -42,5 +42,5 @@ p.center { text-align: center; }
 .pos .max { font-size: 50px; color: #aaa; }
 
 /* Particles */
-.particles { position: absolute; margin: 0; padding: 0; top: 0; left: 0; width: 0; height: 0; list-style: none; }
+.particles { position: absolute; margin: 0; padding: 0; top: 0; left: 0; width: 100%; height: 100%; list-style: none; overflow: hidden; }
 .particles li { position: absolute; top: 0; left: 0; width: 10px; height: 10px; margin: 0; padding: 0; border-radius: 50%; background: #a03232; }
