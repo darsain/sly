@@ -17,11 +17,18 @@
 	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
 	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
+	var wheelEvent = (document.implementation.hasFeature('Event.wheel', '3.0') ? 'wheel.' : 'mousewheel.') + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
 	var interactiveElements = ['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'];
 	var tmpArray = [];
 	var time;
+
+	// Keep track of last fired global wheel event
+	var lastWheel = 0;
+	$doc.on(wheelEvent, function () {
+		lastWheel = +new Date();
+	});
 
 	/**
 	 * Sly.
@@ -1548,6 +1555,12 @@
 		 * @return {Void}
 		 */
 		function scrollHandler(event) {
+			// Don't hijack global scrolling
+			var time = +new Date();
+			if (lastWheel + 300 > time) {
+				lastWheel = time;
+				return;
+			}
 			// Ignore if there is no scrolling to be done
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
@@ -2014,6 +2027,7 @@
 		// Scrolling
 		scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
 		scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+		scrollHijack: 300,  // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
 
 		// Dragging
 		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
