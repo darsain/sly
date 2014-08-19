@@ -1,5 +1,5 @@
 /*!
- * sly 1.2.3 - 9th Feb 2014
+ * sly 1.2.4 - 19th Aug 2014
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -24,11 +24,18 @@
 	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
 	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
+	var wheelEvent = (document.implementation.hasFeature('Event.wheel', '3.0') ? 'wheel.' : 'mousewheel.') + namespace;
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
 	var interactiveElements = ['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'];
 	var tmpArray = [];
 	var time;
+
+	// Keep track of last fired global wheel event
+	var lastWheel = 0;
+	$doc.on(wheelEvent, function () {
+		lastWheel = +new Date();
+	});
 
 	/**
 	 * Sly.
@@ -1527,8 +1534,9 @@
 		 * @return {Int}
 		 */
 		function normalizeWheelDelta(event) {
-			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
-			scrolling.curDelta = event.wheelDelta ? -event.wheelDelta / 120 : (event.detail || event.deltaY) / 3;
+			// wheelDelta needed only for IE8-
+			scrolling.curDelta = ((o.horizontal ? event.deltaY || event.deltaX : event.deltaY) || -event.wheelDelta);
+			scrolling.curDelta /= event.deltaMode === 1 ? 3 : 100;
 			if (!itemNav) {
 				return scrolling.curDelta;
 			}
@@ -1555,6 +1563,12 @@
 		 * @return {Void}
 		 */
 		function scrollHandler(event) {
+			// Don't hijack global scrolling
+			var time = +new Date();
+			if (lastWheel + 300 > time) {
+				lastWheel = time;
+				return;
+			}
 			// Ignore if there is no scrolling to be done
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
@@ -1784,7 +1798,7 @@
 			}
 
 			// Scrolling navigation
-			$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
+			$scrollSource.on(wheelEvent, scrollHandler);
 
 			// Clicking on scrollbar navigation
 			if ($sb[0]) {
@@ -2021,6 +2035,7 @@
 		// Scrolling
 		scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
 		scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+		scrollHijack: 300,  // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
 
 		// Dragging
 		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
