@@ -1527,8 +1527,9 @@
 		 * @return {Int}
 		 */
 		function normalizeWheelDelta(event) {
-			// event.deltaY needed only for compatibility with jQuery mousewheel plugin in FF & IE
-			scrolling.curDelta = event.wheelDelta ? -event.wheelDelta / 120 : (event.detail || event.deltaY) / 3;
+			// wheelDelta needed only for IE8-
+			scrolling.curDelta = ((o.horizontal ? event.deltaY || event.deltaX : event.deltaY) || -event.wheelDelta);
+			scrolling.curDelta /= event.deltaMode === 1 ? 3 : 100;
 			if (!itemNav) {
 				return scrolling.curDelta;
 			}
@@ -1790,7 +1791,7 @@
 			}
 
 			// Scrolling navigation
-			$scrollSource.on('DOMMouseScroll.' + namespace + ' mousewheel.' + namespace, scrollHandler);
+			$scrollSource.on(wheelEvent, scrollHandler);
 
 			// Clicking on scrollbar navigation
 			if ($sb[0]) {
