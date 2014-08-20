@@ -1062,7 +1062,7 @@
 
 			if (itemNav) {
 				// Insert the element(s)
-				if (index == null || !items[0]) {
+				if (index == null || !items[0] || index >= items.length) {
 					$element.appendTo($slidee);
 				} else if (items.length) {
 					$element.insertBefore(items[index].el);
