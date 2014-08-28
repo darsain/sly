@@ -1336,14 +1336,14 @@
 		 * @return {Void}
 		 */
 		function dragInit(event) {
-			// Ignore when already in progress, or interactive element
-			if (dragging.init || isInteractive(event.target)) {
-				return;
-			}
-
 			var isTouch = event.type === 'touchstart';
 			var source = event.data.source;
 			var isSlidee = source === 'slidee';
+
+			// Ignore when already in progress, or interactive element in non-touch navivagion
+			if (dragging.init || !isTouch && isInteractive(event.target)) {
+				return;
+			}
 
 			// Handle dragging conditions
 			if (source === 'handle' && (!o.dragHandle || hPos.start === hPos.end)) {
@@ -1363,7 +1363,7 @@
 			continuousInit(source);
 
 			// Properties used in dragHandler
-			dragging.init = 1;
+			dragging.init = 0;
 			dragging.$source = $(event.target);
 			dragging.touch = isTouch;
 			dragging.pointer = isTouch ? event.originalEvent.touches[0] : event;
@@ -1377,9 +1377,6 @@
 			dragging.locked = 0;
 			dragging.history = [0, 0, 0, 0];
 			dragging.pathToLock = isSlidee ? isTouch ? 30 : 10 : 0;
-			dragging.initLoc = dragging[o.horizontal ? 'initX' : 'initY'];
-			dragging.deltaMin = isSlidee ? -dragging.initLoc : -hPos.cur;
-			dragging.deltaMax = isSlidee ? document[o.horizontal ? 'width' : 'height'] - dragging.initLoc : hPos.end - hPos.cur;
 
 			// Bind dragging events
 			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
@@ -1413,25 +1410,26 @@
 			dragging.pathX = dragging.pointer.pageX - dragging.initX;
 			dragging.pathY = dragging.pointer.pageY - dragging.initY;
 			dragging.path = sqrt(pow(dragging.pathX, 2) + pow(dragging.pathY, 2));
-			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
+			dragging.delta = o.horizontal ? dragging.pathX : dragging.pathY;
 
-			if (!dragging.locked && dragging.path > dragging.pathToLock) {
-				dragging.locked = 1;
-				if (o.horizontal ? abs(dragging.pathX) < abs(dragging.pathY) : abs(dragging.pathX) > abs(dragging.pathY)) {
-					// If path has reached the pathToLock distance, but in a wrong direction, cancel dragging
-					dragging.released = 1;
-				} else if (dragging.slidee) {
-					// Disable click on a source element, as it is unwelcome when dragging SLIDEE
-					dragging.$source.on(clickEvent, disableOneEvent);
+			if (!dragging.init) {
+				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
+					dragging.init = 1;
+				} else {
+					return dragEnd();
 				}
+			}
+
+			stopDefault(event);
+
+			// Disable click on a source element, as it is unwelcome when dragging
+			if (!dragging.locked && dragging.path > dragging.pathToLock && dragging.slidee) {
+				dragging.locked = 1;
+				dragging.$source.on(clickEvent, disableOneEvent);
 			}
 
 			// Cancel dragging on release
 			if (dragging.released) {
-				if (!dragging.touch) {
-					stopDefault(event);
-				}
-
 				dragEnd();
 
 				// Adjust path with a swing on mouse release
@@ -1440,8 +1438,6 @@
 					dragging.delta += dragging.swing;
 					dragging.tweese = abs(dragging.swing) > 10;
 				}
-			} else if (dragging.locked || !dragging.touch) {
-				stopDefault(event);
 			}
 
 			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
