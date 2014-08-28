@@ -1415,6 +1415,25 @@
 			dragging.path = sqrt(pow(dragging.pathX, 2) + pow(dragging.pathY, 2));
 			dragging.delta = within(o.horizontal ? dragging.pathX : dragging.pathY, dragging.deltaMin, dragging.deltaMax);
 
+      /**
+        Some mobile browsers (Chrome mainly) fire touchcancel event right after initial touch move,
+        so we need to prevent default behaviour if the items are meant to be dragged/scrolled.
+        We'll do this by checking if the px distance is within buffer for either x or y.
+      */
+      if (o.horizontal){
+        if (isToBeDragged(dragging.pointer.pageX, dragging.initX, 5)) {
+          stopDefault(event);
+        } else {
+          dragEnd();
+        }
+      } else {
+        if (isToBeDragged(dragging.pointer.pageY, dragging.initY, 5)) {
+          stopDefault(event);
+        } else {
+          dragEnd();
+        }
+      }
+
 			if (!dragging.locked && dragging.path > dragging.pathToLock) {
 				dragging.locked = 1;
 				if (o.horizontal ? abs(dragging.pathX) < abs(dragging.pathY) : abs(dragging.pathX) > abs(dragging.pathY)) {
@@ -1473,6 +1492,22 @@
 
 			dragging.init = 0;
 		}
+		
+    /**
+     * Check whether scroll position is outside of buffer.
+     *
+     * @return {Boolean}
+     */
+    function isToBeDragged(newVal, oldVal, buffer) {
+      console.log("new val: " + newVal + buffer);
+      console.log("oldVal: " + oldVal);
+      if (newVal + buffer < oldVal || newVal - buffer > oldVal) {
+        stopDefault(event);
+        return true;
+      } else {
+        return false;
+      }
+    }
 
 		/**
 		 * Check whether element is interactive.
