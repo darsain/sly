@@ -25,16 +25,39 @@ requestAnimationFrame, and GPU accelerated positioning with fallbacks for browse
 
 Works everywhere, even in IE6+ abominations, but that is a complete accident :) IE 6-7 are not officially supported.
 
-*Mobile:* Sly has a touch support, but mobile is not tested. If you want to help with that, you are welcome!
-
-### [Changelog](https://github.com/darsain/sly/wiki/Changelog)
-
-Sly upholds the [Semantic Versioning Specification](http://semver.org/).
-
 ### [Forum](https://groups.google.com/d/forum/sly-js)
 
-**Please do not populate Issues tracker with non-issues!** If you have a question about Sly, you can use the
-**[Sly forum](https://groups.google.com/d/forum/sly-js)**.
+Forum is for questions. Issues are for bug reports and feature requests. Don't mix the two :)
+
+## Usage
+
+Constructor:
+
+```js
+var options = {
+	horizontal: 1,
+	itemNav: 'basic',
+	speed: 300,
+	mouseDragging: 1,
+	touchDragging: 1
+};
+var frame = new Sly('#frame', options).init();
+```
+
+jQuery proxy:
+
+```js
+var options = {
+	horizontal: 1,
+	itemNav: 'basic',
+	speed: 300,
+	mouseDragging: 1,
+	touchDragging: 1
+};
+$('#frame').sly(options);
+```
+
+jQuery proxy is good when you want to create an instance and forget about it. For anything more complex, like using methods, events, accessing instance properties, ... use the constructor and work with the instance directly.
 
 ## Download
 
@@ -49,23 +72,12 @@ When isolating issues on jsfiddle, you can use this URL:
 
 ## Documentation
 
-- **[Markup](https://github.com/darsain/sly/wiki/Markup)** - how should the HTML look like
-- **[Calling](https://github.com/darsain/sly/wiki/Calling)** - how to call Sly
-- **[Options](https://github.com/darsain/sly/wiki/Options)** - all available options
-- **[Properties](https://github.com/darsain/sly/wiki/Properties)** - accessible Sly object properties
-- **[Methods](https://github.com/darsain/sly/wiki/Methods)** - all available methods, and how to use them
-- **[Events](https://github.com/darsain/sly/wiki/Events)** - all available events, and how to register callbacks
-- **[Parallax](https://github.com/darsain/sly/wiki/Parallax)** - how to initiate and use Sly's parallax mode
-
-## Roadmap
-
-All of the desired features have been implemented.
-
-Maaaaybe never, but I'd liked to:
-
-- Dropping jQuery dependency, and transforming Sly into a [Component](http://component.io/) component.
-- RTL layout support.
+Can be found in the [docs](https://github.com/darsain/sly/tree/master/docs) directory.
 
 ## Contributing
 
 Please, read the [Contributing Guidelines](CONTRIBUTING.md) for this project.
+
+## License
+
+MIT
