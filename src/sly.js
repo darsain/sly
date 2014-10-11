@@ -1355,10 +1355,6 @@
 				return;
 			}
 
-			if (!isTouch) {
-				stopDefault(event, 1);
-			}
-
 			// Reset dragging object
 			continuousInit(source);
 
