@@ -44,11 +44,11 @@ module.exports = function (grunt) {
 			}
 		},
 
-		// Minify with Google Closure Compiler.
-		gcc: {
+		// Minify UglifyJS.
+		uglify: {
 			dist: {
 				options: {
-					banner: '<%= meta.bannerLight %>'
+					banner: '<%= meta.bannerLight %>\n'
 				},
 				src: 'src/<%= pkg.name %>.js',
 				dest: 'dist/<%= pkg.name %>.min.js'
@@ -71,17 +71,17 @@ module.exports = function (grunt) {
 
 	// These plugins provide necessary tasks.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-tagrelease');
 	grunt.loadNpmTasks('grunt-bumpup');
-	grunt.loadNpmTasks('grunt-gcc');
 
 	// Build task.
 	grunt.registerTask('build', function () {
 		grunt.task.run('clean');
 		grunt.task.run('concat');
-		grunt.task.run('gcc');
+		grunt.task.run('uglify');
 	});
 
 	// Release task.
