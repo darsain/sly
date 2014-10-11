@@ -2,7 +2,7 @@
 	"name": "sly",
 	"title": "Sly",
 	"description": "One-directional scrolling with item based navigation support.",
-	"version": "1.2.5",
+	"version": "1.2.6",
 	"keywords": [
 		"scrolling",
 		"items",
