@@ -1,5 +1,9 @@
 # Changelog
 
+**1.2.6** :: *11th Oct 2014*
+
+- Fixed dragging navigation collisions in nested Sly instances with crossed directions.
+
 **1.2.5** :: *28th Aug 2014*
 
 - Dragging overhaul. Fixes a lot of issues with touch dragging on mobile devices. You can test the difference here: http://fiddle.jshell.net/0duf5h6b/show/light/
