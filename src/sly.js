@@ -1355,6 +1355,11 @@
 				return;
 			}
 
+			if (!isTouch) {
+				// prevents native image dragging in Firefox
+				stopDefault(event);
+			}
+
 			// Reset dragging object
 			continuousInit(source);
 
