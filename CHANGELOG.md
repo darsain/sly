@@ -1,5 +1,9 @@
 # Changelog
 
+**1.2.7** :: *30th Oct 2014*
+
+- Prevent native image dragging in Firefox when Sly dragging is active.
+
 **1.2.6** :: *11th Oct 2014*
 
 - Fixed dragging navigation collisions in nested Sly instances with crossed directions.

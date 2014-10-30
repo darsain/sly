@@ -1,5 +1,5 @@
 /*!
- * sly 1.2.6 - 11th Oct 2014
+ * sly 1.2.7 - 30th Oct 2014
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1360,6 +1360,11 @@
 			// SLIDEE dragging conditions
 			if (isSlidee && !(isTouch ? o.touchDragging : o.mouseDragging && event.which < 2)) {
 				return;
+			}
+
+			if (!isTouch) {
+				// prevents native image dragging in Firefox
+				stopDefault(event);
 			}
 
 			// Reset dragging object
