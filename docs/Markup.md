@@ -41,7 +41,7 @@ The markup for a scroll bar is similar. You have an element that represents a sc
 </div>
 ```
 
-You than pass the element with `id="scrollbar"` into the `scrollBar` option.
+You then pass the element with `id="scrollbar"` into the `scrollBar` option.
 
 ## Styling elements
 
