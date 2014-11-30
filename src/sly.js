@@ -2000,28 +2000,32 @@
 
 	// Local WindowAnimationTiming interface polyfill
 	(function (w) {
-		var vendors = ['moz', 'webkit', 'o'];
-		var lastTime = 0;
+		rAF = w.requestAnimationFrame
+			|| w.webkitRequestAnimationFrame
+			|| fallback;
 
-		// For a more accurate WindowAnimationTiming interface implementation, ditch the native
-		// requestAnimationFrame when cancelAnimationFrame is not present (older versions of Firefox)
-		for(var i = 0, l = vendors.length; i < l && !cAF; ++i) {
-			cAF = w[vendors[i]+'CancelAnimationFrame'] || w[vendors[i]+'CancelRequestAnimationFrame'];
-			rAF = cAF && w[vendors[i]+'RequestAnimationFrame'];
+		/**
+		* Fallback implementation.
+		*/
+		var prev = new Date().getTime();
+		function fallback(fn) {
+			var curr = new Date().getTime();
+			var ms = Math.max(0, 16 - (curr - prev));
+			var req = setTimeout(fn, ms);
+			prev = curr;
+			return req;
 		}
 
-		if (!cAF) {
-			rAF = function (callback) {
-				var currTime = +new Date();
-				var timeToCall = max(0, 16 - (currTime - lastTime));
-				lastTime = currTime + timeToCall;
-				return w.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
-			};
+		/**
+		* Cancel.
+		*/
+		var cancel = w.cancelAnimationFrame
+			|| w.webkitCancelAnimationFrame
+			|| w.clearTimeout;
 
-			cAF = function (id) {
-				clearTimeout(id);
-			};
-		}
+		cAF = function(id){
+			cancel.call(w, id);
+		};
 	}(window));
 
 	// Feature detects
