@@ -33,9 +33,9 @@
 	var min = Math.min;
 
 	// Keep track of last fired global wheel event
-	var lastWheel = 0;
+	var lastGlobalWheel = 0;
 	$doc.on(wheelEvent, function () {
-		lastWheel = +new Date();
+		lastGlobalWheel = +new Date();
 	});
 
 	/**
@@ -1578,8 +1578,8 @@
 		function scrollHandler(event) {
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastWheel + 300 > time) {
-				lastWheel = time;
+			if (lastGlobalWheel + 300 > time) {
+				lastGlobalWheel = time;
 				return;
 			}
 			// Ignore if there is no scrolling to be done
