@@ -1,5 +1,5 @@
 /*!
- * sly 1.2.7 - 30th Oct 2014
+ * sly 1.3.0 - 30th Nov 2014
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -40,9 +40,9 @@
 	var min = Math.min;
 
 	// Keep track of last fired global wheel event
-	var lastWheel = 0;
+	var lastGlobalWheel = 0;
 	$doc.on(wheelEvent, function () {
-		lastWheel = +new Date();
+		lastGlobalWheel = +new Date();
 	});
 
 	/**
@@ -102,6 +102,12 @@
 			activePage: 0
 		};
 
+		// Styles
+		var frameStyles = new StyleRestorer($frame[0]);
+		var slideeStyles = new StyleRestorer($slidee[0]);
+		var sbStyles = new StyleRestorer($sb[0]);
+		var handleStyles = new StyleRestorer($handle[0]);
+
 		// Navigation type booleans
 		var basicNav = o.itemNav === 'basic';
 		var forceCenteredNav = o.itemNav === 'forceCentered';
@@ -160,6 +166,10 @@
 		 * @return {Void}
 		 */
 		function load() {
+			if (!self.initialized) {
+				return;
+			}
+
 			// Local variables
 			var lastItemsCount = 0;
 			var lastPagesCount = pages.length;
@@ -426,6 +436,10 @@
 		 * @return {Void}
 		 */
 		function render() {
+			if (!self.initialized) {
+				return;
+			}
+
 			// If first render call, wait for next animationFrame
 			if (!renderID) {
 				renderID = rAF(render);
@@ -1571,16 +1585,20 @@
 		function scrollHandler(event) {
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastWheel + 300 > time) {
-				lastWheel = time;
+			if (lastGlobalWheel + 300 > time) {
+				lastGlobalWheel = time;
 				return;
 			}
 			// Ignore if there is no scrolling to be done
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
 			}
-			stopDefault(event, 1);
-			self.slideBy(o.scrollBy * normalizeWheelDelta(event.originalEvent));
+			var delta = normalizeWheelDelta(event.originalEvent);
+			// Trap scrolling only when necessary and/or requested
+			if (o.scrollTrap || delta > 0 && pos.dest < pos.end || delta < 0 && pos.dest > pos.start) {
+				stopDefault(event, 1);
+			}
+			self.slideBy(o.scrollBy * delta);
 		}
 
 		/**
@@ -1735,8 +1753,11 @@
 			if (!parallax) {
 				// Unbind events from frame
 				$frame.unbind('.' + namespace);
-				// Reset SLIDEE and handle positions
-				$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
+				// Restore original styles
+				frameStyles.restore();
+				slideeStyles.restore();
+				sbStyles.restore();
+				handleStyles.restore();
 				// Remove the instance from element data storage
 				$.removeData(frame, namespace);
 			}
@@ -1762,6 +1783,14 @@
 
 			// Register callbacks map
 			self.on(callbackMap);
+
+			// Save styles
+			var holderProps = ['overflow', 'position'];
+			var movableProps = ['position', 'webkitTransform', 'msTransform', 'transform', 'left', 'top', 'width', 'height'];
+			frameStyles.save.apply(frameStyles, holderProps);
+			sbStyles.save.apply(sbStyles, holderProps);
+			slideeStyles.save.apply(slideeStyles, movableProps);
+			handleStyles.save.apply(handleStyles, movableProps);
 
 			// Set required styles
 			var $movables = $handle;
@@ -1839,6 +1868,9 @@
 				$frame.on('scroll.' + namespace, resetScroll);
 			}
 
+			// Mark instance as initialized
+			self.initialized = 1;
+
 			// Load
 			load();
 
@@ -1846,9 +1878,6 @@
 			if (o.cycleBy && !parallax) {
 				self[o.startPaused ? 'pause' : 'resume']();
 			}
-
-			// Mark instance as initialized
-			self.initialized = 1;
 
 			// Return instance
 			return self;
@@ -1949,30 +1978,65 @@
 		return number < min ? min : number > max ? max : number;
 	}
 
+	/**
+	 * Saves element styles for later restoration.
+	 *
+	 * Example:
+	 *   var styles = new StyleRestorer(frame);
+	 *   styles.save('position');
+	 *   element.style.position = 'absolute';
+	 *   styles.restore(); // restores to state before the assignment above
+	 *
+	 * @param {Element} element
+	 */
+	function StyleRestorer(element) {
+		var self = {};
+		self.style = {};
+		self.save = function () {
+			if (!element) return;
+			for (var i = 0; i < arguments.length; i++) {
+				self.style[arguments[i]] = element.style[arguments[i]];
+			}
+			return self;
+		};
+		self.restore = function () {
+			if (!element) return;
+			for (var prop in self.style) {
+				if (self.style.hasOwnProperty(prop)) element.style[prop] = self.style[prop];
+			}
+			return self;
+		};
+		return self;
+	}
+
 	// Local WindowAnimationTiming interface polyfill
 	(function (w) {
-		var vendors = ['moz', 'webkit', 'o'];
-		var lastTime = 0;
+		rAF = w.requestAnimationFrame
+			|| w.webkitRequestAnimationFrame
+			|| fallback;
 
-		// For a more accurate WindowAnimationTiming interface implementation, ditch the native
-		// requestAnimationFrame when cancelAnimationFrame is not present (older versions of Firefox)
-		for(var i = 0, l = vendors.length; i < l && !cAF; ++i) {
-			cAF = w[vendors[i]+'CancelAnimationFrame'] || w[vendors[i]+'CancelRequestAnimationFrame'];
-			rAF = cAF && w[vendors[i]+'RequestAnimationFrame'];
+		/**
+		* Fallback implementation.
+		*/
+		var prev = new Date().getTime();
+		function fallback(fn) {
+			var curr = new Date().getTime();
+			var ms = Math.max(0, 16 - (curr - prev));
+			var req = setTimeout(fn, ms);
+			prev = curr;
+			return req;
 		}
 
-		if (!cAF) {
-			rAF = function (callback) {
-				var currTime = +new Date();
-				var timeToCall = max(0, 16 - (currTime - lastTime));
-				lastTime = currTime + timeToCall;
-				return w.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
-			};
+		/**
+		* Cancel.
+		*/
+		var cancel = w.cancelAnimationFrame
+			|| w.webkitCancelAnimationFrame
+			|| w.clearTimeout;
 
-			cAF = function (id) {
-				clearTimeout(id);
-			};
-		}
+		cAF = function(id){
+			cancel.call(w, id);
+		};
 	}(window));
 
 	// Feature detects
@@ -2029,36 +2093,37 @@
 
 	// Default options
 	Sly.defaults = {
-		horizontal: 0, // Switch to horizontal mode.
+		horizontal: false, // Switch to horizontal mode.
 
 		// Item based navigation
-		itemNav:      null, // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
-		itemSelector: null, // Select only items that match this selector.
-		smart:        0,    // Repositions the activated item to help with further navigation.
-		activateOn:   null, // Activate an item on this event. Can be: 'click', 'mouseenter', ...
-		activateMiddle: 0,  // Always activate the item in the middle of the FRAME. forceCentered only.
+		itemNav:        null,  // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
+		itemSelector:   null,  // Select only items that match this selector.
+		smart:          false, // Repositions the activated item to help with further navigation.
+		activateOn:     null,  // Activate an item on this event. Can be: 'click', 'mouseenter', ...
+		activateMiddle: false, // Always activate the item in the middle of the FRAME. forceCentered only.
 
 		// Scrolling
-		scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
-		scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
-		scrollHijack: 300,  // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
+		scrollSource: null,  // Element for catching the mouse wheel scrolling. Default is FRAME.
+		scrollBy:     0,     // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+		scrollHijack: 300,   // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
+		scrollTrap:   false, // Don't bubble scrolling when hitting scrolling limits.
 
 		// Dragging
-		dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
-		mouseDragging: 0,    // Enable navigation by dragging the SLIDEE with mouse cursor.
-		touchDragging: 0,    // Enable navigation by dragging the SLIDEE with touch events.
-		releaseSwing:  0,    // Ease out on dragging swing release.
-		swingSpeed:    0.2,  // Swing synchronization speed, where: 1 = instant, 0 = infinite.
-		elasticBounds: 0,    // Stretch SLIDEE position limits when dragging past FRAME boundaries.
-		interactive:   null, // Selector for special interactive elements.
+		dragSource:    null,  // Selector or DOM element for catching dragging events. Default is FRAME.
+		mouseDragging: false, // Enable navigation by dragging the SLIDEE with mouse cursor.
+		touchDragging: false, // Enable navigation by dragging the SLIDEE with touch events.
+		releaseSwing:  false, // Ease out on dragging swing release.
+		swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
+		elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
+		interactive:   null,  // Selector for special interactive elements.
 
 		// Scrollbar
-		scrollBar:     null, // Selector or DOM element for scrollbar container.
-		dragHandle:    0,    // Whether the scrollbar handle should be draggable.
-		dynamicHandle: 0,    // Scrollbar handle represents the ratio between hidden and visible content.
-		minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
-		clickBar:      0,    // Enable navigation by clicking on scrollbar.
-		syncSpeed:     0.5,  // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
+		scrollBar:     null,  // Selector or DOM element for scrollbar container.
+		dragHandle:    false, // Whether the scrollbar handle should be draggable.
+		dynamicHandle: false, // Scrollbar handle represents the ratio between hidden and visible content.
+		minHandleSize: 50,    // Minimal height or width (depends on sly direction) of a handle in pixels.
+		clickBar:      false, // Enable navigation by clicking on scrollbar.
+		syncSpeed:     0.5,   // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
 
 		// Pagesbar
 		pagesBar:       null, // Selector or DOM element for pages bar container.
@@ -2077,10 +2142,10 @@
 		nextPage: null, // Selector or DOM element for "next page" button.
 
 		// Automated cycling
-		cycleBy:       null, // Enable automatic cycling by 'items' or 'pages'.
-		cycleInterval: 5000, // Delay between cycles in milliseconds.
-		pauseOnHover:  0,    // Pause cycling when mouse hovers over the FRAME.
-		startPaused:   0,    // Whether to start in paused sate.
+		cycleBy:       null,  // Enable automatic cycling by 'items' or 'pages'.
+		cycleInterval: 5000,  // Delay between cycles in milliseconds.
+		pauseOnHover:  false, // Pause cycling when mouse hovers over the FRAME.
+		startPaused:   false, // Whether to start in paused sate.
 
 		// Mixed options
 		moveBy:        300,     // Speed in pixels per second used by forward and backward buttons.
@@ -2090,8 +2155,8 @@
 		keyboardNavBy: null,    // Enable keyboard navigation by 'items' or 'pages'.
 
 		// Classes
-		draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
-		activeClass:   'active',   // Class for active items and pages.
-		disabledClass: 'disabled'  // Class for disabled navigation elements.
+		draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
+		activeClass:   'active',  // Class for active items and pages.
+		disabledClass: 'disabled' // Class for disabled navigation elements.
 	};
 }(jQuery, window));

@@ -24,36 +24,37 @@ Sly call with all default options as defined in the source.
 
 ```js
 var frame = new Sly('#frame', {
-	horizontal: 0, // Switch to horizontal mode.
+	horizontal: false, // Switch to horizontal mode.
 
 	// Item based navigation
-	itemNav:      null, // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
-	itemSelector: null, // Select only items that match this selector.
-	smart:        0,    // Repositions the activated item to help with further navigation.
-	activateOn:   null, // Activate an item on this event. Can be: 'click', 'mouseenter', ...
-	activateMiddle: 0,  // Always activate the item in the middle of the FRAME. forceCentered only.
+	itemNav:        null,  // Item navigation type. Can be: 'basic', 'centered', 'forceCentered'.
+	itemSelector:   null,  // Select only items that match this selector.
+	smart:          false, // Repositions the activated item to help with further navigation.
+	activateOn:     null,  // Activate an item on this event. Can be: 'click', 'mouseenter', ...
+	activateMiddle: false, // Always activate the item in the middle of the FRAME. forceCentered only.
 
 	// Scrolling
-	scrollSource: null, // Element for catching the mouse wheel scrolling. Default is FRAME.
-	scrollBy:     0,    // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
-	scrollHijack: 300,  // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
+	scrollSource: null,  // Element for catching the mouse wheel scrolling. Default is FRAME.
+	scrollBy:     0,     // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
+	scrollHijack: 300,   // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
+	scrollTrap:   false, // Don't bubble scrolling when hitting scrolling limits.
 
 	// Dragging
-	dragSource:    null, // Selector or DOM element for catching dragging events. Default is FRAME.
-	mouseDragging: 0,    // Enable navigation by dragging the SLIDEE with mouse cursor.
-	touchDragging: 0,    // Enable navigation by dragging the SLIDEE with touch events.
-	releaseSwing:  0,    // Ease out on dragging swing release.
-	swingSpeed:    0.2,  // Swing synchronization speed, where: 1 = instant, 0 = infinite.
-	elasticBounds: 0,    // Stretch SLIDEE position limits when dragging past FRAME boundaries.
-	interactive:   null, // Selector for special interactive elements.
+	dragSource:    null,  // Selector or DOM element for catching dragging events. Default is FRAME.
+	mouseDragging: false, // Enable navigation by dragging the SLIDEE with mouse cursor.
+	touchDragging: false, // Enable navigation by dragging the SLIDEE with touch events.
+	releaseSwing:  false, // Ease out on dragging swing release.
+	swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
+	elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
+	interactive:   null,  // Selector for special interactive elements.
 
 	// Scrollbar
-	scrollBar:     null, // Selector or DOM element for scrollbar container.
-	dragHandle:    0,    // Whether the scrollbar handle should be draggable.
-	dynamicHandle: 0,    // Scrollbar handle represents the ratio between hidden and visible content.
-	minHandleSize: 50,   // Minimal height or width (depends on sly direction) of a handle in pixels.
-	clickBar:      0,    // Enable navigation by clicking on scrollbar.
-	syncSpeed:     0.5,  // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
+	scrollBar:     null,  // Selector or DOM element for scrollbar container.
+	dragHandle:    false, // Whether the scrollbar handle should be draggable.
+	dynamicHandle: false, // Scrollbar handle represents the ratio between hidden and visible content.
+	minHandleSize: 50,    // Minimal height or width (depends on sly direction) of a handle in pixels.
+	clickBar:      false, // Enable navigation by clicking on scrollbar.
+	syncSpeed:     0.5,   // Handle => SLIDEE synchronization speed, where: 1 = instant, 0 = infinite.
 
 	// Pagesbar
 	pagesBar:       null, // Selector or DOM element for pages bar container.
@@ -72,10 +73,10 @@ var frame = new Sly('#frame', {
 	nextPage: null, // Selector or DOM element for "next page" button.
 
 	// Automated cycling
-	cycleBy:       null, // Enable automatic cycling by 'items' or 'pages'.
-	cycleInterval: 5000, // Delay between cycles in milliseconds.
-	pauseOnHover:  0,    // Pause cycling when mouse hovers over the FRAME.
-	startPaused:   0,    // Whether to start in paused sate.
+	cycleBy:       null,  // Enable automatic cycling by 'items' or 'pages'.
+	cycleInterval: 5000,  // Delay between cycles in milliseconds.
+	pauseOnHover:  false, // Pause cycling when mouse hovers over the FRAME.
+	startPaused:   false, // Whether to start in paused sate.
 
 	// Mixed options
 	moveBy:        300,     // Speed in pixels per second used by forward and backward buttons.
@@ -85,9 +86,9 @@ var frame = new Sly('#frame', {
 	keyboardNavBy: null,    // Enable keyboard navigation by 'items' or 'pages'.
 
 	// Classes
-	draggedClass:  'dragged',  // Class for dragged elements (like SLIDEE or scrollbar handle).
-	activeClass:   'active',   // Class for active items and pages.
-	disabledClass: 'disabled'  // Class for disabled navigation elements.
+	draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
+	activeClass:   'active',  // Class for active items and pages.
+	disabledClass: 'disabled' // Class for disabled navigation elements.
 });
 ```
 
@@ -172,17 +173,24 @@ You can pass a selector string, a DOM element, or a jQuery object with element. 
 
 ### scrollBy
 
-Type: `Int`
+Type: `Integer`
 Default: `0`
 
 Number of pixels, or - in item based navigation - items, to move per one mouse wheel scroll event. Leave at `0` to disable.
 
 ### scrollHijack
 
-Type: `Int`
+Type: `Integer`
 Default: `300`
 
 Number of milliseconds since last global wheel event after which it is acceptable to hijack global scroll.
+
+### scrollTrap
+
+Type: `Boolean`
+Default: `false`
+
+Set this to `true` to catch all scrolls originating on FRAME. By default, when there is nowhere to scroll, Sly lets scroll events bubble so they can scroll the parent document.
 
 ---
 
@@ -277,7 +285,7 @@ Whether the scrollbar handle size should be automatically adjusted to represent 
 
 ### minHandleSize
 
-Type: `Int`
+Type: `Integer`
 Default: `50`
 
 Minimal allowed handle size in pixels when `dynamicHandle` is enabled.
@@ -291,7 +299,7 @@ Enables navigation by clicking on scrollbar.
 
 ### syncSpeed
 
-Type: `Int`
+Type: `Integer`
 Default: `0.5`
 
 When dragging the handle, this represents the synchronization animation speed. For this animation Sly uses non-duration based easing function that accepts synchronization factor instead of milliseconds. That means:
@@ -408,7 +416,7 @@ Activates automated cycling. Can be:
 
 ### cycleInterval
 
-Type: `Int`
+Type: `Integer`
 Default: `5000`
 
 Delay between cycles in milliseconds.
@@ -435,14 +443,14 @@ When `cycleBy` is enabled, this will start the Sly in paused mode.
 
 ### moveBy
 
-Type: `Int`
+Type: `Integer`
 Default: `300`
 
 Default speed in pixels per second used by forward & backward buttons.
 
 ### speed
 
-Type: `Int`
+Type: `Integer`
 Default: `0`
 
 Speed of duration based (tweening) animations in milliseconds.
@@ -456,7 +464,7 @@ Easing function for duration based (tweening) animations. Default build in funct
 
 ### startAt
 
-Type: `Int`
+Type: `Integer`
 Default: `0`
 
 Offset in pixels to start Sly at. In item based navigations, this is an item index starting at `0`.

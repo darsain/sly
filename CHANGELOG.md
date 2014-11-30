@@ -1,5 +1,10 @@
 # Changelog
 
+**1.3.0** :: *30th Nov 2014*
+
+- `destroy()` now correctly restores previous element styles.
+- Implemented `scrollTrap` option.
+
 **1.2.7** :: *30th Oct 2014*
 
 - Prevent native image dragging in Firefox when Sly dragging is active.
