@@ -95,6 +95,12 @@
 			activePage: 0
 		};
 
+		// Styles
+		var frameStyles = new StyleRestorer($frame[0]);
+		var slideeStyles = new StyleRestorer($slidee[0]);
+		var sbStyles = new StyleRestorer($sb[0]);
+		var handleStyles = new StyleRestorer($handle[0]);
+
 		// Navigation type booleans
 		var basicNav = o.itemNav === 'basic';
 		var forceCenteredNav = o.itemNav === 'forceCentered';
@@ -153,6 +159,10 @@
 		 * @return {Void}
 		 */
 		function load() {
+			if (!self.initialized) {
+				return;
+			}
+
 			// Local variables
 			var lastItemsCount = 0;
 			var lastPagesCount = pages.length;
@@ -419,6 +429,10 @@
 		 * @return {Void}
 		 */
 		function render() {
+			if (!self.initialized) {
+				return;
+			}
+
 			// If first render call, wait for next animationFrame
 			if (!renderID) {
 				renderID = rAF(render);
@@ -1728,8 +1742,11 @@
 			if (!parallax) {
 				// Unbind events from frame
 				$frame.unbind('.' + namespace);
-				// Reset SLIDEE and handle positions
-				$slidee.add($handle).css(transform || (o.horizontal ? 'left' : 'top'), transform ? 'none' : 0);
+				// Restore original styles
+				frameStyles.restore();
+				slideeStyles.restore();
+				sbStyles.restore();
+				handleStyles.restore();
 				// Remove the instance from element data storage
 				$.removeData(frame, namespace);
 			}
@@ -1755,6 +1772,14 @@
 
 			// Register callbacks map
 			self.on(callbackMap);
+
+			// Save styles
+			var holderProps = ['overflow', 'position'];
+			var movableProps = ['position', 'webkitTransform', 'msTransform', 'transform', 'left', 'top', 'width', 'height'];
+			frameStyles.save.apply(frameStyles, holderProps);
+			sbStyles.save.apply(sbStyles, holderProps);
+			slideeStyles.save.apply(slideeStyles, movableProps);
+			handleStyles.save.apply(handleStyles, movableProps);
 
 			// Set required styles
 			var $movables = $handle;
@@ -1832,6 +1857,9 @@
 				$frame.on('scroll.' + namespace, resetScroll);
 			}
 
+			// Mark instance as initialized
+			self.initialized = 1;
+
 			// Load
 			load();
 
@@ -1839,9 +1867,6 @@
 			if (o.cycleBy && !parallax) {
 				self[o.startPaused ? 'pause' : 'resume']();
 			}
-
-			// Mark instance as initialized
-			self.initialized = 1;
 
 			// Return instance
 			return self;
@@ -1940,6 +1965,37 @@
 	 */
 	function within(number, min, max) {
 		return number < min ? min : number > max ? max : number;
+	}
+
+	/**
+	 * Saves element styles for later restoration.
+	 *
+	 * Example:
+	 *   var styles = new StyleRestorer(frame);
+	 *   styles.save('position');
+	 *   element.style.position = 'absolute';
+	 *   styles.restore(); // restores to state before the assignment above
+	 *
+	 * @param {Element} element
+	 */
+	function StyleRestorer(element) {
+		var self = {};
+		self.style = {};
+		self.save = function () {
+			if (!element) return;
+			for (var i = 0; i < arguments.length; i++) {
+				self.style[arguments[i]] = element.style[arguments[i]];
+			}
+			return self;
+		};
+		self.restore = function () {
+			if (!element) return;
+			for (var prop in self.style) {
+				if (self.style.hasOwnProperty(prop)) element.style[prop] = self.style[prop];
+			}
+			return self;
+		};
+		return self;
 	}
 
 	// Local WindowAnimationTiming interface polyfill
