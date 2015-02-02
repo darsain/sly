@@ -938,7 +938,7 @@
 		function updateButtonsState() {
 			var isStart = pos.dest <= pos.start;
 			var isEnd = pos.dest >= pos.end;
-			var slideePosState = isStart ? 1 : isEnd ? 2 : 3;
+			var slideePosState = isStart ? ( isEnd ? 4 : 1 ) : isEnd ? 2 : 3;
 
 			// Update paging buttons only if there has been a change in SLIDEE position
 			if (last.slideePosState !== slideePosState) {
@@ -974,7 +974,7 @@
 			if (itemNav) {
 				var isFirst = rel.activeItem === 0;
 				var isLast = rel.activeItem >= items.length - 1;
-				var itemsButtonState = isFirst ? 1 : isLast ? 2 : 3;
+				var itemsButtonState = isFirst ? ( isEnd ? 4 : 1 ) : isLast ? 2 : 3;
 
 				if (last.itemsButtonState !== itemsButtonState) {
 					last.itemsButtonState = itemsButtonState;
