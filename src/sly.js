@@ -17,7 +17,12 @@
 	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
 	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
 	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
-	var wheelEvent = (document.implementation.hasFeature('Event.wheel', '3.0') ? 'wheel.' : 'mousewheel.') + namespace;
+	var wheelEvent = (('onwheel' in document.createElement('div')) || (document.implementation.hasFeature('Event.wheel', '3.0')) ? 'wheel.' + namespace : // Modern browsers support 'wheel'
+						( document.onmousewheel !== undefined ? 'mousewheel.' + namespace : // Webkit and IE support at least 'mousewheel"
+						  // not sure if we really need the DOMMouseScroll event too...seems to work without at least from 3.5+ (but going even lower is rediculous)
+						  'MozMousePixelScroll.' + namespace // + ' DOMMouseScroll.' + namespace // let's assume that remaining browsers are older Firefox
+						)
+					 );
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
 	var interactiveElements = ['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'];
@@ -1548,7 +1553,8 @@
 		 */
 		function normalizeWheelDelta(event) {
 			// wheelDelta needed only for IE8-
-			scrolling.curDelta = ((o.horizontal ? event.deltaY || event.deltaX : event.deltaY) || -event.wheelDelta);
+			// event.detail needed for Firefox 18-
+			scrolling.curDelta = ( (o.horizontal ? (event.deltaY || event.deltaX || event.detail) : event.deltaY) || (-event.wheelDelta || -event.detail) );
 			scrolling.curDelta /= event.deltaMode === 1 ? 3 : 100;
 			if (!itemNav) {
 				return scrolling.curDelta;
