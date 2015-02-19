@@ -1,6 +1,7 @@
 {
 	"name": "sly",
-	"version": "0.0.0",
+	"version": "1.3.0",
+	"main": "dist/sly",
 	"devDependencies": {
 		"grunt-contrib-jshint": "~0.7.2",
 		"grunt-contrib-uglify": "~0.6.0",
