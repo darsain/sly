@@ -1,5 +1,5 @@
 /*!
- * sly 1.3.0 - 30th Nov 2014
+ * sly 1.3.0 - 3rd Mar 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1435,7 +1435,7 @@
 			dragging.delta = o.horizontal ? dragging.pathX : dragging.pathY;
 
 			if (!dragging.init) {
-				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
+				if (o.horizontal ? abs(dragging.pathX) >= abs(dragging.pathY) : abs(dragging.pathX) <= abs(dragging.pathY)) {
 					dragging.init = 1;
 				} else {
 					return dragEnd();
