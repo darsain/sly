@@ -1716,8 +1716,7 @@
 		 */
 		self.destroy = function () {
 			// Unbind all events
-			$doc
-				.add($scrollSource)
+			$scrollSource
 				.add($handle)
 				.add($sb)
 				.add($pb)
@@ -1727,7 +1726,10 @@
 				.add($nextButton)
 				.add($prevPageButton)
 				.add($nextPageButton)
-				.unbind('.' + namespace);
+				.off('.' + namespace);
+
+			// Unbinding specifically as to not nuke out other instances
+			$doc.off('keydown', keyboardHandler);
 
 			// Remove classes
 			$prevButton
@@ -1745,7 +1747,7 @@
 
 			if (!parallax) {
 				// Unbind events from frame
-				$frame.unbind('.' + namespace);
+				$frame.off('.' + namespace);
 				// Restore original styles
 				frameStyles.restore();
 				slideeStyles.restore();
@@ -1852,7 +1854,7 @@
 			}
 
 			// Keyboard navigation
-			$doc.bind('keydown.' + namespace, keyboardHandler);
+			$doc.on('keydown', keyboardHandler);
 
 			if (!parallax) {
 				// Pause on hover
