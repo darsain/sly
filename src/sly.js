@@ -91,7 +91,7 @@
 			firstItem: 0,
 			lastItem: 0,
 			centerItem: 0,
-			activeItem: -1,
+			activeItem: null,
 			activePage: 0
 		};
 
@@ -328,20 +328,16 @@
 
 			// Activate requested position
 			if (itemNav) {
-				if (isInit) {
+				if (isInit && o.startAt != null) {
 					activate(o.startAt);
 					self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
-				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
-					// Activate last item if previous active has been removed, or first item
-					// when there were no items before, and new got appended.
-					activate(rel.activeItem >= items.length ? items.length - 1 : 0, !lastItemsCount);
 				}
 				// Fix possible overflowing
 				var activeItem = items[rel.activeItem];
 				slideTo(centeredNav && activeItem ? activeItem.center : within(pos.dest, pos.start, pos.end));
 			} else {
 				if (isInit) {
-					slideTo(o.startAt, 1);
+					if (o.startAt != null) slideTo(o.startAt, 1);
 				} else {
 					// Fix possible overflowing
 					slideTo(within(pos.dest, pos.start, pos.end));
@@ -969,7 +965,7 @@
 			}
 
 			// Item navigation
-			if (itemNav) {
+			if (itemNav && rel.activeItem != null) {
 				var isFirst = rel.activeItem === 0;
 				var isLast = rel.activeItem >= items.length - 1;
 				var itemsButtonState = (isFirst ? 1 : 0) | (isLast ? 2 : 0);
@@ -999,7 +995,7 @@
 		 * @return {Void}
 		 */
 		self.resume = function (priority) {
-			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && !items[0] || priority < self.isPaused) {
+			if (!o.cycleBy || !o.cycleInterval || o.cycleBy === 'items' && (!items[0] || rel.activeItem == null) || priority < self.isPaused) {
 				return;
 			}
 
@@ -1090,7 +1086,7 @@
 				}
 
 				// Adjust the activeItem index
-				if (index <= rel.activeItem) {
+				if (rel.activeItem != null && index <= rel.activeItem) {
 					last.active = rel.activeItem += $element.length;
 				}
 			} else {
@@ -1121,7 +1117,7 @@
 					var reactivate = index === rel.activeItem;
 
 					// Adjust the activeItem index
-					if (index < rel.activeItem) {
+					if (rel.activeItem != null && index < rel.activeItem) {
 						last.active = --rel.activeItem;
 					}
 
@@ -1162,10 +1158,12 @@
 				var shiftsUp = item > position;
 
 				// Update activeItem index
-				if (item === rel.activeItem) {
-					last.active = rel.activeItem = after ? (shiftsUp ? position + 1 : position) : (shiftsUp ? position : position - 1);
-				} else if (rel.activeItem > shiftStart && rel.activeItem < shiftEnd) {
-					last.active = rel.activeItem += shiftsUp ? 1 : -1;
+				if (rel.activeItem != null) {
+					if (item === rel.activeItem) {
+						last.active = rel.activeItem = after ? (shiftsUp ? position + 1 : position) : (shiftsUp ? position : position - 1);
+					} else if (rel.activeItem > shiftStart && rel.activeItem < shiftEnd) {
+						last.active = rel.activeItem += shiftsUp ? 1 : -1;
+					}
 				}
 
 				// Reload
@@ -1737,7 +1735,7 @@
 				.add($nextPageButton)
 				.removeClass(o.disabledClass);
 
-			if ($items) {
+			if ($items && rel.activeItem != null) {
 				$items.eq(rel.activeItem).removeClass(o.activeClass);
 			}
 
@@ -2145,7 +2143,7 @@
 		moveBy:        300,     // Speed in pixels per second used by forward and backward buttons.
 		speed:         0,       // Animations speed in milliseconds. 0 to disable animations.
 		easing:        'swing', // Easing for duration based (tweening) animations.
-		startAt:       0,       // Starting offset in pixels or items.
+		startAt:       null,    // Starting offset in pixels or items.
 		keyboardNavBy: null,    // Enable keyboard navigation by 'items' or 'pages'.
 
 		// Classes
