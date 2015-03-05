@@ -2,7 +2,7 @@
 
 **1.4.1** :: *5th Mar 2015*
 
-= Fixed dragging somehow broken by previous commits.
+- Fixed dragging somehow broken by previous commits.
 
 **1.4.0** :: *5th Mar 2015*
 
