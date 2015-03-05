@@ -152,17 +152,14 @@
 		self.dragging = dragging;
 
 		/**
-		 * (Re)Loading function.
+		 * Loading function.
 		 *
 		 * Populate arrays, set sizes, bind events, ...
 		 *
+		 * @param {Boolean} [isInit] Whether load is called from within self.init().
 		 * @return {Void}
 		 */
-		function load() {
-			if (!self.initialized) {
-				return;
-			}
-
+		function load(isInit) {
 			// Local variables
 			var lastItemsCount = 0;
 			var lastPagesCount = pages.length;
@@ -331,7 +328,7 @@
 
 			// Activate requested position
 			if (itemNav) {
-				if (!self.initialized) {
+				if (isInit) {
 					activate(o.startAt);
 					self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
 				} else if (rel.activeItem >= items.length || lastItemsCount === 0 && items.length > 0) {
@@ -343,7 +340,7 @@
 				var activeItem = items[rel.activeItem];
 				slideTo(centeredNav && activeItem ? activeItem.center : within(pos.dest, pos.start, pos.end));
 			} else {
-				if (!self.initialized) {
+				if (isInit) {
 					slideTo(o.startAt, 1);
 				} else {
 					// Fix possible overflowing
@@ -354,7 +351,7 @@
 			// Trigger load event
 			trigger('load');
 		}
-		self.reload = load;
+		self.reload = function () { load(); };
 
 		/**
 		 * Animate to a position.
@@ -1868,7 +1865,7 @@
 			self.initialized = 1;
 
 			// Load
-			load();
+			load(true);
 
 			// Initiate automatic cycling
 			if (o.cycleBy && !parallax) {
