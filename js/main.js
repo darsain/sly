@@ -28,7 +28,7 @@ jQuery(function ($) {
 		scrollBy: 1,
 		pagesBar: $example.find('.pages'),
 		activatePageOn: 'click',
-		speed: 300,
+		speed: 200,
 		moveBy: 600,
 		elasticBounds: 1,
 		dragHandle: 1,
