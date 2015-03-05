@@ -205,7 +205,8 @@
 				$items.each(function (i, element) {
 					// Item
 					var $item = $(element);
-					var itemSize = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+					var rect = element.getBoundingClientRect();
+					var itemSize = round(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
 					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
 					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
 					var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
