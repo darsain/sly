@@ -1472,14 +1472,14 @@
 				dragging.$source.off(clickEvent, disableOneEvent);
 			});
 
-			// Resume ongoing cycle
-			self.resume(1);
-
 			// Normally, this is triggered in render(), but if there
 			// is nothing to render, we have to do it manually here.
 			if (pos.cur === pos.dest && dragging.init) {
 				trigger('moveEnd');
 			}
+
+			// Resume ongoing cycle
+			self.resume(1);
 
 			dragging.init = 0;
 		}
