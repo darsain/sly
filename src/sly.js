@@ -616,7 +616,7 @@
 		 * @return {Void}
 		 */
 		self.prev = function () {
-			self.activate(rel.activeItem - 1);
+			self.activate(rel.activeItem == null ? 0 : rel.activeItem - 1);
 		};
 
 		/**
@@ -625,7 +625,7 @@
 		 * @return {Void}
 		 */
 		self.next = function () {
-			self.activate(rel.activeItem + 1);
+			self.activate(rel.activeItem == null ? 0 : rel.activeItem + 1);
 		};
 
 		/**
