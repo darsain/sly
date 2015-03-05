@@ -1,5 +1,5 @@
 /*!
- * sly 1.4.0 - 5th Mar 2015
+ * sly 1.4.1 - 5th Mar 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1429,6 +1429,8 @@
 			dragging.pathY = dragging.pointer.pageY - dragging.initY;
 			dragging.path = sqrt(pow(dragging.pathX, 2) + pow(dragging.pathY, 2));
 			dragging.delta = o.horizontal ? dragging.pathX : dragging.pathY;
+
+			if (!dragging.released && dragging.path < 1) return;
 
 			if (!dragging.init) {
 				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
