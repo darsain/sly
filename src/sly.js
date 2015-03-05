@@ -1463,6 +1463,7 @@
 		 */
 		function dragEnd() {
 			clearInterval(historyID);
+			dragging.released = true;
 			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
 			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
 
