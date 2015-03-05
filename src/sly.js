@@ -1423,6 +1423,8 @@
 			dragging.path = sqrt(pow(dragging.pathX, 2) + pow(dragging.pathY, 2));
 			dragging.delta = o.horizontal ? dragging.pathX : dragging.pathY;
 
+			if (!dragging.released && dragging.path < 1) return;
+
 			if (!dragging.init) {
 				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
 					dragging.init = 1;
