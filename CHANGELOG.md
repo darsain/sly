@@ -1,5 +1,9 @@
 # Changelog
 
+**1.4.2** :: *9th Mar 2015*
+
+- Fixed `scrollHijack` and `scrollTrap` options not working nicely together.
+
 **1.4.1** :: *5th Mar 2015*
 
 - Fixed dragging somehow broken by previous commits.

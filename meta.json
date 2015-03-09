@@ -1,8 +1,8 @@
 {
 	"name": "sly",
 	"description": "One-directional scrolling with item based navigation support.",
-	"version": "1.4.1",
-	"date": "2015-03-05 18:33:37 +00:00",
+	"version": "1.4.2",
+	"date": "2015-03-09 16:14:05 +00:00",
 	"bugs": "https://github.com/darsain/sly/issues",
 	"repository": {
 		"type": "git",
