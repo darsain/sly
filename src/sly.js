@@ -35,7 +35,11 @@
 	// Keep track of last fired global wheel event
 	var lastGlobalWheel = 0;
 	$doc.on(wheelEvent, function (event) {
-		if (event.originalEvent[namespace] == null) lastGlobalWheel = +new Date();
+		var sly = event.originalEvent[namespace];
+		var time = +new Date();
+		// Update last global wheel time, but only when event didn't originate
+		// in Sly frame, or the origin was less than scrollHijack time ago
+		if (!sly || sly.options.scrollHijack < time - lastGlobalWheel) lastGlobalWheel = time;
 	});
 
 	/**
@@ -1576,7 +1580,7 @@
 		 */
 		function scrollHandler(event) {
 			// Mark event as originating in a Sly instance
-			event.originalEvent[namespace] = true;
+			event.originalEvent[namespace] = self;
 			// Don't hijack global scrolling
 			var time = +new Date();
 			if (lastGlobalWheel + 300 > time) {
