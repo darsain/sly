@@ -1,5 +1,10 @@
 # Changelog
 
+**1.4.3** :: *10th Mar 2015*
+
+- Improved `scrollHijack` logic.
+- Fixed `scrollHijack` value being ignored and instead a fixed `300` was used.
+
 **1.4.2** :: *9th Mar 2015*
 
 - Fixed `scrollHijack` and `scrollTrap` options not working nicely together.
