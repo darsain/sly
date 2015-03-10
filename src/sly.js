@@ -1583,7 +1583,7 @@
 			event.originalEvent[namespace] = self;
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastGlobalWheel + 300 > time) {
+			if (lastGlobalWheel + o.scrollHijack > time) {
 				lastGlobalWheel = time;
 				return;
 			}
