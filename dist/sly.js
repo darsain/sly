@@ -1,5 +1,5 @@
 /*!
- * sly 1.4.3 - 10th Mar 2015
+ * sly 1.4.4 - 30th Mar 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1658,15 +1658,19 @@
 		 */
 		function activateHandler(event) {
 			/*jshint validthis:true */
+
 			// Ignore clicks on interactive elements.
 			if (isInteractive(this)) {
-				event.stopPropagation();
+				event.originalEvent[namespace + 'ignore'] = true;
 				return;
 			}
-			// Accept only events from direct SLIDEE children.
-			if (this.parentNode === $slidee[0]) {
-				self.activate(this);
-			}
+
+			// Ignore events that:
+			// - are not originating from direct SLIDEE children
+			// - originated from interactive elements
+			if (this.parentNode !== $slidee[0] || event.originalEvent[namespace + 'ignore']) return;
+
+			self.activate(this);
 		}
 
 		/**

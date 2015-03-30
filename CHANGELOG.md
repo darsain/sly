@@ -1,5 +1,11 @@
 # Changelog
 
+**1.4.4** :: *30th Mar 2015*
+
+- Fixed `activateOn` events not bubbling when originating on interactive elements, making it impossible to bind handlers to buttons for example.
+
+# Changelog
+
 **1.4.3** :: *10th Mar 2015*
 
 - Improved `scrollHijack` logic.
