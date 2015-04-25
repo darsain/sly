@@ -61,7 +61,8 @@
 
 		// Frame
 		var $frame = $(frame);
-		var $slidee = $frame.children().eq(0);
+		// var $slidee = $frame.children().eq(0);
+		var $slidee = o.slidee || $frame.children().eq(0);
 		var frameSize = 0;
 		var slideeSize = 0;
 		var pos = {
@@ -2097,6 +2098,8 @@
 
 	// Default options
 	Sly.defaults = {
+		slidee: null, // Selector for a customized slidee, in case there exists one more children inheriting FRAME. Default is SLIDEE, the first child of FRAME
+		
 		horizontal: false, // Switch to horizontal mode.
 
 		// Item based navigation
