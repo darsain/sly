@@ -24,6 +24,8 @@ Sly call with all default options as defined in the source.
 
 ```js
 var frame = new Sly('#frame', {
+	slidee: null, // Selector for a customized slidee, in case there exists one more children inheriting FRAME. Default is SLIDEE, the first child of FRAME
+	
 	horizontal: false, // Switch to horizontal mode.
 
 	// Item based navigation
