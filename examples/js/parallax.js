@@ -39,8 +39,9 @@ jQuery(function ($) {
 			start: 0
 		};
 		var maxY = size + frame.height;
-		var minParticleSize = 2;
-		var maxParticleSize = 12;
+		var minParticleSize = 4;
+		var maxParticleSize = 120;
+		var particleDistributionPow = 10;
 		var particles = [];
 
 		function updateDimensions() {
@@ -58,14 +59,15 @@ jQuery(function ($) {
 			var $el, zoom, size;
 			for (var i = 0; i < count; i++) {
 				$el = $('<li/>');
-				zoom = Math.random() * 0.99 + 0.01;
+				zoom = Math.pow(Math.random(), particleDistributionPow) * 0.99 + 0.01;
 				size = Math.max(minParticleSize, maxParticleSize * zoom);
 
 				// Adjust dot size
 				$el.css({
 					width: Math.round(size),
 					height: Math.round(size),
-					zIndex: Math.round(zoom * 100)
+					zIndex: Math.round(zoom * 100),
+					opacity: 1 - zoom
 				});
 
 				// Add to particles
