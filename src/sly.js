@@ -1583,7 +1583,7 @@
 			event.originalEvent[namespace] = self;
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastGlobalWheel + o.scrollHijack > time) {
+			if (lastGlobalWheel + o.scrollHijack > time && $scrollSource[0] !== document && $scrollSource[0] !== window) {
 				lastGlobalWheel = time;
 				return;
 			}
