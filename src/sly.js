@@ -1997,14 +1997,14 @@
 		var self = {};
 		self.style = {};
 		self.save = function () {
-			if (!element) return;
+			if (!element || !element.nodeType) return;
 			for (var i = 0; i < arguments.length; i++) {
 				self.style[arguments[i]] = element.style[arguments[i]];
 			}
 			return self;
 		};
 		self.restore = function () {
-			if (!element) return;
+			if (!element || !element.nodeType) return;
 			for (var prop in self.style) {
 				if (self.style.hasOwnProperty(prop)) element.style[prop] = self.style[prop];
 			}
