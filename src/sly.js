@@ -61,7 +61,7 @@
 
 		// Frame
 		var $frame = $(frame);
-		var $slidee = $frame.children().eq(0);
+		var $slidee = o.slidee ? $(o.slidee).eq(0) : $frame.children().eq(0);
 		var frameSize = 0;
 		var slideeSize = 0;
 		var pos = {
@@ -2097,6 +2097,7 @@
 
 	// Default options
 	Sly.defaults = {
+		slidee:     null,  // Selector, DOM element, or jQuery object with DOM element representing SLIDEE.
 		horizontal: false, // Switch to horizontal mode.
 
 		// Item based navigation

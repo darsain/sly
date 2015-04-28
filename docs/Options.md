@@ -24,6 +24,7 @@ Sly call with all default options as defined in the source.
 
 ```js
 var frame = new Sly('#frame', {
+	slidee:     null,  // Selector, DOM element, or jQuery object with DOM element representing SLIDEE.
 	horizontal: false, // Switch to horizontal mode.
 
 	// Item based navigation
@@ -93,6 +94,13 @@ var frame = new Sly('#frame', {
 ```
 
 # Options
+
+### slidee
+
+Type: `String|Element|Object`
+Default: `null`
+
+This option allows to manually set what will Sly use as a SLIDEE element. By default, SLIDEE is a 1st child of FRAME.
 
 ### horizontal
 
