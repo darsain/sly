@@ -1,5 +1,5 @@
 /*!
- * sly 1.4.4 - 30th Mar 2015
+ * sly 1.5.0 - 28th Apr 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -68,7 +68,7 @@
 
 		// Frame
 		var $frame = $(frame);
-		var $slidee = $frame.children().eq(0);
+		var $slidee = o.slidee ? $(o.slidee).eq(0) : $frame.children().eq(0);
 		var frameSize = 0;
 		var slideeSize = 0;
 		var pos = {
@@ -2104,6 +2104,7 @@
 
 	// Default options
 	Sly.defaults = {
+		slidee:     null,  // Selector, DOM element, or jQuery object with DOM element representing SLIDEE.
 		horizontal: false, // Switch to horizontal mode.
 
 		// Item based navigation

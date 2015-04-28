@@ -1,5 +1,9 @@
 # Changelog
 
+**1.5.0** :: *28th Apr 2015*
+
+- Added `slidee` option to force Sly to use as a specific SLIDEE element.
+
 **1.4.4** :: *30th Mar 2015*
 
 - Fixed `activateOn` events not bubbling when originating on interactive elements, making it impossible to bind handlers to buttons for example.
