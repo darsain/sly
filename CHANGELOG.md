@@ -1,8 +1,13 @@
 # Changelog
 
+**1.5.1** :: *28th Apr 2015*
+
+- Fixed parallax mode.
+- Fixed scrolling not working when `document` or `window` was used as a scroll source.
+
 **1.5.0** :: *28th Apr 2015*
 
-- Added `slidee` option to force Sly to use as a specific SLIDEE element.
+- Added `slidee` option that forces Sly to use a specific SLIDEE element.
 
 **1.4.4** :: *30th Mar 2015*
 

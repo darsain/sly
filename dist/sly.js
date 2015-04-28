@@ -1,5 +1,5 @@
 /*!
- * sly 1.5.0 - 28th Apr 2015
+ * sly 1.5.1 - 28th Apr 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1590,7 +1590,7 @@
 			event.originalEvent[namespace] = self;
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastGlobalWheel + o.scrollHijack > time) {
+			if (lastGlobalWheel + o.scrollHijack > time && $scrollSource[0] !== document && $scrollSource[0] !== window) {
 				lastGlobalWheel = time;
 				return;
 			}
@@ -2004,14 +2004,14 @@
 		var self = {};
 		self.style = {};
 		self.save = function () {
-			if (!element) return;
+			if (!element || !element.nodeType) return;
 			for (var i = 0; i < arguments.length; i++) {
 				self.style[arguments[i]] = element.style[arguments[i]];
 			}
 			return self;
 		};
 		self.restore = function () {
-			if (!element) return;
+			if (!element || !element.nodeType) return;
 			for (var prop in self.style) {
 				if (self.style.hasOwnProperty(prop)) element.style[prop] = self.style[prop];
 			}
