@@ -2045,7 +2045,7 @@
 
 	// Feature detects
 	(function () {
-		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'];
+		var prefixes = ['', 'Webkit', 'Moz', 'ms', 'O'];
 		var el = document.createElement('div');
 
 		function testProp(prop) {
