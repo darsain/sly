@@ -1429,11 +1429,22 @@
 
 			if (!dragging.released && dragging.path < 1) return;
 
+			// We haven't decided whether this is a drag or not...
 			if (!dragging.init) {
-				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
-					dragging.init = 1;
-				} else {
-					return dragEnd();
+				// If the drag path was very short, maybe it's not a drag?
+				if (dragging.path < 3) {
+					// If the pointer was released, the path will not become longer and it's 
+					// definitely not a drag. If not released yet, decide on next iteration
+					return dragging.released ? dragEnd() : undefined;
+				}
+				else {
+					// If dragging path is sufficiently long we can confidently start a drag
+					// if drag is in different direction than scroll, ignore it
+					if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
+						dragging.init = 1;
+					} else {
+						return dragEnd();
+					}
 				}
 			}
 
