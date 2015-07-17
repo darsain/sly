@@ -1432,8 +1432,8 @@
 			// We haven't decided whether this is a drag or not...
 			if (!dragging.init) {
 				// If the drag path was very short, maybe it's not a drag?
-				if (dragging.path < 3) {
-					// If the pointer was released, the path will not become longer and it's 
+				if (dragging.path < o.dragThreshold) {
+					// If the pointer was released, the path will not become longer and it's
 					// definitely not a drag. If not released yet, decide on next iteration
 					return dragging.released ? dragEnd() : undefined;
 				}
@@ -2131,6 +2131,7 @@
 		releaseSwing:  false, // Ease out on dragging swing release.
 		swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 		elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
+		dragThreshold: 3,     // Distance in pixels before Sly recognizes dragging.
 		interactive:   null,  // Selector for special interactive elements.
 
 		// Scrollbar
