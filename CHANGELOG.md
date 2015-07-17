@@ -1,5 +1,10 @@
 # Changelog
 
+**1.6.0** :: *17th Jul 2015*
+
+- Implemented dragging threshold - distance in pixels before Sly recognizes dragging.
+- Added `dragThreshold` option, which is `3` by default.
+
 **1.5.1** :: *28th Apr 2015*
 
 - Fixed parallax mode.

@@ -1,5 +1,5 @@
 /*!
- * sly 1.5.1 - 28th Apr 2015
+ * sly 1.6.0 - 17th Jul 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -1436,11 +1436,22 @@
 
 			if (!dragging.released && dragging.path < 1) return;
 
+			// We haven't decided whether this is a drag or not...
 			if (!dragging.init) {
-				if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
-					dragging.init = 1;
-				} else {
-					return dragEnd();
+				// If the drag path was very short, maybe it's not a drag?
+				if (dragging.path < o.dragThreshold) {
+					// If the pointer was released, the path will not become longer and it's
+					// definitely not a drag. If not released yet, decide on next iteration
+					return dragging.released ? dragEnd() : undefined;
+				}
+				else {
+					// If dragging path is sufficiently long we can confidently start a drag
+					// if drag is in different direction than scroll, ignore it
+					if (o.horizontal ? abs(dragging.pathX) > abs(dragging.pathY) : abs(dragging.pathX) < abs(dragging.pathY)) {
+						dragging.init = 1;
+					} else {
+						return dragEnd();
+					}
 				}
 			}
 
@@ -2052,7 +2063,7 @@
 
 	// Feature detects
 	(function () {
-		var prefixes = ['', 'webkit', 'moz', 'ms', 'o'];
+		var prefixes = ['', 'Webkit', 'Moz', 'ms', 'O'];
 		var el = document.createElement('div');
 
 		function testProp(prop) {
@@ -2127,6 +2138,7 @@
 		releaseSwing:  false, // Ease out on dragging swing release.
 		swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 		elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
+		dragThreshold: 3,     // Distance in pixels before Sly recognizes dragging.
 		interactive:   null,  // Selector for special interactive elements.
 
 		// Scrollbar
