@@ -1893,6 +1893,11 @@
 			if (o.cycleBy && !parallax) {
 				self[o.startPaused ? 'pause' : 'resume']();
 			}
+			
+			// Put reference into data element
+			if( !$frame.data(namespace) ) {
+				$frame.data(namespace, self);
+			}
 
 			// Return instance
 			return self;
