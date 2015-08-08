@@ -53,6 +53,8 @@
 	 * @param {Object}  callbackMap Callbacks map.
 	 */
 	function Sly(frame, options, callbackMap) {
+		if (!(this instanceof Sly)) return new Sly(frame, options, callbackMap);
+
 		// Extend options
 		var o = $.extend({}, Sly.defaults, options);
 
