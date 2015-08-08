@@ -1,5 +1,10 @@
 # Changelog
 
+**1.6.1** :: *8th Aug 2015*
+
+- Improved instance clearing and method calls when called via jQuery proxy.
+- Made `new` keyword in `new Sly()` optional.
+
 **1.6.0** :: *17th Jul 2015*
 
 - Implemented dragging threshold - distance in pixels before Sly recognizes dragging.

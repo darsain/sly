@@ -1913,15 +1913,15 @@
 
 	Sly.getInstance = function (element) {
 		return $.data(element, namespace);
-	}
+	};
 
 	Sly.storeInstance = function (element, sly) {
 		return $.data(element, namespace, sly);
-	}
+	};
 
 	Sly.removeInstance = function (element) {
 		return $.removeData(element, namespace);
-	}
+	};
 
 	/**
 	 * Return type of the value.
