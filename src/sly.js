@@ -1,3 +1,4 @@
+
 ;(function ($, w, undefined) {
 	'use strict';
 
@@ -1735,6 +1736,9 @@
 		 * @return {Void}
 		 */
 		self.destroy = function () {
+			// Remove the reference to itself
+			Sly.removeInstance(frame);
+
 			// Unbind all events
 			$scrollSource
 				.add($handle)
@@ -1795,6 +1799,12 @@
 			if (self.initialized) {
 				return;
 			}
+
+			// Disallow multiple instances on the same element
+			if (Sly.getInstance(frame)) throw new Error('There is already a Sly instance on this element');
+
+			// Store the reference to itself
+			Sly.storeInstance(frame, self);
 
 			// Register callbacks map
 			self.on(callbackMap);
@@ -1897,6 +1907,18 @@
 			// Return instance
 			return self;
 		};
+	}
+
+	Sly.getInstance = function (element) {
+		return $.data(element, namespace);
+	}
+
+	Sly.storeInstance = function (element, sly) {
+		return $.data(element, namespace, sly);
+	}
+
+	Sly.removeInstance = function (element) {
+		return $.removeData(element, namespace);
 	}
 
 	/**
@@ -2092,11 +2114,11 @@
 		// Apply to all elements
 		return this.each(function (i, element) {
 			// Call with prevention against multiple instantiations
-			var plugin = $.data(element, namespace);
+			var plugin = Sly.getInstance(element);
 
 			if (!plugin && !method) {
 				// Create a new object if it doesn't exist yet
-				plugin = $.data(element, namespace, new Sly(element, options, callbackMap).init());
+				plugin = new Sly(element, options, callbackMap).init();
 			} else if (plugin && method) {
 				// Call method
 				if (plugin[method]) {
