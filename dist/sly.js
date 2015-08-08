@@ -1,10 +1,11 @@
 /*!
- * sly 1.6.0 - 17th Jul 2015
+ * sly 1.6.1 - 8th Aug 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
  * http://opensource.org/licenses/MIT
  */
+
 ;(function ($, w, undefined) {
 	'use strict';
 
@@ -59,6 +60,8 @@
 	 * @param {Object}  callbackMap Callbacks map.
 	 */
 	function Sly(frame, options, callbackMap) {
+		if (!(this instanceof Sly)) return new Sly(frame, options, callbackMap);
+
 		// Extend options
 		var o = $.extend({}, Sly.defaults, options);
 
@@ -1742,6 +1745,9 @@
 		 * @return {Void}
 		 */
 		self.destroy = function () {
+			// Remove the reference to itself
+			Sly.removeInstance(frame);
+
 			// Unbind all events
 			$scrollSource
 				.add($handle)
@@ -1802,6 +1808,12 @@
 			if (self.initialized) {
 				return;
 			}
+
+			// Disallow multiple instances on the same element
+			if (Sly.getInstance(frame)) throw new Error('There is already a Sly instance on this element');
+
+			// Store the reference to itself
+			Sly.storeInstance(frame, self);
 
 			// Register callbacks map
 			self.on(callbackMap);
@@ -1905,6 +1917,18 @@
 			return self;
 		};
 	}
+
+	Sly.getInstance = function (element) {
+		return $.data(element, namespace);
+	};
+
+	Sly.storeInstance = function (element, sly) {
+		return $.data(element, namespace, sly);
+	};
+
+	Sly.removeInstance = function (element) {
+		return $.removeData(element, namespace);
+	};
 
 	/**
 	 * Return type of the value.
@@ -2099,11 +2123,11 @@
 		// Apply to all elements
 		return this.each(function (i, element) {
 			// Call with prevention against multiple instantiations
-			var plugin = $.data(element, namespace);
+			var plugin = Sly.getInstance(element);
 
 			if (!plugin && !method) {
 				// Create a new object if it doesn't exist yet
-				plugin = $.data(element, namespace, new Sly(element, options, callbackMap).init());
+				plugin = new Sly(element, options, callbackMap).init();
 			} else if (plugin && method) {
 				// Call method
 				if (plugin[method]) {
