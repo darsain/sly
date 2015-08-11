@@ -1,3 +1,4 @@
+![Bower](https://img.shields.io/bower/v/sly.svg)
 # [Sly](http://darsa.in/sly)
 
 JavaScript library for one-directional scrolling with item based navigation support.

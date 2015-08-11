@@ -1,0 +1,26 @@
+{
+  "name": "sly",
+  "version": "1.6.1",
+  "homepage": "http://darsa.in/sly",
+  "authors": [
+    "Darsain"
+  ],
+  "description": "One-directional scrolling with item based navigation support.",
+  "main": "dist/sly.min.js",
+  "keywords": [
+    "scrolling",
+    "items",
+    "touch"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">=1.7"
+  }
+}
