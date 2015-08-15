@@ -1426,6 +1426,8 @@
 		 * @return {Void}
 		 */
 		function dragHandler(event) {
+			var dragInitiated = true;
+
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
 			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
 			dragging.pathX = dragging.pointer.pageX - dragging.initX;
@@ -1465,6 +1467,7 @@
 			// Cancel dragging on release
 			if (dragging.released) {
 				dragEnd();
+				dragInitiated = false;
 
 				// Adjust path with a swing on mouse release
 				if (o.releaseSwing && dragging.slidee) {
@@ -1477,7 +1480,7 @@
 				}
 			}
 
-			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta), undefined, undefined, true);
+			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta), undefined, undefined, dragInitiated);
 		}
 
 		/**
