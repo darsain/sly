@@ -1470,7 +1470,10 @@
 				if (o.releaseSwing && dragging.slidee) {
 					dragging.swing = (dragging.delta - dragging.history[0]) / 40 * 300;
 					dragging.delta += dragging.swing;
-					dragging.tweese = abs(dragging.swing) > 10;
+
+					if (o.releaseTweese) {
+						dragging.tweese = abs(dragging.swing) > 10;
+					}
 				}
 			}
 
@@ -2156,6 +2159,7 @@
 		mouseDragging: false, // Enable navigation by dragging the SLIDEE with mouse cursor.
 		touchDragging: false, // Enable navigation by dragging the SLIDEE with touch events.
 		releaseSwing:  false, // Ease out on dragging swing release.
+		releaseTweese: false, // Tweese on dragging release.
 		swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 		elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
 		dragThreshold: 3,     // Distance in pixels before Sly recognizes dragging.

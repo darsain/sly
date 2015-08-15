@@ -45,6 +45,7 @@ var frame = new Sly('#frame', {
 	mouseDragging: false, // Enable navigation by dragging the SLIDEE with mouse cursor.
 	touchDragging: false, // Enable navigation by dragging the SLIDEE with touch events.
 	releaseSwing:  false, // Ease out on dragging swing release.
+	releaseTweese: false, // Tweese on dragging release.
 	swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 	elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
 	interactive:   null,  // Selector for special interactive elements.
@@ -237,6 +238,13 @@ Type: `Boolean`
 Default: `false`
 
 Whether Sly should calculate additional easing path for swipe/swing gestures after draggin has been released. The path length is calculated by the swing strength, i.e. the path that pointer moved in the last 40ms.
+
+### releaseTweese
+
+Type: `Boolean`
+Default: `false`
+
+Whether Sly should add a tweese path for a releaseSwing action.
 
 ### swingSpeed
 
