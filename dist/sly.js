@@ -1,5 +1,5 @@
 /*!
- * sly 1.6.1 - 8th Aug 2015
+ * sly 1.6.1 - 15th Aug 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -366,13 +366,16 @@
 		/**
 		 * Animate to a position.
 		 *
-		 * @param {Int}  newPos    New position.
-		 * @param {Bool} immediate Reposition immediately without an animation.
-		 * @param {Bool} dontAlign Do not align items, use the raw position passed in first argument.
+		 * @param {Int}  newPos        New position.
+		 * @param {Bool} immediate     Reposition immediately without an animation.
+		 * @param {Bool} dontAlign     Do not align items, use the raw position passed in first argument.
+		 * @param {Bool} dragInitiated If action has been initiated by dragging or not.
 		 *
 		 * @return {Void}
 		 */
-		function slideTo(newPos, immediate, dontAlign) {
+		function slideTo(newPos, immediate, dontAlign, dragInitiated) {
+			dragInitiated = dragInitiated || false;
+
 			// Align items
 			if (itemNav && dragging.released && !dontAlign) {
 				var tempRel = getRelatives(newPos);
@@ -416,7 +419,7 @@
 			// Start animation rendering
 			if (newPos !== pos.dest) {
 				pos.dest = newPos;
-				trigger('change');
+				trigger('change', dragInitiated);
 				if (!renderID) {
 					render();
 				}
@@ -1478,7 +1481,7 @@
 				}
 			}
 
-			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
+			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta), undefined, undefined, true);
 		}
 
 		/**
