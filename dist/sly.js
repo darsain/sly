@@ -1,5 +1,5 @@
 /*!
- * sly 1.6.1 - 8th Aug 2015
+ * sly 1.6.1 - 15th Aug 2015
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -366,13 +366,16 @@
 		/**
 		 * Animate to a position.
 		 *
-		 * @param {Int}  newPos    New position.
-		 * @param {Bool} immediate Reposition immediately without an animation.
-		 * @param {Bool} dontAlign Do not align items, use the raw position passed in first argument.
+		 * @param {Int}  newPos        New position.
+		 * @param {Bool} immediate     Reposition immediately without an animation.
+		 * @param {Bool} dontAlign     Do not align items, use the raw position passed in first argument.
+		 * @param {Bool} dragInitiated If action has been initiated by dragging or not.
 		 *
 		 * @return {Void}
 		 */
-		function slideTo(newPos, immediate, dontAlign) {
+		function slideTo(newPos, immediate, dontAlign, dragInitiated) {
+			dragInitiated = dragInitiated || false;
+
 			// Align items
 			if (itemNav && dragging.released && !dontAlign) {
 				var tempRel = getRelatives(newPos);
@@ -416,7 +419,7 @@
 			// Start animation rendering
 			if (newPos !== pos.dest) {
 				pos.dest = newPos;
-				trigger('change');
+				trigger('change', dragInitiated);
 				if (!renderID) {
 					render();
 				}
@@ -1430,6 +1433,8 @@
 		 * @return {Void}
 		 */
 		function dragHandler(event) {
+			var dragInitiated = true;
+
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
 			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
 			dragging.pathX = dragging.pointer.pageX - dragging.initX;
@@ -1469,16 +1474,20 @@
 			// Cancel dragging on release
 			if (dragging.released) {
 				dragEnd();
+				dragInitiated = false;
 
 				// Adjust path with a swing on mouse release
 				if (o.releaseSwing && dragging.slidee) {
 					dragging.swing = (dragging.delta - dragging.history[0]) / 40 * 300;
 					dragging.delta += dragging.swing;
-					dragging.tweese = abs(dragging.swing) > 10;
+
+					if (o.releaseTweese) {
+						dragging.tweese = abs(dragging.swing) > 10;
+					}
 				}
 			}
 
-			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta));
+			slideTo(dragging.slidee ? round(dragging.initPos - dragging.delta) : handleToSlidee(dragging.initPos + dragging.delta), undefined, undefined, dragInitiated);
 		}
 
 		/**
@@ -2160,6 +2169,7 @@
 		mouseDragging: false, // Enable navigation by dragging the SLIDEE with mouse cursor.
 		touchDragging: false, // Enable navigation by dragging the SLIDEE with touch events.
 		releaseSwing:  false, // Ease out on dragging swing release.
+		releaseTweese: false, // Tweese on dragging release.
 		swingSpeed:    0.2,   // Swing synchronization speed, where: 1 = instant, 0 = infinite.
 		elasticBounds: false, // Stretch SLIDEE position limits when dragging past FRAME boundaries.
 		dragThreshold: 3,     // Distance in pixels before Sly recognizes dragging.

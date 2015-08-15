@@ -113,6 +113,7 @@ Event triggered whenever a new position change has been requested. That means th
 Callback arguments:
 
 1. **eventName** `String` Event name.
+2. **dragInitiated** `Bool` If action has been initiated by dragging or not.
 
 **Note!:** When dragging a scrollbar handle or a SLIDEE, this event is being triggered on each mouse move, which is quite often.
 
