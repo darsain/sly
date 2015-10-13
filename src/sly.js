@@ -32,6 +32,7 @@
 	var round = Math.round;
 	var max = Math.max;
 	var min = Math.min;
+	var ceil = Math.ceil;
 
 	// Keep track of last fired global wheel event
 	var lastGlobalWheel = 0;
@@ -210,7 +211,7 @@
 					// Item
 					var $item = $(element);
 					var rect = element.getBoundingClientRect();
-					var itemSize = round(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
+					var itemSize = ceil(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
 					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
 					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
 					var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
