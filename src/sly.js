@@ -14,11 +14,11 @@
 	var transform, gpuAcceleration;
 
 	// Other global values
-	var $doc = $(document);
+	var dragInitEventNames = ['touchstart', 'mousedown'];
 	var dragInitEvents = 'touchstart.' + namespace + ' mousedown.' + namespace;
-	var dragMouseEvents = 'mousemove.' + namespace + ' mouseup.' + namespace;
-	var dragTouchEvents = 'touchmove.' + namespace + ' touchend.' + namespace;
-	var wheelEvent = (document.implementation.hasFeature('Event.wheel', '3.0') ? 'wheel.' : 'mousewheel.') + namespace;
+	var dragMouseEvents = ['mousemove', 'mouseup'];
+	var dragTouchEvents = ['touchmove', 'touchend'];
+	var wheelEvent = (document.implementation.hasFeature('Event.wheel', '3.0') ? 'wheel' : 'mousewheel');
 	var clickEvent = 'click.' + namespace;
 	var mouseDownEvent = 'mousedown.' + namespace;
 	var interactiveElements = ['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'];
@@ -35,9 +35,9 @@
 
 	// Keep track of last fired global wheel event
 	var lastGlobalWheel = 0;
-	$doc.on(wheelEvent, function (event) {
-		var sly = event.originalEvent[namespace];
-		var time = +new Date();
+	document.addEventListener(wheelEvent, function (event) {
+	    var sly = event[namespace];
+	    var time = +new Date();
 		// Update last global wheel time, but only when event didn't originate
 		// in Sly frame, or the origin was less than scrollHijack time ago
 		if (!sly || sly.options.scrollHijack < time - lastGlobalWheel) lastGlobalWheel = time;
@@ -63,8 +63,8 @@
 		var parallax = isNumber(frame);
 
 		// Frame
-		var $frame = $(frame);
-		var $slidee = o.slidee ? $(o.slidee).eq(0) : $frame.children().eq(0);
+		var frameElement = frame;
+		var slideeElement = o.slidee ? o.slidee : $(frameElement).children().eq(0)[0];
 		var frameSize = 0;
 		var slideeSize = 0;
 		var pos = {
@@ -77,7 +77,7 @@
 
 		// Scrollbar
 		var $sb = $(o.scrollBar).eq(0);
-		var $handle = $sb.children().eq(0);
+		var handle = $sb.children().eq(0)[0];
 		var sbSize = 0;
 		var handleSize = 0;
 		var hPos = {
@@ -103,10 +103,10 @@
 		};
 
 		// Styles
-		var frameStyles = new StyleRestorer($frame[0]);
-		var slideeStyles = new StyleRestorer($slidee[0]);
+		var frameStyles = new StyleRestorer(frameElement);
+		var slideeStyles = new StyleRestorer(slideeElement);
 		var sbStyles = new StyleRestorer($sb[0]);
-		var handleStyles = new StyleRestorer($handle[0]);
+		var handleStyles = new StyleRestorer(handle);
 
 		// Navigation type booleans
 		var basicNav = o.itemNav === 'basic';
@@ -115,8 +115,8 @@
 		var itemNav = !parallax && (basicNav || centeredNav || forceCenteredNav);
 
 		// Miscellaneous
-		var $scrollSource = o.scrollSource ? $(o.scrollSource) : $frame;
-		var $dragSource = o.dragSource ? $(o.dragSource) : $frame;
+		var $scrollSource = o.scrollSource ? $(o.scrollSource) : $(frameElement);
+		var $dragSource = o.dragSource ? $(o.dragSource) : $(frameElement);
 		var $forwardButton = $(o.forward);
 		var $backwardButton = $(o.backward);
 		var $prevButton = $(o.prev);
@@ -143,13 +143,13 @@
 
 		// Normalizing frame
 		if (!parallax) {
-			frame = $frame[0];
+		    frame = frameElement;
 		}
 
 		// Expose properties
 		self.initialized = 0;
 		self.frame = frame;
-		self.slidee = $slidee[0];
+		self.slidee = slideeElement;
 		self.pos = pos;
 		self.rel = rel;
 		self.items = items;
@@ -175,9 +175,9 @@
 			pos.old = $.extend({}, pos);
 
 			// Reset global variables
-			frameSize = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
+			frameSize = parallax ? 0 : $(frameElement)[o.horizontal ? 'width' : 'height']();
 			sbSize = $sb[o.horizontal ? 'width' : 'height']();
-			slideeSize = parallax ? frame : $slidee[o.horizontal ? 'outerWidth' : 'outerHeight']();
+			slideeSize = parallax ? frame : $(slideeElement)[o.horizontal ? 'outerWidth' : 'outerHeight']();
 			pages.length = 0;
 
 			// Set position limits & relatives
@@ -190,12 +190,13 @@
 				lastItemsCount = items.length;
 
 				// Reset itemNav related variables
-				$items = $slidee.children(o.itemSelector);
+				$items = $(o.itemSelector, slideeElement);
 				items.length = 0;
 
 				// Needed variables
-				var paddingStart = getPx($slidee, o.horizontal ? 'paddingLeft' : 'paddingTop');
-				var paddingEnd = getPx($slidee, o.horizontal ? 'paddingRight' : 'paddingBottom');
+				var slideeComputedStyle = getComputedStyle(slideeElement, null);
+				var paddingStart = getStylePx(slideeComputedStyle, o.horizontal ? 'padding-left' : 'padding-top');
+				var paddingEnd = getStylePx(slideeComputedStyle, o.horizontal ? 'padding-right' : 'padding-bottom');
 				var borderBox = $($items).css('boxSizing') === 'border-box';
 				var areFloated = $items.css('float') !== 'none';
 				var ignoredMargin = 0;
@@ -253,7 +254,7 @@
 				});
 
 				// Resize SLIDEE to fit all items
-				$slidee[0].style[o.horizontal ? 'width' : 'height'] = (borderBox ? slideeSize: slideeSize - paddingStart - paddingEnd) + 'px';
+				slideeElement.style[o.horizontal ? 'width' : 'height'] = (borderBox ? slideeSize : slideeSize - paddingStart - paddingEnd) + 'px';
 
 				// Adjust internal SLIDEE size for last margin
 				slideeSize -= ignoredMargin;
@@ -274,14 +275,14 @@
 			updateRelatives();
 
 			// Scrollbar
-			if ($handle.length && sbSize > 0) {
-				// Stretch scrollbar handle to represent the visible area
+			if (handle && sbSize > 0) {
+			    // Stretch scrollbar handle to represent the visible area
 				if (o.dynamicHandle) {
 					handleSize = pos.start === pos.end ? sbSize : round(sbSize * frameSize / slideeSize);
 					handleSize = within(handleSize, o.minHandleSize, sbSize);
-					$handle[0].style[o.horizontal ? 'width' : 'height'] = handleSize + 'px';
-				} else {
-					handleSize = $handle[o.horizontal ? 'outerWidth' : 'outerHeight']();
+					handle.style[o.horizontal ? 'width' : 'height'] = handleSize + 'px';
+                } else {
+				    handleSize = $(handle)[o.horizontal ? 'outerWidth' : 'outerHeight']();
 				}
 
 				hPos.end = sbSize - handleSize;
@@ -476,9 +477,9 @@
 			// Update SLIDEE position
 			if (!parallax) {
 				if (transform) {
-					$slidee[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
+				    slideeElement.style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + (-pos.cur) + 'px)';
 				} else {
-					$slidee[0].style[o.horizontal ? 'left' : 'top'] = -round(pos.cur) + 'px';
+				    slideeElement.style[o.horizontal ? 'left' : 'top'] = -round(pos.cur) + 'px';
 				}
 			}
 
@@ -496,15 +497,15 @@
 		 * @return {Void}
 		 */
 		function syncScrollbar() {
-			if ($handle.length) {
-				hPos.cur = pos.start === pos.end ? 0 : (((dragging.init && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
+		    if (handle) {
+		        hPos.cur = pos.start === pos.end ? 0 : (((dragging.init && !dragging.slidee) ? pos.dest : pos.cur) - pos.start) / (pos.end - pos.start) * hPos.end;
 				hPos.cur = within(round(hPos.cur), hPos.start, hPos.end);
 				if (last.hPos !== hPos.cur) {
 					last.hPos = hPos.cur;
 					if (transform) {
-						$handle[0].style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
+					    handle.style[transform] = gpuAcceleration + (o.horizontal ? 'translateX' : 'translateY') + '(' + hPos.cur + 'px)';
 					} else {
-						$handle[0].style[o.horizontal ? 'left' : 'top'] = hPos.cur + 'px';
+					    handle.style[o.horizontal ? 'left' : 'top'] = hPos.cur + 'px';
 					}
 				}
 			}
@@ -523,6 +524,29 @@
 			}
 		}
 
+		function getOffset(elem) {
+
+		    var doc = document;
+		    var box = { top: 0, left: 0 };
+
+		    if (!doc) {
+		        return box;
+		    }
+
+		    var docElem = doc.documentElement;
+
+		    // Support: BlackBerry 5, iOS 3 (original iPhone)
+		    // If we don't have gBCR, just use 0,0 rather than error
+		    if (elem.getBoundingClientRect) {
+		        box = elem.getBoundingClientRect();
+		    }
+		    var win = doc.defaultView;
+		    return {
+		        top: box.top + win.pageYOffset - docElem.clientTop,
+		        left: box.left + win.pageXOffset - docElem.clientLeft
+		    };
+		}
+
 		/**
 		 * Returns the position object.
 		 *
@@ -535,21 +559,18 @@
 				var index = getIndex(item);
 				return index !== -1 ? items[index] : false;
 			} else {
-				var $item = $slidee.find(item).eq(0);
+			    var slideeOffset = getOffset(slideeElement);
+			    var itemOffset = getOffset(item);
 
-				if ($item[0]) {
-					var offset = o.horizontal ? $item.offset().left - $slidee.offset().left : $item.offset().top - $slidee.offset().top;
-					var size = $item[o.horizontal ? 'outerWidth' : 'outerHeight']();
+			    var offset = o.horizontal ? itemOffset.left - slideeOffset.left : itemOffset.top - slideeOffset.top;
+			    var size = item[o.horizontal ? 'offsetWidth' : 'offsetHeight'];
 
-					return {
-						start: offset,
-						center: offset - frameSize / 2 + size / 2,
-						end: offset - frameSize + size,
-						size: size
-					};
-				} else {
-					return false;
-				}
+			    return {
+			        start: offset,
+			        center: offset - frameSize / 2 + size / 2,
+			        end: offset - frameSize + size,
+			        size: size
+			    };
 			}
 		};
 
@@ -1087,7 +1108,7 @@
 			if (itemNav) {
 				// Insert the element(s)
 				if (index == null || !items[0] || index >= items.length) {
-					$element.appendTo($slidee);
+				    slideeElement.appendChild(element);
 				} else if (items.length) {
 					$element.insertBefore(items[index].el);
 				}
@@ -1097,7 +1118,7 @@
 					last.active = rel.activeItem += $element.length;
 				}
 			} else {
-				$slidee.append($element);
+			    slideeElement.appendChild(element);
 			}
 
 			// Reload
@@ -1138,8 +1159,8 @@
 					}
 				}
 			} else {
-				$(element).remove();
-				load();
+			    element.parentNode.removeChild(element);
+			    load();
 			}
 		};
 
@@ -1345,6 +1366,14 @@
 			dragging.slidee = source === 'slidee';
 		}
 
+		function dragInitHandle(event) {
+		    dragInit(event, 'handle');
+		}
+
+		function dragInitSlidee(event) {
+		    dragInit(event, 'slidee');
+		}
+
 		/**
 		 * Dragging initiator.
 		 *
@@ -1352,9 +1381,8 @@
 		 *
 		 * @return {Void}
 		 */
-		function dragInit(event) {
+		function dragInit(event, source) {
 			var isTouch = event.type === 'touchstart';
-			var source = event.data.source;
 			var isSlidee = source === 'slidee';
 
 			// Ignore when already in progress, or interactive element in non-touch navivagion
@@ -1382,9 +1410,9 @@
 
 			// Properties used in dragHandler
 			dragging.init = 0;
-			dragging.$source = $(event.target);
+			dragging.source = event.target;
 			dragging.touch = isTouch;
-			dragging.pointer = isTouch ? event.originalEvent.touches[0] : event;
+			dragging.pointer = isTouch ? event.touches[0] : event;
 			dragging.initX = dragging.pointer.pageX;
 			dragging.initY = dragging.pointer.pageY;
 			dragging.initPos = isSlidee ? pos.cur : hPos.cur;
@@ -1397,13 +1425,25 @@
 			dragging.pathToLock = isSlidee ? isTouch ? 30 : 10 : 0;
 
 			// Bind dragging events
-			$doc.on(isTouch ? dragTouchEvents : dragMouseEvents, dragHandler);
+			if (isTouch) {
+			    dragTouchEvents.map(function (eventName) {
+			        document.addEventListener(eventName, dragHandler);
+			    });
+			} else {
+			    dragMouseEvents.map(function (eventName) {
+			        document.addEventListener(eventName, dragHandler);
+			    });
+			}
 
 			// Pause ongoing cycle
 			self.pause(1);
 
 			// Add dragging class
-			(isSlidee ? $slidee : $handle).addClass(o.draggedClass);
+			if (isSlidee) {
+			    slideeElement.classList.add(o.draggedClass);
+			} else {
+			    handle.classList.add(o.draggedClass);
+			}
 
 			// Trigger moveStart event
 			trigger('moveStart');
@@ -1424,7 +1464,7 @@
 		 */
 		function dragHandler(event) {
 			dragging.released = event.type === 'mouseup' || event.type === 'touchend';
-			dragging.pointer = dragging.touch ? event.originalEvent[dragging.released ? 'changedTouches' : 'touches'][0] : event;
+			dragging.pointer = dragging.touch ? event[dragging.released ? 'changedTouches' : 'touches'][0] : event;
 			dragging.pathX = dragging.pointer.pageX - dragging.initX;
 			dragging.pathY = dragging.pointer.pageY - dragging.initY;
 			dragging.path = sqrt(pow(dragging.pathX, 2) + pow(dragging.pathY, 2));
@@ -1456,8 +1496,8 @@
 			// Disable click on a source element, as it is unwelcome when dragging
 			if (!dragging.locked && dragging.path > dragging.pathToLock && dragging.slidee) {
 				dragging.locked = 1;
-				dragging.$source.on(clickEvent, disableOneEvent);
-			}
+				dragging.source.addEventListener('click', disableOneEvent);
+            }
 
 			// Cancel dragging on release
 			if (dragging.released) {
@@ -1482,12 +1522,26 @@
 		function dragEnd() {
 			clearInterval(historyID);
 			dragging.released = true;
-			$doc.off(dragging.touch ? dragTouchEvents : dragMouseEvents, dragHandler);
-			(dragging.slidee ? $slidee : $handle).removeClass(o.draggedClass);
+			if (dragging.touch) {
+			    dragTouchEvents.map(function (eventName) {
+			        document.removeEventListener(eventName, dragHandler);
+			    });
+			} else {
+			    dragMouseEvents.map(function (eventName) {
+			        document.removeEventListener(eventName, dragHandler);
+			    });
+			}
+
+			if (dragging.slidee) {
+			    slideeElement.classList.remove(o.draggedClass);
+			} else {
+			    handle.classList.remove(o.draggedClass);
+			}
+
 
 			// Make sure that disableOneEvent is not active in next tick.
 			setTimeout(function () {
-				dragging.$source.off(clickEvent, disableOneEvent);
+			    dragging.source.removeEventListener('click', disableOneEvent);
 			});
 
 			// Normally, this is triggered in render(), but if there
@@ -1518,8 +1572,8 @@
 		 */
 		function movementReleaseHandler() {
 			self.stop();
-			$doc.off('mouseup', movementReleaseHandler);
-		}
+			document.removeEventListener('mouseup', movementReleaseHandler);
+        }
 
 		/**
 		 * Buttons navigation handler.
@@ -1535,7 +1589,7 @@
 				case $forwardButton[0]:
 				case $backwardButton[0]:
 					self.moveBy($forwardButton.is(this) ? o.moveBy : -o.moveBy);
-					$doc.on('mouseup', movementReleaseHandler);
+					document.addEventListener('mouseup', movementReleaseHandler);
 					break;
 
 				case $prevButton[0]:
@@ -1666,19 +1720,21 @@
 		function activateHandler(event) {
 			/*jshint validthis:true */
 
-			// Ignore clicks on interactive elements.
-			if (isInteractive(this)) {
-				event.originalEvent[namespace + 'ignore'] = true;
+		    var elem = event.target;
+
+		    // Ignore clicks on interactive elements.
+		    if (isInteractive(elem)) {
+				event[namespace + 'ignore'] = true;
 				return;
 			}
 
 			// Ignore events that:
 			// - are not originating from direct SLIDEE children
 			// - originated from interactive elements
-			if (this.parentNode !== $slidee[0] || event.originalEvent[namespace + 'ignore']) return;
+		    if (this.parentNode !== slideeElement || event[namespace + 'ignore']) return;
 
-			self.activate(this);
-		}
+			self.activate(elem);
+        }
 
 		/**
 		 * Click on page button handler.
@@ -1743,7 +1799,6 @@
 
 			// Unbind all events
 			$scrollSource
-				.add($handle)
 				.add($sb)
 				.add($pb)
 				.add($forwardButton)
@@ -1754,8 +1809,12 @@
 				.add($nextPageButton)
 				.off('.' + namespace);
 
-			// Unbinding specifically as to not nuke out other instances
-			$doc.off('keydown', keyboardHandler);
+			dragInitEventNames.map(function (eventName) {
+			    handle.removeEventListener(eventName, dragInitHandle);
+			});
+
+		    // Unbinding specifically as to not nuke out other instances
+			document.removeEventListener('keydown', keyboardHandler);
 
 			// Remove classes
 			$prevButton
@@ -1773,8 +1832,16 @@
 
 			if (!parallax) {
 				// Unbind events from frame
-				$frame.off('.' + namespace);
-				// Restore original styles
+			    if (o.activateOn) {
+			        o.activateOn.split(' ').map(function (eventName) {
+			            frameElement.removeEventListener(eventName, activateHandler);
+			        });
+			    }
+			    frameElement.removeEventListener('mouseenter', pauseOnHoverHandler);
+			    frameElement.removeEventListener('mouseleave', pauseOnHoverHandler);
+			    // Reset native FRAME element scroll
+			    frameElement.removeEventListener('scroll', resetScroll);
+			    // Restore original styles
 				frameStyles.restore();
 				slideeStyles.restore();
 				sbStyles.restore();
@@ -1820,24 +1887,32 @@
 			handleStyles.save.apply(handleStyles, movableProps);
 
 			// Set required styles
-			var $movables = $handle;
+			var movables = [handle];
 			if (!parallax) {
-				$movables = $movables.add($slidee);
-				$frame.css('overflow', 'hidden');
-				if (!transform && $frame.css('position') === 'static') {
-					$frame.css('position', 'relative');
-				}
+
+			    if (slideeElement) {
+			        movables.push(slideeElement);
+			    }
+			    frameElement.style.overflow = 'hidden';
+
+			    if (!transform && getComputedStyle(frameElement, null).getPropertyValue('position') === 'static') {
+			        frameElement.style.position = 'relative';
+			    }
 			}
 			if (transform) {
 				if (gpuAcceleration) {
-					$movables.css(transform, gpuAcceleration);
+				    movables.map(function (m) {
+				        m.style.transform = gpuAcceleration;
+				    });
 				}
 			} else {
 				if ($sb.css('position') === 'static') {
 					$sb.css('position', 'relative');
 				}
-				$movables.css({ position: 'absolute' });
-			}
+				movables.map(function (m) {
+				    m.style.position = 'absolute';
+				});
+            }
 
 			// Navigation buttons
 			if (o.forward) {
@@ -1867,9 +1942,13 @@
 				$sb.on(clickEvent, scrollbarHandler);
 			}
 
-			// Click on items navigation
-			if (itemNav && o.activateOn) {
-				$frame.on(o.activateOn + '.' + namespace, '*', activateHandler);
+		    // Click on items navigation
+			if (itemNav) {
+			    if (o.activateOn) {
+			        o.activateOn.split(' ').map(function (eventName) {
+			            frameElement.addEventListener(eventName, activateHandler, true);
+			        });
+			    }
 			}
 
 			// Pages navigation
@@ -1878,21 +1957,24 @@
 			}
 
 			// Dragging navigation
-			$dragSource.on(dragInitEvents, { source: 'slidee' }, dragInit);
+			$dragSource.on(dragInitEvents, dragInitSlidee);
 
-			// Scrollbar dragging navigation
-			if ($handle) {
-				$handle.on(dragInitEvents, { source: 'handle' }, dragInit);
+		    // Scrollbar dragging navigation
+			if (handle) {
+			    dragInitEventNames.map(function (eventName) {
+			        handle.addEventListener(eventName, dragInitHandle);
+			    });
 			}
 
-			// Keyboard navigation
-			$doc.on('keydown', keyboardHandler);
+		    // Keyboard navigation
+			document.addEventListener('keydown', keyboardHandler);
 
 			if (!parallax) {
-				// Pause on hover
-				$frame.on('mouseenter.' + namespace + ' mouseleave.' + namespace, pauseOnHoverHandler);
-				// Reset native FRAME element scroll
-				$frame.on('scroll.' + namespace, resetScroll);
+			    // Pause on hover
+			    frameElement.addEventListener('mouseenter', pauseOnHoverHandler);
+			    frameElement.addEventListener('mouseleave', pauseOnHoverHandler);
+			    // Reset native FRAME element scroll
+			    frameElement.addEventListener('scroll', resetScroll);
 			}
 
 			// Mark instance as initialized
@@ -1967,8 +2049,8 @@
 	function disableOneEvent(event) {
 		/*jshint validthis:true */
 		stopDefault(event, 1);
-		$(this).off(event.type, disableOneEvent);
-	}
+		this.removeEventListener(event.type, disableOneEvent);
+    }
 
 	/**
 	 * Resets native element scroll values to 0.
@@ -2002,6 +2084,18 @@
 	 */
 	function getPx($item, property) {
 		return 0 | round(String($item.css(property)).replace(/[^\-0-9.]/g, ''));
+	}
+
+    /**
+	 * Parse style to pixels.
+	 *
+	 * @param {Object}   $item    jQuery object with element.
+	 * @param {Property} property CSS property to get the pixels from.
+	 *
+	 * @return {Int}
+	 */
+	function getStylePx(computedStyle, property) {
+	    return 0 | round(String(computedStyle.getPropertyValue(property)).replace(/[^\-0-9.]/g, ''));
 	}
 
 	/**
