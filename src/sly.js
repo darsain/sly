@@ -115,7 +115,7 @@
 		var itemNav = !parallax && (basicNav || centeredNav || forceCenteredNav);
 
 		// Miscellaneous
-		var $scrollSource = o.scrollSource ? $(o.scrollSource) : $(frameElement);
+		var scrollSource = o.scrollSource ? o.scrollSource : frameElement;
 		var $dragSource = o.dragSource ? $(o.dragSource) : $(frameElement);
 		var $forwardButton = $(o.forward);
 		var $backwardButton = $(o.backward);
@@ -1648,10 +1648,10 @@
 		 */
 		function scrollHandler(event) {
 			// Mark event as originating in a Sly instance
-			event.originalEvent[namespace] = self;
+			event[namespace] = self;
 			// Don't hijack global scrolling
 			var time = +new Date();
-			if (lastGlobalWheel + o.scrollHijack > time && $scrollSource[0] !== document && $scrollSource[0] !== window) {
+			if (lastGlobalWheel + o.scrollHijack > time && scrollSource !== document && scrollSource !== window) {
 				lastGlobalWheel = time;
 				return;
 			}
@@ -1659,7 +1659,7 @@
 			if (!o.scrollBy || pos.start === pos.end) {
 				return;
 			}
-			var delta = normalizeWheelDelta(event.originalEvent);
+			var delta = normalizeWheelDelta(event);
 			// Trap scrolling only when necessary and/or requested
 			if (o.scrollTrap || delta > 0 && pos.dest < pos.end || delta < 0 && pos.dest > pos.start) {
 				stopDefault(event, 1);
@@ -1797,8 +1797,10 @@
 			// Remove the reference to itself
 			Sly.removeInstance(frame);
 
+			scrollSource.removeEventListener(wheelEvent, scrollHandler);
+
 			// Unbind all events
-			$scrollSource
+		    $(scrollSource)
 				.add($sb)
 				.add($pb)
 				.add($forwardButton)
@@ -1936,7 +1938,7 @@
 			}
 
 			// Scrolling navigation
-			$scrollSource.on(wheelEvent, scrollHandler);
+			scrollSource.addEventListener(wheelEvent, scrollHandler);
 
 			// Clicking on scrollbar navigation
 			if ($sb[0]) {
