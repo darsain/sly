@@ -1,4 +1,3 @@
-
 ;(function ($, w, undefined) {
 	'use strict';
 
@@ -94,6 +93,7 @@
 		// Items
 		var $items = 0;
 		var items = [];
+		var item_w; //Item width
 		var rel = {
 			firstItem: 0,
 			lastItem: 0,
@@ -166,6 +166,100 @@
 		 * @param {Boolean} [isInit] Whether load is called from within self.init().
 		 * @return {Void}
 		 */
+		function countSizes(paddingStart, lastItemIndex, lastItem, paddingEnd, ignoredMargin, borderBox) {
+			frameSize = parallax ? 0 : $frame[o.horizontal ? 'width' : 'height']();
+			slideeSize = 0;
+
+			$items.each(function (i, element) {
+				var $item = $(element);
+				var rect = element.getBoundingClientRect();
+				var itemSize;
+
+				//Checking how many items to show in one time
+				if (o.visibleItems === null) {
+					//Using width added by css, or auto width
+					itemSize = round(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
+				} else {
+
+					//Responsive views of items
+					if (Object.prototype.toString.call( o.visibleItems ) === '[object Array]') {
+						var w = $(window).width();
+						if(w >= o.screen_md) { itemSize = frameSize / o.visibleItems[0]; }
+						if((w < o.screen_md) && (w >= o.screen_sm)) { itemSize = frameSize / o.visibleItems[1]; }
+						if(w < o.screen_sm) { itemSize = frameSize / o.visibleItems[2]; }
+
+					}
+					else { 
+						itemSize = frameSize / o.visibleItems;
+					}
+
+				}
+
+				var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
+				var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
+				var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
+				var singleSpaced = !itemMarginStart || !itemMarginEnd;
+				var item = {};
+				
+				if (o.visibleItems !== null) {
+					$item.css('width', itemSizeFull); // this is for jQuert 1.7+
+				}
+				
+				item.el = element;
+				item.size = singleSpaced ? itemSize : itemSizeFull;
+				item.half = item.size / 2;
+				item.start = slideeSize + (singleSpaced ? itemMarginStart : 0);
+				item.center = item.start - round(frameSize / 2 - item.size / 2);
+				item.end = item.start - frameSize + item.size;
+
+				// Account for slidee padding
+				if (!i) {
+					slideeSize += paddingStart;
+				}
+
+				// Increment slidee size for size of the active element
+				slideeSize += itemSizeFull;
+				item_w = itemSizeFull;
+
+
+				// Try to account for vertical margin collapsing in vertical mode
+				// It's not bulletproof, but should work in 99% of cases
+				if (!o.horizontal && !areFloated) {
+					// Subtract smaller margin, but only when top margin is not 0, and this is not the first element
+					if (itemMarginEnd && itemMarginStart && i > 0) {
+						slideeSize -= min(itemMarginStart, itemMarginEnd);
+					}
+				}
+
+				// Things to be done on last item
+				if (i === lastItemIndex) {
+					item.end += paddingEnd;
+					slideeSize += paddingEnd;
+					ignoredMargin = singleSpaced ? itemMarginEnd : 0;
+				}
+
+				// Add item object to items array
+				items.push(item);
+				lastItem = item;
+
+			});
+
+			// Resize SLIDEE to fit all items
+			$slidee[0].style[o.horizontal ? 'width' : 'height'] = (borderBox ? slideeSize: slideeSize - paddingStart - paddingEnd) + 'px';
+
+			// Adjust internal SLIDEE size for last margin
+			slideeSize -= ignoredMargin;
+
+			// Set limits
+			if (items.length) {
+				pos.start =  items[0][forceCenteredNav ? 'center' : 'start'];
+				pos.end = forceCenteredNav ? lastItem.center : frameSize < slideeSize ? lastItem.end : pos.start;
+			} else {
+				pos.start = pos.end = 0;
+			}
+
+		}
+
 		function load(isInit) {
 			// Local variables
 			var lastItemsCount = 0;
@@ -205,66 +299,38 @@
 				// Reset slideeSize
 				slideeSize = 0;
 
-				// Iterate through items
-				$items.each(function (i, element) {
-					// Item
-					var $item = $(element);
-					var rect = element.getBoundingClientRect();
-					var itemSize = round(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
-					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
-					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
-					var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
-					var singleSpaced = !itemMarginStart || !itemMarginEnd;
-					var item = {};
-					item.el = element;
-					item.size = singleSpaced ? itemSize : itemSizeFull;
-					item.half = item.size / 2;
-					item.start = slideeSize + (singleSpaced ? itemMarginStart : 0);
-					item.center = item.start - round(frameSize / 2 - item.size / 2);
-					item.end = item.start - frameSize + item.size;
+				//Check - if is responsive array was added and check when resize finished
+				if(o.visibleItems!==null) {
 
-					// Account for slidee padding
-					if (!i) {
-						slideeSize += paddingStart;
+					var rtime;
+					var timeout = false;
+					var delta = 200;
+
+					var resizeend = function () {
+					    if (new Date() - rtime < delta) {
+					        setTimeout(resizeend, delta);
+					    } else {
+					        timeout = false;
+				        	updateRelatives();
+							updateButtonsState();
+							syncPagesbar();
+							countSizes(paddingStart, lastItemIndex, lastItem, paddingEnd, ignoredMargin, borderBox);
+							self[centeredNav ? 'toCenter' : 'toStart'](o.startAt);
+					    } 
 					}
 
-					// Increment slidee size for size of the active element
-					slideeSize += itemSizeFull;
-
-					// Try to account for vertical margin collapsing in vertical mode
-					// It's not bulletproof, but should work in 99% of cases
-					if (!o.horizontal && !areFloated) {
-						// Subtract smaller margin, but only when top margin is not 0, and this is not the first element
-						if (itemMarginEnd && itemMarginStart && i > 0) {
-							slideeSize -= min(itemMarginStart, itemMarginEnd);
-						}
-					}
-
-					// Things to be done on last item
-					if (i === lastItemIndex) {
-						item.end += paddingEnd;
-						slideeSize += paddingEnd;
-						ignoredMargin = singleSpaced ? itemMarginEnd : 0;
-					}
-
-					// Add item object to items array
-					items.push(item);
-					lastItem = item;
-				});
-
-				// Resize SLIDEE to fit all items
-				$slidee[0].style[o.horizontal ? 'width' : 'height'] = (borderBox ? slideeSize: slideeSize - paddingStart - paddingEnd) + 'px';
-
-				// Adjust internal SLIDEE size for last margin
-				slideeSize -= ignoredMargin;
-
-				// Set limits
-				if (items.length) {
-					pos.start =  items[0][forceCenteredNav ? 'center' : 'start'];
-					pos.end = forceCenteredNav ? lastItem.center : frameSize < slideeSize ? lastItem.end : pos.start;
-				} else {
-					pos.start = pos.end = 0;
+					$(window).resize(function() {
+					    rtime = new Date();
+					    if (timeout === false) {
+					        timeout = true;
+					        setTimeout(resizeend, delta);
+					    }
+					});
 				}
+
+				// Iterate through items
+				countSizes(paddingStart, lastItemIndex, lastItem, paddingEnd, ignoredMargin, borderBox);
+
 			}
 
 			// Calculate SLIDEE center position
@@ -2198,6 +2264,11 @@
 		// Classes
 		draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
 		activeClass:   'active',  // Class for active items and pages.
-		disabledClass: 'disabled' // Class for disabled navigation elements.
+		disabledClass: 'disabled', // Class for disabled navigation elements.
+
+		// Responsive variables
+		visibleItems: null, // Array with numbers of visible items at once for different resolutions, like [3,2,1].
+		screen_sm: 768,     // Breakpoint for mobile screens - more than 768 - tablets; less than 768 - mobile screens.
+		screen_md: 992    // Breakpoint for desctop screens - more than 992.
 	};
 }(jQuery, window));
