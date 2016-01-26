@@ -90,6 +90,11 @@ var frame = new Sly('#frame', {
 	draggedClass:  'dragged', // Class for dragged elements (like SLIDEE or scrollbar handle).
 	activeClass:   'active',  // Class for active items and pages.
 	disabledClass: 'disabled' // Class for disabled navigation elements.
+
+	// Responsive variables
+	visibleItems: null, // Array with numbers of visible items at once for different resolutions, like [3,2,1].
+	screen_sm: 768,     // Breakpoint for mobile screens - more than 768 - tablets; less than 768 - mobile screens.
+	screen_md: 992    // Breakpoint for desctop screens - more than 992.
 });
 ```
 
@@ -523,3 +528,30 @@ Class added to buttons when they are disabled.
 Buttons are being disabled when there would be no action after pressing them. For example: the previous item button when the very first item is activated.
 
 If a button is a `<button>` or `<input>` element, it will also be marked with `disabled="disabled"` attribute.
+
+---
+
+###### Responsive
+
+---
+
+### visibleItems
+
+Type: `Array`
+Default: `null`
+
+Array with numbers of visible items at once for different resolutions, like [3,2,1] - [desctop, tablet, mobile]
+
+### screen_sm
+
+Type: `Integer`
+Default: `768`
+
+Breakpoint for mobile screens - more than 768 - tablets; less than 768 - mobile screens.
+
+### screen_md
+
+Type: `Integer`
+Default: `992`
+
+Breakpoint for desctop screens - more than 992.
