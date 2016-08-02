@@ -1,5 +1,5 @@
 /*!
- * sly 1.6.1 - 8th Aug 2015
+ * sly 1.6.1 - 2nd Aug 2016
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -368,13 +368,12 @@
 		 *
 		 * @param {Int}  newPos    New position.
 		 * @param {Bool} immediate Reposition immediately without an animation.
-		 * @param {Bool} dontAlign Do not align items, use the raw position passed in first argument.
 		 *
 		 * @return {Void}
 		 */
-		function slideTo(newPos, immediate, dontAlign) {
+		function slideTo(newPos, immediate) {
 			// Align items
-			if (itemNav && dragging.released && !dontAlign) {
+			if (itemNav && dragging.released && !o.dontAlign) {
 				var tempRel = getRelatives(newPos);
 				var isNotBordering = newPos > pos.start && newPos < pos.end;
 
