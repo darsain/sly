@@ -1,0 +1,13 @@
+{
+  "name": "sly",
+  "description": "JavaScript library for one-directional scrolling with item based navigation support. http://darsa.in/sly",
+  "main": ["dist/sly.js"],
+  "license": "MIT",
+  "ignore": [
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "package.json",
+    "README.md",
+    "test.html"
+  ]
+}
