@@ -1566,7 +1566,10 @@
 		function normalizeWheelDelta(event) {
 			// wheelDelta needed only for IE8-
 			scrolling.curDelta = ((o.horizontal ? event.deltaY || event.deltaX : event.deltaY) || -event.wheelDelta);
-			scrolling.curDelta /= event.deltaMode === 1 ? 3 : 100;
+			// for chrome on OSX
+			scrolling.curDelta = round(scrolling.curDelta) === 4 || round(scrolling.curDelta) === -4 ? -event.wheelDelta : scrolling.curDelta;
+			// for safari on OSX
+			scrolling.curDelta /= event.deltaMode === 1 || (event.wheelDelta === 12 || event.wheelDelta === -12) ? 3 : 100;
 			if (!itemNav) {
 				return scrolling.curDelta;
 			}
