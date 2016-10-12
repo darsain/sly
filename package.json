@@ -1,6 +1,9 @@
 {
 	"name": "sly-scrolling",
 	"version": "1.6.1",
+	"peerDependencies": {
+		"jquery": ">=1.7"
+	},
 	"devDependencies": {
 		"grunt-contrib-jshint": "~0.7.2",
 		"grunt-contrib-uglify": "~0.6.0",
