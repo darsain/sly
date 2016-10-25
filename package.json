@@ -6,6 +6,7 @@
 	"homepage": "http://darsa.in/sly/",
 	"bugs": "https://github.com/darsain/sly/issues",
 	"license": "MIT",
+	"main": "dist/sly.node.js",
 	"repository": {"type": "git", "url": "https://github.com/darsain/sly"},
 	"peerDependencies": {
 		"jquery": ">=1.7"

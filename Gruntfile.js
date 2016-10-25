@@ -2,6 +2,24 @@
 module.exports = function (grunt) {
 	'use strict';
 
+	grunt.registerTask('node', 'Prepare node source', function() {
+		var fs = require('fs');
+		var done = this.async();
+		fs.readFile('src/sly.js', function(err, source) {
+			if (err) {
+				done(false);
+			} else {
+				var lines = source.toString().trim().split("\n");
+				lines[0] = lines[0].replace(/^;/, ';module.exports = ');
+				lines[lines.length-1] = lines[lines.length-1].replace('}(jQuery, window)', 'return Sly;}');
+				source = lines.join("\n");
+				fs.writeFile('dist/sly.node.source.js', source, function(err) {
+					done(!err);
+				});
+			}
+		});
+	});
+
 	// Override environment based line endings enforced by Grunt
 	grunt.util.linefeed = '\n';
 
@@ -41,6 +59,13 @@ module.exports = function (grunt) {
 				},
 				src: 'src/<%= pkg.name %>.js',
 				dest: 'dist/<%= pkg.name %>.js'
+			},
+			node: {
+				options: {
+					banner: '<%= meta.banner %>'
+				},
+				src: 'dist/<%= pkg.name %>.node.source.js',
+				dest: 'dist/<%= pkg.name %>.node.js'
 			}
 		},
 
@@ -80,6 +105,7 @@ module.exports = function (grunt) {
 	// Build task.
 	grunt.registerTask('build', function () {
 		grunt.task.run('clean');
+		grunt.task.run('node');
 		grunt.task.run('concat');
 		grunt.task.run('uglify');
 	});
