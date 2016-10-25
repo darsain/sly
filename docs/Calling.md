@@ -1,5 +1,14 @@
 # Calling
 
+If using Sly in the Node.js environment, require and instantiate it first:
+
+```js
+var jQuery = require('jquery');
+var Sly = require('sly-scrolling')(jQuery, window);
+```
+
+Browser environments do not need this step.
+
 When you want to have a direct access to all methods and complete control over Sly:
 
 ```js
