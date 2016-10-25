@@ -1,6 +1,16 @@
 {
-	"name": "sly",
-	"version": "0.0.0",
+	"name": "sly-scrolling",
+	"version": "1.6.1",
+	"description": "JavaScript library for advanced one-directional scrolling with item based navigation support.",
+	"keywords": ["jquery", "scrolling"],
+	"homepage": "http://darsa.in/sly/",
+	"bugs": "https://github.com/darsain/sly/issues",
+	"license": "MIT",
+	"main": "dist/sly.node.js",
+	"repository": {"type": "git", "url": "https://github.com/darsain/sly"},
+	"peerDependencies": {
+		"jquery": ">=1.7"
+	},
 	"devDependencies": {
 		"grunt-contrib-jshint": "~0.7.2",
 		"grunt-contrib-uglify": "~0.6.0",

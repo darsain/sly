@@ -59,6 +59,23 @@ $('#frame').sly(options);
 
 jQuery proxy is good when you want to create an instance and forget about it. For anything more complex, like using methods, events, accessing instance properties, ... use the constructor and work with the instance directly.
 
+In Node:
+
+```js
+var jQuery = require('jquery');
+var Sly = require('sly-scrolling')(jQuery, window);
+
+// now use Sly as above
+var options = {
+	horizontal: 1,
+	itemNav: 'basic',
+	speed: 300,
+	mouseDragging: 1,
+	touchDragging: 1
+};
+var frame = new Sly('#frame', options).init();
+```
+
 ## Download
 
 Latest stable release:
