@@ -87,7 +87,7 @@ module.exports = function (grunt) {
 					pkg: 'meta.json',
 				},
 			},
-			files: ['meta.json', '<%= pkg.name %>.jquery.json'],
+			files: ['meta.json', '<%= pkg.name %>.jquery.json', 'package.json'],
 		},
 
 		// Commit changes and tag the latest commit with a version from JSON file.
