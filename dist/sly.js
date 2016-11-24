@@ -1,5 +1,5 @@
 /*!
- * sly 1.6.1 - 8th Aug 2015
+ * sly 1.6.1 - 24th Nov 2016
  * https://github.com/darsain/sly
  *
  * Licensed under the MIT license.
@@ -630,7 +630,8 @@
 		 * @return {Void}
 		 */
 		self.prev = function () {
-			self.activate(rel.activeItem == null ? 0 : rel.activeItem - 1);
+			var index = self.activate(rel.activeItem == null ? 0 : rel.activeItem - 1);
+			trigger('prev', index);
 		};
 
 		/**
@@ -639,7 +640,8 @@
 		 * @return {Void}
 		 */
 		self.next = function () {
-			self.activate(rel.activeItem == null ? 0 : rel.activeItem + 1);
+			var index = self.activate(rel.activeItem == null ? 0 : rel.activeItem + 1);
+			trigger('next', index);
 		};
 
 		/**
@@ -770,10 +772,10 @@
 		 */
 		function getIndex(item) {
 			return item != null ?
-					isNumber(item) ?
-						item >= 0 && item < items.length ? item : -1 :
-						$items.index(item) :
-					-1;
+				isNumber(item) ?
+					item >= 0 && item < items.length ? item : -1 :
+					$items.index(item) :
+				-1;
 		}
 		// Expose getIndex without lowering the compressibility of it,
 		// as it is used quite often throughout Sly.
@@ -826,7 +828,7 @@
 		 * @param {Mixed} item      Item DOM element, or index starting at 0.
 		 * @param {Bool}  immediate Whether to reposition immediately in smart navigation.
 		 *
-		 * @return {Void}
+		 * @return {Mixed}
 		 */
 		self.activate = function (item, immediate) {
 			var index = activate(item);
@@ -847,6 +849,7 @@
 					resetCycle();
 				}
 			}
+			return index;
 		};
 
 		/**
@@ -1225,7 +1228,7 @@
 						self.on(key, name[key]);
 					}
 				}
-			// Callback
+				// Callback
 			} else if (type(fn) === 'function') {
 				var names = name.split(' ');
 				for (var n = 0, nl = names.length; n < nl; n++) {
@@ -1234,7 +1237,7 @@
 						callbacks[names[n]].push(fn);
 					}
 				}
-			// Callbacks array
+				// Callbacks array
 			} else if (type(fn) === 'array') {
 				for (var f = 0, fl = fn.length; f < fl; f++) {
 					self.on(name, fn[f]);
@@ -2062,8 +2065,8 @@
 			|| fallback;
 
 		/**
-		* Fallback implementation.
-		*/
+		 * Fallback implementation.
+		 */
 		var prev = new Date().getTime();
 		function fallback(fn) {
 			var curr = new Date().getTime();
@@ -2074,8 +2077,8 @@
 		}
 
 		/**
-		* Cancel.
-		*/
+		 * Cancel.
+		 */
 		var cancel = w.cancelAnimationFrame
 			|| w.webkitCancelAnimationFrame
 			|| w.clearTimeout;

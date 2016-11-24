@@ -175,3 +175,25 @@ Triggered on each cycle tick.
 Callback arguments:
 
 1. **eventName** `String` Event name.
+
+---
+
+### prev
+
+Triggered when prev method is call.
+
+Callback arguments:
+
+1. **eventName** `String` Event name.
+2. **itemIndex** `Int` Index of activated item.
+
+---
+
+### next
+
+Triggered when next method is call.
+
+Callback arguments:
+
+1. **eventName** `String` Event name.
+2. **itemIndex** `Int` Index of activated item.
