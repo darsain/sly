@@ -995,8 +995,8 @@
 						$nextButton.prop('disabled', isLast);
 					}
 
-					$prevButton[isFirst ? 'addClass' : 'removeClass'](o.disabledClass);
-					$nextButton[isLast ? 'addClass' : 'removeClass'](o.disabledClass);
+					$prevButton[isFirst || isStart ? 'addClass' : 'removeClass'](o.disabledClass);
+					$nextButton[isLast || isEnd ? 'addClass' : 'removeClass'](o.disabledClass);
 				}
 			}
 		}
