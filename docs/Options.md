@@ -39,6 +39,7 @@ var frame = new Sly('#frame', {
 	scrollBy:     0,     // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
 	scrollHijack: 300,   // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
 	scrollTrap:   false, // Don't bubble scrolling when hitting scrolling limits.
+	dontAlign:    false, // Don't align the items within the box edges.
 
 	// Dragging
 	dragSource:    null,  // Selector or DOM element for catching dragging events. Default is FRAME.
@@ -199,6 +200,13 @@ Type: `Boolean`
 Default: `false`
 
 Set this to `true` to catch all scrolls originating on FRAME. By default, when there is nowhere to scroll, Sly lets scroll events bubble so they can scroll the parent document.
+
+### dontAlign
+
+Type: `Boolean`
+Default: `false`
+
+Set this to `true` in order not to align the items within the box edges. The animation can now stop in the middle of an item and the scrollBy is used for pixels scroll width.
 
 ---
 

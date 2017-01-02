@@ -366,6 +366,7 @@
 		 * @return {Void}
 		 */
 		function slideTo(newPos, immediate, dontAlign) {
+			dontAlign = dontAlign || o.dontAlign;
 			// Align items
 			if (itemNav && dragging.released && !dontAlign) {
 				var tempRel = getRelatives(newPos);
@@ -665,7 +666,7 @@
 			if (!delta) {
 				return;
 			}
-			if (itemNav) {
+			if (itemNav && !o.dontAlign) {
 				self[centeredNav ? 'toCenter' : 'toStart'](
 					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
 				);
@@ -763,10 +764,10 @@
 		 */
 		function getIndex(item) {
 			return item != null ?
-					isNumber(item) ?
-						item >= 0 && item < items.length ? item : -1 :
-						$items.index(item) :
-					-1;
+				isNumber(item) ?
+					item >= 0 && item < items.length ? item : -1 :
+					$items.index(item) :
+				-1;
 		}
 		// Expose getIndex without lowering the compressibility of it,
 		// as it is used quite often throughout Sly.
@@ -1218,7 +1219,7 @@
 						self.on(key, name[key]);
 					}
 				}
-			// Callback
+				// Callback
 			} else if (type(fn) === 'function') {
 				var names = name.split(' ');
 				for (var n = 0, nl = names.length; n < nl; n++) {
@@ -1227,7 +1228,7 @@
 						callbacks[names[n]].push(fn);
 					}
 				}
-			// Callbacks array
+				// Callbacks array
 			} else if (type(fn) === 'array') {
 				for (var f = 0, fl = fn.length; f < fl; f++) {
 					self.on(name, fn[f]);
@@ -2055,8 +2056,8 @@
 			|| fallback;
 
 		/**
-		* Fallback implementation.
-		*/
+		 * Fallback implementation.
+		 */
 		var prev = new Date().getTime();
 		function fallback(fn) {
 			var curr = new Date().getTime();
@@ -2067,8 +2068,8 @@
 		}
 
 		/**
-		* Cancel.
-		*/
+		 * Cancel.
+		 */
 		var cancel = w.cancelAnimationFrame
 			|| w.webkitCancelAnimationFrame
 			|| w.clearTimeout;
@@ -2147,6 +2148,7 @@
 		scrollBy:     0,     // Pixels or items to move per one mouse scroll. 0 to disable scrolling.
 		scrollHijack: 300,   // Milliseconds since last wheel event after which it is acceptable to hijack global scroll.
 		scrollTrap:   false, // Don't bubble scrolling when hitting scrolling limits.
+		dontAlign:    false, // Don't align the items within the box edges.
 
 		// Dragging
 		dragSource:    null,  // Selector or DOM element for catching dragging events. Default is FRAME.
