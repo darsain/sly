@@ -30,6 +30,7 @@
 	var sqrt = Math.sqrt;
 	var pow = Math.pow;
 	var round = Math.round;
+	var ceil = Math.ceil;
 	var max = Math.max;
 	var min = Math.min;
 
@@ -210,7 +211,7 @@
 					// Item
 					var $item = $(element);
 					var rect = element.getBoundingClientRect();
-					var itemSize = round(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
+					var itemSize = ceil(o.horizontal ? rect.width || rect.right - rect.left : rect.height || rect.bottom - rect.top);
 					var itemMarginStart = getPx($item, o.horizontal ? 'marginLeft' : 'marginTop');
 					var itemMarginEnd = getPx($item, o.horizontal ? 'marginRight' : 'marginBottom');
 					var itemSizeFull = itemSize + itemMarginStart + itemMarginEnd;
