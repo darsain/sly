@@ -554,6 +554,17 @@
 		};
 
 		/**
+		 * Returns current position and end position.
+		 *
+		 * @param {Func} callback function
+		 *
+		 * @return {void}
+		 */
+		self.curPos = function(callback){
+	            callback(self.pos.cur, self.pos.end);
+	        }
+
+		/**
 		 * Continuous move in a specified direction.
 		 *
 		 * @param  {Bool} forward True for forward movement, otherwise it'll go backwards.
