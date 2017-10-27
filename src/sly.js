@@ -561,8 +561,8 @@
 		 * @return {void}
 		 */
 		self.curPos = function(callback){
-            callback(self.pos.cur, self.pos.end);
-        }
+	            callback(self.pos.cur, self.pos.end);
+	        }
 
 		/**
 		 * Continuous move in a specified direction.
