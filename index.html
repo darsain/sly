@@ -77,44 +77,70 @@
 	<div class="download-border pagespan"></div>
 
 	<div id="content" class="content pagespan">
-
-		<style>
-		.reward {
-			display: block;
-			min-height: 60px;
-			padding: .5em 0 0 80px;
-			background: url('img/paypal-stamp.png') no-repeat left top;
-			color: #3b7bbf;
-		}
-		.reward h4 { margin: 0; }
-		.reward.mini {
-			width: 120px;
-			background-position: center top;
-			margin: 1.5em auto 0;
-			padding: 70px 0 0 0;
-			text-align: center;
-		}
-		.reward.mini h4 { font-size: .9em; }
-		.reward:hover {
-			color: #1e477a;
-			text-decoration: none;
-		}
-		</style>
-
 		<nav id="mainnav" class="mainnav">
-			<div id="carbonads-container">
-				<div class="carbonad">
-					<div id="azcarbon"></div>
-					<script type="text/javascript">
-						var z = document.createElement("script");
-						z.type = "text/javascript";
-						z.async = true;
-						z.src = "http://engine.carbonads.com/z/32315/azcarbon_2_1_0_VERT";
-						var s = document.getElementsByTagName("script")[0];
-						s.parentNode.insertBefore(z, s);
-					</script>
-				</div>
-			</div>
+
+			<style>
+				#carbonads {
+					display: block;
+					overflow: hidden;
+					padding: 1em;
+					margin: 30px auto 0;
+					background: #fff;
+					text-align: center;
+					font-size: 14px;
+					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+					line-height: 1.5;
+				}
+				#carbonads a { color: inherit; text-decoration: none; }
+				#carbonads a:hover { color: inherit; }
+				#carbonads span { display: block; overflow: hidden; }
+				.carbon-img { display: block; margin: 0 auto 8px; line-height: 1; }
+				.carbon-text { display: block; margin-bottom: 8px; }
+				.carbon-poweredby {
+					display: block;
+					text-transform: uppercase;
+					letter-spacing: 1px;
+					font-size: 10px;
+					line-height: 1;
+				}
+				.carbon-text:after {
+					display: block;
+					margin-top: 20px;
+					padding: 12px 16px;
+					border-radius: 3px;
+					background-color: hsl(0, 0%, 20%);
+					color: #fff;
+					content: "Learn More";
+					white-space: nowrap;
+					font-weight: 600;
+					font-size: 14px;
+					line-height: 1;
+				}
+			</style>
+			<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CKYIKKJE&placement=darsain" id="_carbonads_js"></script>
+
+			<style>
+				.reward {
+					display: block;
+					min-height: 60px;
+					padding: .5em 0 0 80px;
+					background: url('img/paypal-stamp.png') no-repeat left top;
+					color: #3b7bbf;
+				}
+				.reward h4 { margin: 0; }
+				.reward.mini {
+					width: 120px;
+					background-position: center top;
+					margin: 1.5em auto 0;
+					padding: 70px 0 0 0;
+					text-align: center;
+				}
+				.reward.mini h4 { font-size: .9em; }
+				.reward:hover {
+					color: #1e477a;
+					text-decoration: none;
+				}
+			</style>
 			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=23CALWRSTQ8X2" class="reward mini">
 				<h4>Reward the developer</h4>
 			</a>

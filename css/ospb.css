@@ -539,10 +539,6 @@ header .projectdescription { opacity: .7; }
 .mainnav ul li.active a { color: #fff; background: #d95b5b; text-shadow: 1px 1px 0 rgba(0,0,0,.2); }
 .mainnav ul li.active a:before { border-right-color: #d95b5b; }
 
-/* Barbon ads */
-#carbonads-container { margin: 30px 0 0; height: 220px; }
-.carbonad { margin: 0 auto; }
-
 /* Content. */
 .content { position: relative; margin: 0 auto; }
 .content > section { margin-left: 295px; padding: 30px 0 40px;
