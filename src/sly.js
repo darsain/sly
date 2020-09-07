@@ -1058,7 +1058,7 @@
 		};
 
 		/**
-		 * Updates a signle or multiple option values.
+		 * Updates a single or multiple option values.
 		 *
 		 * @param {Mixed} name  Name of the option that should be updated, or object that will extend the options.
 		 * @param {Mixed} value New option value.
